@@ -19,15 +19,12 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
+      
 
     }
 
     private void Start()
     {
-        EventData.EventDataSetter<Vector2> move = new EventData.EventDataSetter<Vector2>(EventDataName.Input.移动);
-        EventData.ConditionsSetter testEventData = new EventData.ConditionsSetter();
-        testEventData.SetAction(() => { Debug.Log(move.GetData()); });
-        testEventData.AddCondition(move.OnDataUpdate);
-        testEventData.Enable();
+       
     }
 }

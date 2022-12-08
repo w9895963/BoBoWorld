@@ -1,23 +1,27 @@
-Library/
-Output/
-Packages/
-UserSettings/
-.vscode/
-.plastic
-ProjectSettings/
-Temp/
-obj/
-Assets/*
-!Assets/Scripts/
-Logs/
+# 忽略所有文件
+# 不忽略.gitignore文件
+/*
+!/.gitignore
 
+
+
+# 忽略所有根目录下的文件夹
+# 不忽略Assets文件夹
+/*/
+!/Assets/
+
+
+
+# 忽略Assets文件夹下的所有子文件夹
+# 不忽略Assets文件夹下的Scripts文件夹
+/Assets/*/
+!/Assets/Scripts/
+
+
+
+# 忽略各种文件类型
 *.meta
-*.log
-*.csproj
-*.conf
 *.prefab
 
-*.sln
 
-Mods/
 
