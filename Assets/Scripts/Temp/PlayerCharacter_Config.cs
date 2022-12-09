@@ -8,5 +8,5 @@ public class PlayerCharacter_Config : ScriptableObject
 {
     public float 重力大小 = 9.8f;
     public Vector2 重力方向 = Vector2.down;
-
+    //test
 }
