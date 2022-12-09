@@ -287,17 +287,6 @@ namespace EventData
 
 
 
-    //事件更新方式
-    public enum EventUpdateType
-    {
-
-        //自动更新
-        Auto,
-        //强制更新
-        Force,
-        //不更新
-        None
-    }
 
 
 }
