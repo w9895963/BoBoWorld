@@ -39,17 +39,77 @@ public class ConfigManager : MonoBehaviour
         {
             //将字段的值添加到eventData中
             System.Action<int> setData = EventDataF.GetDataSetter<int>(dataName, gameObject);
-            setData(1);
+            setData((int)dataValue);
         }
+        //如果字段的类型为float
+        else if (type == typeof(float))
+        {
+            //将字段的值添加到eventData中
+            System.Action<float> setData = EventDataF.GetDataSetter<float>(dataName, gameObject);
+            setData((float)dataValue);
+        }
+        //如果字段的类型为string
+        else if (type == typeof(string))
+        {
+            //将字段的值添加到eventData中
+            System.Action<string> setData = EventDataF.GetDataSetter<string>(dataName, gameObject);
+            setData((string)dataValue);
+        }
+        //如果字段的类型为bool
+        else if (type == typeof(bool))
+        {
+            //将字段的值添加到eventData中
+            System.Action<bool> setData = EventDataF.GetDataSetter<bool>(dataName, gameObject);
+            setData((bool)dataValue);
+        }
+        //如果字段的类型为Vector2
+        else if (type == typeof(Vector2))
+        {
+            //将字段的值添加到eventData中
+            System.Action<Vector2> setData = EventDataF.GetDataSetter<Vector2>(dataName, gameObject);
+            setData((Vector2)dataValue);
+        }
+        //如果字段的类型为Vector3
+        else if (type == typeof(Vector3))
+        {
+            //将字段的值添加到eventData中
+            System.Action<Vector3> setData = EventDataF.GetDataSetter<Vector3>(dataName, gameObject);
+            setData((Vector3)dataValue);
+        }
+        //如果字段的类型为Vector4
+        else if (type == typeof(Vector4))
+        {
+            //将字段的值添加到eventData中
+            System.Action<Vector4> setData = EventDataF.GetDataSetter<Vector4>(dataName, gameObject);
+            setData((Vector4)dataValue);
+        }
+        //如果字段的类型为Color
+        else if (type == typeof(Color))
+        {
+            //将字段的值添加到eventData中
+            System.Action<Color> setData = EventDataF.GetDataSetter<Color>(dataName, gameObject);
+            setData((Color)dataValue);
+        }
+        //如果字段的类型为GameObject
+        else if (type == typeof(GameObject))
+        {
+            //将字段的值添加到eventData中
+            System.Action<GameObject> setData = EventDataF.GetDataSetter<GameObject>(dataName, gameObject);
+            setData((GameObject)dataValue);
+        }
+
+
 
     }
 
 
     //方法：将某个配置添加到eventData中
-    public void AddConfigToEventData<T, O>(GameObject gameObject = null) where T : ScriptableObject
+    /** T：配置文件类型， O：对应的枚举类型. */
+    public void AddConfigToEventData<ConfigT, EnumT>(GameObject gameObject = null) where ConfigT : ScriptableObject
     {
+
         //获取配置
-        T config = GetConfig<T>();
+        ConfigT config = GetConfig<ConfigT>();
         //如果配置存在
         if (config != null)
         {
@@ -64,7 +124,7 @@ public class ConfigManager : MonoBehaviour
                 //获得字段的名称
                 string fieldName = fieldInfo.Name;
                 //历遍枚举O
-                foreach (object enumValue in System.Enum.GetValues(typeof(O)))
+                foreach (object enumValue in System.Enum.GetValues(typeof(EnumT)))
                 {
                     //如果字段的名称和枚举O的名称相同
                     if (fieldName == enumValue.ToString())

@@ -9,8 +9,8 @@ namespace EventData
     namespace EventDataVisualizeGroup
     {
         //属性：只在编辑器下可见
-        [ExecuteInEditMode]
         //类型： 事件数据可视化
+        [ExecuteInEditMode]
         public class EventDataVisualizer : MonoBehaviour
         {
             //字段：全局数据条目列表
@@ -36,10 +36,10 @@ namespace EventData
                 Dictionary<System.Enum, EventDataUtil.EventData> eventDataDict = EventDataUtil.GlobalData.holderDict;
                 Dictionary<System.Enum, EventDataUtil.EventData> eventDataDict_this = null;
                 //如果组件存在
-                if (gameObject.GetComponent<EventDataUtil.EventDataMono>() != null)
+                if (gameObject.GetComponent<EventDataUtil.EventDataStoreMono>() != null)
                 {
                     //获取本物体上的字典
-                    eventDataDict_this = gameObject.GetComponent<EventDataUtil.EventDataMono>().dateHolderDict;
+                    eventDataDict_this = gameObject.GetComponent<EventDataUtil.EventDataStoreMono>().dateHolderDict;
                 }
 
 
@@ -74,8 +74,10 @@ namespace EventData
                     name = $"{eventData.Key.ToString()}:{eventData.Value.GetData().ToString()}",
                     eventData = eventData.Value,
                 }).ToList();
-                //往ObjectData中添加不重复的数据
-                ObjectData.AddRange(ObjectDataListAll.Where(dataItem => !ObjectData.Contains(dataItem)));
+                //*往ObjectData中添加不重复的数据
+                // 获得ObjectData中所有eventData的列表
+                List<EventDataUtil.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
+                ObjectData.AddRange(ObjectDataListAll.Where(dataItem => !eventDataList_ObjectData.Contains(dataItem.eventData)));
             }
             //方法：添加自动更新事件
             private void AddDataAutoUpdateEvent(List<DataItem> ObjectData)

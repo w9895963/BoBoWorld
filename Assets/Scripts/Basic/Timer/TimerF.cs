@@ -14,12 +14,19 @@ public static class TimerF
     public static Timer.Base.SimpleTimer Wait(float time, Action action = null)
     {
         GameObject hol = TimerHolder;
+        //如果空退出
+        if (TimerHolder == null)
+            return null;
         Timer.Base.SimpleTimer simpleTimer = hol.AddComponent<Timer.Base.SimpleTimer>();
         simpleTimer.Wait(time, action);
         return simpleTimer;
     }
     public static Timer.Base.WaitUpdate WaitUpdate(Action action)
     {
+        //如果空退出
+        if (TimerHolder == null)
+            return null;
+
         var timer = TimerHolder.AddComponent<Timer.Base.WaitUpdate>();
         timer.Setup(action);
         return timer;

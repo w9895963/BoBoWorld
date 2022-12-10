@@ -20,10 +20,12 @@ namespace EventData
         }
 
         // 基于物体的事件数据存储字典, Unity 组件
-        public class EventDataMono : MonoBehaviour
+        public class EventDataStoreMono : MonoBehaviour
         {
             public Dictionary<System.Enum, EventData> dateHolderDict = new Dictionary<System.Enum, EventData>();
         }
+
+       
 
 
 
@@ -77,10 +79,10 @@ namespace EventData
                 }
                 else
                 {
-                    EventDataMono eventDataMono = gameObject.GetComponent<EventDataMono>();
+                    EventDataStoreMono eventDataMono = gameObject.GetComponent<EventDataStoreMono>();
                     if (eventDataMono == null)
                     {
-                        eventDataMono = gameObject.AddComponent<EventDataMono>();
+                        eventDataMono = gameObject.AddComponent<EventDataStoreMono>();
                     }
                     if (eventDataMono.dateHolderDict.ContainsKey(name))
                     {
@@ -113,10 +115,10 @@ namespace EventData
                 }
                 else
                 {
-                    EventDataMono eventDataMono = gameObject.GetComponent<EventDataMono>();
+                    EventDataStoreMono eventDataMono = gameObject.GetComponent<EventDataStoreMono>();
                     if (eventDataMono == null)
                     {
-                        eventDataMono = gameObject.AddComponent<EventDataMono>();
+                        eventDataMono = gameObject.AddComponent<EventDataStoreMono>();
                     }
 
                     if (eventDataMono.dateHolderDict.ContainsKey(name))
