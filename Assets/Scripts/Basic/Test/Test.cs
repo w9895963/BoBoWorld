@@ -12,36 +12,37 @@ public class Test : MonoBehaviour
     public GameObject gameObj;
     private SimpleTimer simpleTimer;
 
+
     [ContextMenu("LogObject")]
     public void LogObj()
     {
         Debug.Log(obj);
+
     }
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        //历遍  EventDataName.Player
-        foreach (var item in Enum.GetValues(typeof(EventDataName.Player)))
-        {
-            Debug.Log(item);
-            Debug.Log(EventDataName.Player.重力大小);
-            //判断item是否等于EventDataName.Player.重力大小
-            if (item.Equals(EventDataName.Player.重力大小))
-            {
-                Debug.Log("相等");
-            }
-            else
-            {
-                Debug.Log("不相等");
-            }
-            //Test test
+        EventDataName.Player.重力大小.GetType().FullName.Log();
+        EventDataName.Player.重力大小.Log();
 
-        }
+
     }
 
 
     private void Start()
     {
+        BasicEvent.OnUpdate.Add(gameObject, NewMethod);
+        BasicEvent.OnUpdate.Add(gameObject, NewMethod);
+        BasicEvent.OnUpdate.Remove(gameObject, NewMethod);
+        BasicEvent.OnUpdate.Remove(gameObject, NewMethod);
 
+
+        static void NewMethod()
+        {
+
+            //log 时间
+            Debug.Log(Time.time);
+
+        }
     }
 }

@@ -10,11 +10,11 @@ namespace BasicEvent
 {
     namespace Component
     {
-        public class OnTrigger2D_Enter_Component : BasicEventMono
+        public class OnTrigger2D_Enter_Component : BasicEventMono<Collider2D>
         {
             private void OnTriggerEnter2D(Collider2D other)
             {
-                RunAction<Collider2D>(other);
+                RunAction(other);
             }
         }
     }

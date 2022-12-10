@@ -10,11 +10,11 @@ namespace BasicEvent
 {
     namespace Component
     {
-        public class OnCollision2D_Exit_Component : BasicEventMono
+        public class OnCollision2D_Exit_Component : BasicEventMono<Collision2D>
         {
             private void OnCollisionExit2D(Collision2D other)
             {
-                RunAction<Collision2D>(other);
+                RunAction(other);
             }
         }
     }

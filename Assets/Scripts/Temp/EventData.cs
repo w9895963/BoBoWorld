@@ -33,14 +33,28 @@ namespace EventData
         //类：事件数据
         public class EventData
         {
-
+            //枚举
+            public System.Enum enumKey;
             //当数据更新时执行动作
             public List<Action> onUpdatedAction = new List<Action>();
             //条件与动作列表
             public List<ConditionAction> conditionActionList = new List<ConditionAction>();
 
+            //引用：数据
+            public Func<System.Object> dataGetter;
 
 
+
+
+
+
+
+
+            //方法：获得数据
+            public System.Object GetData()
+            {
+                return dataGetter();
+            }
 
 
 
@@ -115,16 +129,24 @@ namespace EventData
                         eventDataMono.dateHolderDict.Add(name, eventDataT);
                     }
                 }
+                eventDataT.enumKey = name;
                 return eventDataT;
             }
 
         }
 
-        
+
         //类：带参数的事件数据
         public class EventData<T> : EventData
         {
             public T data;
+
+            public EventData() : base()
+            {
+                dataGetter = () => { return data; };
+            }
+
+
 
             //方法：设置数据
             public void SetData(T data)
@@ -157,7 +179,7 @@ namespace EventData
                 });
             }
             //方法：获取数据
-            public T GetData()
+            public new T GetData()
             {
                 return data;
             }
@@ -279,11 +301,6 @@ namespace EventData
         }
 
     }
-
-
-
-
-
 
 
 

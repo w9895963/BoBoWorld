@@ -8,7 +8,6 @@ public class Manager_PlayerCharacter : MonoBehaviour
     {
         //获取配置管理器
         ConfigManager configManager = FindObjectOfType<ConfigManager>();
-        
 
     }
 
@@ -20,23 +19,7 @@ public class Manager_PlayerCharacter : MonoBehaviour
 
 
 
-    private void Update()
-    {
 
-    }
-    private void FixedUpdate()
-    {
-
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-
-    }
-    private void OnCollisionExit2D(Collision2D other)
-    {
-
-    }
 
 
 

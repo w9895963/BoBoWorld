@@ -29,6 +29,22 @@ public class ConfigManager : MonoBehaviour
         return configObj;
     }
 
+
+
+    //方法：根据输入参数，将某个配置添加到eventData中
+    public void AddConfigToEventData(System.Enum dataName, object dataValue, System.Type type, GameObject gameObject = null)
+    {
+        //如果字段的类型为int
+        if (type == typeof(int))
+        {
+            //将字段的值添加到eventData中
+            System.Action<int> setData = EventDataF.GetDataSetter<int>(dataName, gameObject);
+            setData(1);
+        }
+
+    }
+
+
     //方法：将某个配置添加到eventData中
     public void AddConfigToEventData<T, O>(GameObject gameObject = null) where T : ScriptableObject
     {
@@ -53,8 +69,14 @@ public class ConfigManager : MonoBehaviour
                     //如果字段的名称和枚举O的名称相同
                     if (fieldName == enumValue.ToString())
                     {
-                        //将enumValue转换为类型enum
-                        
+                        //获得数据名称枚举
+                        System.Enum dataName = (System.Enum)enumValue;
+                        //获得数据的值
+                        object dataValue = fieldValue;
+                        //获得数据的类型
+                        System.Type dataType = fieldType;
+                        //将字段添加到eventData中
+                        AddConfigToEventData(dataName, dataValue, dataType, gameObject);
                     }
                 }
 
@@ -63,65 +85,6 @@ public class ConfigManager : MonoBehaviour
 
         }
     }
-
-    //方法：根据输入参数，将某个配置添加到eventData中
-  /*   public void AddConfigToEventData(object fieldValue, System.Type type, GameObject gameObject = null)
-    {
-        //如果字段的类型为int
-        if (type == typeof(int))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<int>(fieldValue, gameObject);
-        }
-        //如果字段的类型为float
-        else if (type == typeof(float))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<float>(fieldValue, gameObject);
-        }
-        //如果字段的类型为string
-        else if (type == typeof(string))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<string>(fieldValue, gameObject);
-        }
-        //如果字段的类型为bool
-        else if (type == typeof(bool))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<bool>(fieldValue, gameObject);
-        }
-        //如果字段的类型为Vector2
-        else if (type == typeof(Vector2))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<Vector2>(fieldValue, gameObject);
-        }
-        //如果字段的类型为Vector3
-        else if (type == typeof(Vector3))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<Vector3>(fieldValue, gameObject);
-        }
-        //如果字段的类型为Vector4
-        else if (type == typeof(Vector4))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<Vector4>(fieldValue, gameObject);
-        }
-        //如果字段的类型为Color
-        else if (type == typeof(Color))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<Color>(fieldValue, gameObject);
-        }
-        //如果字段的类型为GameObject
-        else if (type == typeof(GameObject))
-        {
-            //将字段的值添加到eventData中
-            EventDataF.GetDataSetter<GameObject>(fieldValue, gameObject);
-        }
-    } */
 
 }
 
