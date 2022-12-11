@@ -86,7 +86,7 @@ public class CharacterDash_CMP : MonoBehaviour
         if (forceOn)
         {
             Vector2 dashDir = defaultDashDirection * faceDirection;
-            Vector2 force = PhysicMathF.VelocityChange_getForce(rb.velocity, dashSpeed * dashDir, maxForce, defaultDashDirection, rb.mass);
+            Vector2 force = PhysicMathF.CalcForceByVel(rb.velocity, dashSpeed * dashDir, maxForce, defaultDashDirection, rb.mass);
 
             rb.AddForce(force);
 

@@ -8,5 +8,6 @@ public class PlayerCharacter_Config : ScriptableObject
 {
     public float 重力大小 = 9.8f;
     public Vector2 重力方向 = Vector2.down;
-    //test
+    public float 移动速度 = 5;
+    public float 移动最大施力 = 10;
 }

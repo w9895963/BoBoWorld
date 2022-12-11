@@ -18,6 +18,8 @@ public class CharacterBallState_Cmp : MonoBehaviour
     private SimpleTimer jumpTimer;
     private Action fixedUpdateAction;
     private Character character;
+    //刚体
+    private Rigidbody2D rb;
 
 
     private OtState ballJumpState;
@@ -32,7 +34,8 @@ public class CharacterBallState_Cmp : MonoBehaviour
         jumpState = new OtState(gameObject, Conf.CharacterActionName.跳跃);
         fallState = new OtState(gameObject, Conf.CharacterActionName.动画_下落);
 
-        // OtStateF.GetInputState();
+        //获得刚体
+        rb = gameObject.GetRigidbody2D();
 
 
     }
@@ -123,8 +126,9 @@ public class CharacterBallState_Cmp : MonoBehaviour
         if (v)
         {
             startTime = Time.time;
+            
 
-            fixedUpdateAction = PhysicF.VelocityModify(gameObject, speed, maxForce, Vector2.up);
+            fixedUpdateAction = PhysicF.VelocityModify(rb, speed, maxForce, Vector2.up);
             jumpTimer = TimerF.Wait(jumpTime, () => BasicEvent.OnFixedUpdate.Remove(gameObject, fixedUpdateAction));
             BasicEvent.OnFixedUpdate.Add(gameObject, fixedUpdateAction);
 

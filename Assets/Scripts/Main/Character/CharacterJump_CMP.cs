@@ -77,7 +77,7 @@ public class CharacterJump_CMP : MonoBehaviour
         float maxF = maxForce;
         Vector2 forceDir = jumpDirection;
 
-        Vector2 forceAdd = PhysicMathF.VelocityChange_getForce(curV, tarV, maxF, forceDir, rb.mass);
+        Vector2 forceAdd = PhysicMathF.CalcForceByVel(curV, tarV, maxF, forceDir, rb.mass);
 
         rb.AddForce(forceAdd);
 

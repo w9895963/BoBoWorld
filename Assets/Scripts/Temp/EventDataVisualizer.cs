@@ -9,7 +9,7 @@ namespace EventData
     namespace EventDataVisualizeGroup
     {
         //属性：只在编辑器下可见
-        //类型： 事件数据可视化
+        //*类型： 事件数据可视化
         [ExecuteInEditMode]
         public class EventDataVisualizer : MonoBehaviour
         {
@@ -20,16 +20,22 @@ namespace EventData
 
             private void Awake()
             {
+                //如果是编辑器下,则不执行
+                if (Application.isEditor)
+                    return;
+
                 TimerF.WaitUpdate(() =>
                 {
                     UpdateData();
                 });
+
+
             }
 
 
             //添加上下文菜单
             [ContextMenu("更新数据")]
-            //方法：更新数据
+            //*方法：更新数据
             public void UpdateData()
             {
                 //获得事件数据存储字典
@@ -44,6 +50,7 @@ namespace EventData
 
 
                 AddData(GlobalData, eventDataDict);
+                eventDataDict.Count.Log();
                 AddData(ObjectData, eventDataDict_this);
 
                 AddDataAutoUpdateEvent(GlobalData);
@@ -53,6 +60,7 @@ namespace EventData
 
 
             //方法：往数据列表中添加数据
+
             private void AddData(List<DataItem> ObjectData, Dictionary<System.Enum, EventDataUtil.EventData> eventDataDict)
             {
                 //空则退出
@@ -101,6 +109,7 @@ namespace EventData
                         dataItem.name = $"{dataItem.dataName}:{dataItem.数据}";
 
                     });
+                    
                 }
 
             }
@@ -111,7 +120,7 @@ namespace EventData
         }
 
 
-        //类：数据条目
+        //*类：数据条目
         [System.Serializable]
         public class DataItem
         {

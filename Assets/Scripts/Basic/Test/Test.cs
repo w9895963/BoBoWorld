@@ -22,9 +22,13 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        EventDataName.Player.重力大小.GetType().FullName.Log();
-        EventDataName.Player.重力大小.Log();
-
+        EventData.EventDataUtil.EventData eventData = new EventData.EventDataUtil.EventData();
+        EventData.EventDataUtil.EventData<Vector2> eventData2 = new EventData.EventDataUtil.EventData<Vector2>();
+        eventData.GetType().FullName.Log();
+        eventData2.GetType().FullName.Log();
+        eventData = eventData2;
+        eventData.GetType().FullName.Log();
+        Debug.Log(eventData.GetType() == typeof(EventData.EventDataUtil.EventData<Vector2>));
 
     }
 

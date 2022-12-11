@@ -103,8 +103,7 @@ public class ConfigManager : MonoBehaviour
     }
 
 
-    //方法：将某个配置添加到eventData中
-    /** T：配置文件类型， O：对应的枚举类型. */
+    /// <summary>将配置添加到对应的数据中 , ConfigT:要添加的配置类型，EnumT:对应的字段类型</summary>
     public void AddConfigToEventData<ConfigT, EnumT>(GameObject gameObject = null) where ConfigT : ScriptableObject
     {
 

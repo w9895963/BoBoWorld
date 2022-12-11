@@ -77,6 +77,9 @@ public static class DebugF
 
     public static void LogEach<T>(this IEnumerable<T> list, int lineBreakCount = 0)
     {
+        if (list == null)
+            return;
+
         string str = "";
         int i = 0;
         string Break() => lineBreakCount > 0 ? (i + 1) % lineBreakCount == 0 ? "\n" : null : null;

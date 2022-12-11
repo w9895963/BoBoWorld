@@ -30,15 +30,9 @@ public static class GameObjectF
         return comp;
     }
 
-    public static GameObject FindObjectByNameOrCreate(string name)
-    {
-        GameObject gameObject = GameObject.Find(name);
-        if (gameObject == null)
-        {
-            gameObject = new GameObject(name);
-        }
-        return gameObject;
-    }
+
+
+
 
     public static T FindObjectOfType<T>(string name = null) where T : UnityEngine.Object
     {
@@ -54,6 +48,37 @@ public static class GameObjectF
         }
 
     }
+
+
+
+
+    /// <summary>
+    /// 获得某个名字的物体，如果没有就创建一个
+    /// </summary>
+    //字典: 物体名与物体
+    private static Dictionary<string, GameObject> nameToGameObject = new Dictionary<string, GameObject>();
+    public static GameObject GetObjectByNameOrCreate(string name)
+    {
+        //要找到的物体
+        GameObject gameObject = null;
+        nameToGameObject.TryGetValue(name, out gameObject);
+        //如果字典里没有
+        if (gameObject == null)
+        {
+            gameObject = GameObject.Find(name);
+
+            if (gameObject == null)
+            {
+                //创建一个
+                gameObject = new GameObject(name);
+            }
+            //添加到字典
+            nameToGameObject.Set(name, gameObject);
+        }
+
+        return gameObject;
+    }
+
 
 
 

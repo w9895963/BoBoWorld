@@ -59,11 +59,11 @@ public class CharacterMove_CMP : MonoBehaviour
         Vector2 force;
         if (walkDirection != 0)
         {
-            force = PhysicMathF.VelocityChange_getForce(rb.velocity, targetV, moveForce, defaultWalkDirection);
+            force = PhysicMathF.CalcForceByVel(rb.velocity, targetV, moveForce, defaultWalkDirection);
         }
         else
         {
-            force = PhysicMathF.VelocityChange_getForce(rb.velocity, targetV, stopForce + stopForceGround, defaultWalkDirection);
+            force = PhysicMathF.CalcForceByVel(rb.velocity, targetV, stopForce + stopForceGround, defaultWalkDirection);
         }
         rb.AddForce(force);
     }
