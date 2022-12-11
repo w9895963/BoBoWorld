@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class PlayerCharacter_Manager : MonoBehaviour
 {
+    //功能启用器
+    private (Action Enable, Action Disable) Enabler = (default, default);
     private void Awake()
     {
 
@@ -15,31 +17,30 @@ public class PlayerCharacter_Manager : MonoBehaviour
         //*行走功能
         //获得移动输入
         float moveInput = default;
-        EventDataF.OnDataUpdate<Vector2>((d) => moveInput = d.x, EventDataName.Input.移动);
-        //获得移动数据
         EventDataHandler<Vector2> move = EventDataF.GetData_global<Vector2>(EventDataName.Input.移动);
-        // move.OnDataUpdateDo((d) => moveInput = d.x);
+        move.SetDataTo((d) => moveInput = d.x, ref Enabler);
         //获得地面法线
         Vector2 groundNormal = Vector2.up;
-        EventDataF.OnDataUpdate<Vector2>((d) => groundNormal = d, EventDataName.PlayerObject.地面法线, gameObject);
+        EventDataF.GetData_local<Vector2>(gameObject, EventDataName.PlayerObject.地面法线).SetDataTo((d) => groundNormal = d, ref Enabler);
         //获得速度
         float speed = 0;
-        EventDataF.OnDataUpdate<float>((d) => speed = d, EventDataName.PlayerConfig.移动速度, gameObject);
+        EventDataF.GetData_local<float>(gameObject, EventDataName.PlayerConfig.移动速度).SetDataTo((d) => speed = d, ref Enabler);
         //获得最大力
         float maxForce = 0;
-        EventDataF.OnDataUpdate<float>((d) => maxForce = d, EventDataName.PlayerConfig.移动最大施力, gameObject);
+        EventDataF.GetData_local<float>(gameObject, EventDataName.PlayerConfig.移动最大施力).SetDataTo((d) => maxForce = d, ref Enabler);
         //获得刚体
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
 
 
 
-        //施力赋值器
-        System.Action<Vector2> moveForceSetter = EventDataF.GetDataSetter<Vector2>(EventDataName.PlayerObject.移动施力, gameObject);
-        EventDataF.CreateDataCondition(CalculateMoveForce, dataIsUpdate: new System.Enum[] { EventDataName.Input.移动 });
+        //创建施力数据
+        EventDataHandler<Vector2> moveForceH = EventDataF.GetData_local<Vector2>(gameObject, EventDataName.PlayerObject.移动施力);
+
+
+        EventDataF.CreateDataCondition(CalculateMoveForce, ref Enabler, move.OnUpdate());
         //方法：计算移动施力
         void CalculateMoveForce()
         {
-
             Vector2 currentVelocity = rigidbody2D.velocity;
             Func<Vector2> targetVelocity = () =>
             {
@@ -56,14 +57,14 @@ public class PlayerCharacter_Manager : MonoBehaviour
             //计算移动施力
             Vector2 moveForce = PhysicMathF.CalcForceByVel(currentVelocity, targetVelocity(), maxForce, projectVector, mass);
             //施力赋值器
-            moveForceSetter(moveForce);
+            moveForceH.Data = moveForce;
         }
 
 
 
 
 
-       
+
 
 
     }
@@ -79,7 +80,15 @@ public class PlayerCharacter_Manager : MonoBehaviour
     }
 
 
+    private void OnEnable()
+    {
 
+        Enabler.Enable?.Invoke();
+    }
+    private void OnDisable()
+    {
+        Enabler.Disable?.Invoke();
+    }
 
 
 

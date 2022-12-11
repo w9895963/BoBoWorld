@@ -4,13 +4,14 @@ using UnityEngine;
 
 namespace EventData
 {
+    //只在编辑器下运行
+#if UNITY_EDITOR
 
     //可视化
     namespace EventDataVisualizeGroup
     {
-        //属性：只在编辑器下可见
+
         //*类型： 事件数据可视化
-        [ExecuteInEditMode]
         public class EventDataVisualizer : MonoBehaviour
         {
             //字段：全局数据条目列表
@@ -18,19 +19,13 @@ namespace EventData
             //字段：本地数据条目列表
             public List<DataItem> ObjectData = new List<DataItem>();
 
+
+            //开始
             private void Awake()
             {
-                //如果是编辑器下,则不执行
-                if (Application.isEditor)
-                    return;
-
-                TimerF.WaitUpdate(() =>
-                {
-                    UpdateData();
-                });
-
-
+                TimerF.WaitUpdate(UpdateData);
             }
+
 
 
             //添加上下文菜单
@@ -50,7 +45,6 @@ namespace EventData
 
 
                 AddData(GlobalData, eventDataDict);
-                eventDataDict.Count.Log();
                 AddData(ObjectData, eventDataDict_this);
 
                 AddDataAutoUpdateEvent(GlobalData);
@@ -101,15 +95,15 @@ namespace EventData
                     //标记已经添加事件
                     dataItem.isAddedEvent = true;
                     //添加事件
-                    dataItem.eventData.onUpdatedAction.Add(() =>
+                    EventDataUtil.ConditionAction conditionAction = new EventDataUtil.ConditionAction();
+                    conditionAction.conditionList.Add(() => true);
+                    conditionAction.action = () =>
                     {
-                        //更新值
                         dataItem.数据 = dataItem.eventData.GetData().ToString();
-                        //更新名字
                         dataItem.name = $"{dataItem.dataName}:{dataItem.数据}";
+                    };
+                    dataItem.eventData.conditionActionList.Add(conditionAction);
 
-                    });
-                    
                 }
 
             }
@@ -142,5 +136,5 @@ namespace EventData
     }
 
 
-
+#endif
 }

@@ -38,8 +38,7 @@ public class ConfigManager : MonoBehaviour
         if (type == typeof(int))
         {
             //将字段的值添加到eventData中
-            System.Action<int> setData = EventDataF.GetDataSetter<int>(dataName, gameObject);
-            setData((int)dataValue);
+            EventDataF.GetData_local<int>(gameObject, dataName).Data= (int)dataValue;
         }
         //如果字段的类型为float
         else if (type == typeof(float))

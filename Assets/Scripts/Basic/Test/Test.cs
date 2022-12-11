@@ -22,13 +22,11 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        EventData.EventDataUtil.EventData eventData = new EventData.EventDataUtil.EventData();
-        EventData.EventDataUtil.EventData<Vector2> eventData2 = new EventData.EventDataUtil.EventData<Vector2>();
-        eventData.GetType().FullName.Log();
-        eventData2.GetType().FullName.Log();
-        eventData = eventData2;
-        eventData.GetType().FullName.Log();
-        Debug.Log(eventData.GetType() == typeof(EventData.EventDataUtil.EventData<Vector2>));
+        //功能启用器
+        (Action Enable, Action Disable) FunctionEnabler = (null, null);
+        FunctionEnabler.Enable += () => Debug.Log("启用");
+        FunctionEnabler.Disable += () => Debug.Log("禁用");
+        FunctionEnabler.Enable?.Invoke();
 
     }
 
