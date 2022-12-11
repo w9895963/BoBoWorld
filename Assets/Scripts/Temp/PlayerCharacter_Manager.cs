@@ -64,20 +64,24 @@ public class PlayerCharacter_Manager : MonoBehaviour
 
 
 
-
-
+        //*将属性添加到事件数据 
+        Enabler.Enable += AddConfigToEventData;
 
     }
 
-
-    private void Start()
+    //将属性添加到事件数据 
+    private void AddConfigToEventData()
     {
-        //*将属性添加到事件数据
         //获取配置管理器
         ConfigManager configManager = FindObjectOfType<ConfigManager>();
         //添加配置到事件数据
         configManager.AddConfigToEventData<PlayerCharacter_Config, EventDataName.PlayerConfig>(gameObject);
     }
+
+
+
+
+
 
 
     private void OnEnable()
@@ -89,14 +93,4 @@ public class PlayerCharacter_Manager : MonoBehaviour
     {
         Enabler.Disable?.Invoke();
     }
-
-
-
-
-
-
-
-
-
-
 }

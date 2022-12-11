@@ -13,12 +13,13 @@ public class InputKeysMono : MonoBehaviour
         InputActionAsset asset = GameObject.FindObjectOfType<PlayerInput>().actions;
 
 
-        Action<Vector2> moveSet = EventDataF.GetDataSetter<Vector2>(EventDataName.Input.移动);
+        EventDataHandler<Vector2> move = EventDataF.GetData_global<Vector2>(EventDataName.Input.移动);
         asset.FindAction("Move").performed += (d) =>
         {
-            Vector2 moveData = d.ReadValueAsVector2();
-            moveSet(moveData);
+            move.Data = d.ReadValueAsVector2();
         };
+
+        
 
 
         List<(string InputActionName, System.Enum CmDataName)> nameMapList = new List<(string InputActionName, System.Enum CmDataName)>
@@ -26,13 +27,14 @@ public class InputKeysMono : MonoBehaviour
             ("Jump", EventDataName.Input.跳跃),
             ("Dash", EventDataName.Input.冲刺),
         };
-        var dataSetList = nameMapList.Select((name) => EventDataF.GetDataSetter<bool>(name.CmDataName)).ToList();
 
+
+        List<EventDataHandler<bool>> list = nameMapList.Select((name) => EventDataF.GetData_global<bool>(name.CmDataName)).ToList();
         nameMapList.ForEach((names, i) =>
         {
             asset.FindAction(names.InputActionName).performed += (d) =>
             {
-                dataSetList[i](d.ReadValueAsButton());
+                list[i].Data = d.ReadValueAsButton();
             };
         });
 

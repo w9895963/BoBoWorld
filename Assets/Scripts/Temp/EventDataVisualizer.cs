@@ -1,22 +1,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using NaughtyAttributes;
 
 namespace EventData
 {
     //只在编辑器下运行
-#if UNITY_EDITOR
+
 
     //可视化
     namespace EventDataVisualizeGroup
     {
+        //添加组件名
+        [AddComponentMenu("辅助工具/事件数据可视化")]
 
         //*类型： 事件数据可视化
         public class EventDataVisualizer : MonoBehaviour
         {
+#if UNITY_EDITOR
+            //
+            [Label("全局数据")]
+            
             //字段：全局数据条目列表
             public List<DataItem> GlobalData = new List<DataItem>();
             //字段：本地数据条目列表
+            [Label("本地数据")]
             public List<DataItem> ObjectData = new List<DataItem>();
 
 
@@ -110,7 +118,7 @@ namespace EventData
 
 
 
-
+#endif
         }
 
 
@@ -136,5 +144,5 @@ namespace EventData
     }
 
 
-#endif
+
 }

@@ -9,11 +9,12 @@ using UnityEngine;
 //类：配置管理器
 public class ConfigManager : MonoBehaviour
 {
-    //字段: 配置列表
-    public List<ScriptableObject> configList = new List<ScriptableObject>();
+    //字段: 配置列表,能在编辑器中显示
+    [SerializeField]
+    private List<ScriptableObject> configList = new List<ScriptableObject>();
 
     //方法：获取配置
-    public T GetConfig<T>() where T : ScriptableObject
+    private T GetConfig<T>() where T : ScriptableObject
     {
         //遍历configList
         T configObj = null;
@@ -32,74 +33,74 @@ public class ConfigManager : MonoBehaviour
 
 
     //方法：根据输入参数，将某个配置添加到eventData中
-    public void AddConfigToEventData(System.Enum dataName, object dataValue, System.Type type, GameObject gameObject = null)
+    private void AddConfigToEventData(System.Enum dataName, object dataValue, System.Type type, GameObject gameObject = null)
     {
         //如果字段的类型为int
         if (type == typeof(int))
         {
             //将字段的值添加到eventData中
-            EventDataF.GetData_local<int>(gameObject, dataName).Data= (int)dataValue;
+            SetData<int>(dataName, dataValue, gameObject);
         }
         //如果字段的类型为float
         else if (type == typeof(float))
         {
             //将字段的值添加到eventData中
-            System.Action<float> setData = EventDataF.GetDataSetter<float>(dataName, gameObject);
-            setData((float)dataValue);
+            SetData<float>(dataName, dataValue, gameObject);
         }
         //如果字段的类型为string
         else if (type == typeof(string))
         {
             //将字段的值添加到eventData中
-            System.Action<string> setData = EventDataF.GetDataSetter<string>(dataName, gameObject);
-            setData((string)dataValue);
+            SetData<string>(dataName, dataValue, gameObject);
         }
         //如果字段的类型为bool
         else if (type == typeof(bool))
         {
             //将字段的值添加到eventData中
-            System.Action<bool> setData = EventDataF.GetDataSetter<bool>(dataName, gameObject);
-            setData((bool)dataValue);
+            SetData<bool>(dataName, dataValue, gameObject);
         }
         //如果字段的类型为Vector2
         else if (type == typeof(Vector2))
         {
             //将字段的值添加到eventData中
-            System.Action<Vector2> setData = EventDataF.GetDataSetter<Vector2>(dataName, gameObject);
-            setData((Vector2)dataValue);
+            SetData<Vector2>(dataName, dataValue, gameObject);
         }
         //如果字段的类型为Vector3
         else if (type == typeof(Vector3))
         {
             //将字段的值添加到eventData中
-            System.Action<Vector3> setData = EventDataF.GetDataSetter<Vector3>(dataName, gameObject);
-            setData((Vector3)dataValue);
+            SetData<Vector3>(dataName, dataValue, gameObject);
         }
         //如果字段的类型为Vector4
         else if (type == typeof(Vector4))
         {
             //将字段的值添加到eventData中
-            System.Action<Vector4> setData = EventDataF.GetDataSetter<Vector4>(dataName, gameObject);
-            setData((Vector4)dataValue);
+            SetData<Vector4>(dataName, dataValue, gameObject);
         }
         //如果字段的类型为Color
         else if (type == typeof(Color))
         {
             //将字段的值添加到eventData中
-            System.Action<Color> setData = EventDataF.GetDataSetter<Color>(dataName, gameObject);
-            setData((Color)dataValue);
+            SetData<Color>(dataName, dataValue, gameObject);
         }
         //如果字段的类型为GameObject
         else if (type == typeof(GameObject))
         {
             //将字段的值添加到eventData中
-            System.Action<GameObject> setData = EventDataF.GetDataSetter<GameObject>(dataName, gameObject);
-            setData((GameObject)dataValue);
+            SetData<GameObject>(dataName, dataValue, gameObject);
         }
 
 
-
+        static void SetData<T>(System.Enum dataName, object dataValue, GameObject gameObject)
+        {
+            if (gameObject == null)
+                EventDataF.GetData_global<T>(dataName).Data = (T)dataValue;
+            else
+                EventDataF.GetData_local<T>(gameObject, dataName).Data = (T)dataValue;
+        }
     }
+
+
 
 
     /// <summary>将配置添加到对应的数据中 , ConfigT:要添加的配置类型，EnumT:对应的字段类型</summary>
