@@ -199,6 +199,7 @@ public static class ExtensionMethodBasic
 
 
 
+
     #region System.Action
     public static void Invoke(this Action del, bool setNullAfterInvoke = false)
     {
@@ -208,6 +209,8 @@ public static class ExtensionMethodBasic
 
     #endregion
     // * Region System.Action End---------------------------------- 
+
+
 
 
     #region UnityEvent
@@ -237,6 +240,17 @@ public static class ExtensionMethodBasic
     #endregion
     // * Region UnityEvent End---------------------------------- 
 
+
+    public static string GetFullName(this System.Enum enumName)
+    {
+        //获取枚举类型
+        string typeName = enumName.GetType().FullName;
+        //获取枚举名称
+        string name = enumName.ToString();
+
+
+        return typeName + "." + name;
+    }
 
 }
 

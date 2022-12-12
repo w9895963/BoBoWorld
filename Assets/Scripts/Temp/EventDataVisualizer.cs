@@ -43,15 +43,15 @@ namespace EventDataS
             public void UpdateData()
             {
                 //获得事件数据存储字典
-                Dictionary<System.Enum, EventDataCore.EventData> eventDataDict = EventDataCore.GlobalData.holderDict;
-                Dictionary<System.Enum, EventDataCore.EventData> eventDataDict_this = null;
+                Dictionary<string, EventDataCore.EventData> eventDataDict = EventDataCore.GlobalData.holderDictStr;
+                Dictionary<string, EventDataCore.EventData> eventDataDict_this = null;
                 //如果组件存在
                 if (gameObject.GetComponent<EventDataCore.EventDataStoreMono>() != null)
                 {
                     //获取本物体上的字典
-                    eventDataDict_this = gameObject.GetComponent<EventDataCore.EventDataStoreMono>().dateHolderDict;
+                    eventDataDict_this = gameObject.GetComponent<EventDataCore.EventDataStoreMono>().dateHolderDictStr;
                 }
-
+                
 
                 AddData(GlobalData, eventDataDict);
                 AddData(ObjectData, eventDataDict_this);
@@ -64,7 +64,7 @@ namespace EventDataS
 
             //方法：往数据列表中添加数据
 
-            private void AddData(List<DataItem> ObjectData, Dictionary<System.Enum, EventDataCore.EventData> eventDataDict)
+            private void AddData(List<DataItem> ObjectData, Dictionary<string, EventDataCore.EventData> eventDataDict)
             {
                 //空则退出
                 if (eventDataDict == null || eventDataDict.Count == 0)
@@ -72,7 +72,7 @@ namespace EventDataS
                     return;
                 }
                 //将所有值和索引转换成列表
-                List<KeyValuePair<System.Enum, EventDataCore.EventData>> eventDataList = eventDataDict.ToList();
+                List<KeyValuePair<string, EventDataCore.EventData>> eventDataList = eventDataDict.ToList();
                 //排序
                 eventDataList.Sort((a, b) => { return a.Key.GetType().FullName.CompareTo(b.Key.GetType().FullName); });
                 //转化成DataItem列表
@@ -84,6 +84,8 @@ namespace EventDataS
                 List<EventDataCore.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
                 ObjectData.AddRange(ObjectDataListAll.Where(dataItem => !eventDataList_ObjectData.Contains(dataItem.eventData)));
             }
+
+
             //方法：添加自动更新事件
             private void AddDataAutoUpdateEvent(List<DataItem> ObjectData)
             {
@@ -103,7 +105,7 @@ namespace EventDataS
                     conditionAction.action = () =>
                     {
                         dataItem.数据 = dataItem.eventData.GetData().ToString();
-                        dataItem.name = $"{dataItem.dataName}:{dataItem.数据}";
+                        dataItem.name = $"{dataItem.shortName}:{dataItem.数据}";
                     };
                     dataItem.eventData.conditionActionList.Add(conditionAction);
 
@@ -180,7 +182,7 @@ namespace EventDataS
             public EventDataCore.EventData eventData;
             //隐藏显示
             [HideInInspector]
-            public string dataName;
+            public string shortName;
             //是否已经添加事件
             [HideInInspector]
             public bool isAddedEvent = false;
@@ -190,11 +192,12 @@ namespace EventDataS
             public DataItem(EventDataCore.EventData eventData)
             {
                 this.eventData = eventData;
-                全名 = eventData.enumKey.GetType().FullName + "." + eventData.enumKey.ToString();
+                全名 = eventData.Key;
                 数据 = ExtractData();
-                dataName = eventData.enumKey.ToString();
+                //名字=名字用"."分割的最后一个
+                shortName = eventData.GetShortName();
                 //字符串插值将名字与值加起来
-                name = $"{eventData.enumKey.ToString()}:{数据}";
+                name = $"{shortName}:{数据}";
             }
             //方法：抽取数据
             private string ExtractData()
@@ -208,7 +211,7 @@ namespace EventDataS
                     //转换成可枚举的
                     System.Collections.IEnumerable enumerable = (System.Collections.IEnumerable)v;
                     //添加名字
-                    message += eventData.enumKey + ":";
+                    message += shortName + ":";
 
                     //历遍数组
                     foreach (object v1 in enumerable)
@@ -244,7 +247,7 @@ namespace EventDataS
                     //转换成可枚举的
                     System.Collections.IEnumerable enumerable = (System.Collections.IEnumerable)v;
                     //添加名字
-                    message += eventData.enumKey + ":";
+                    message += eventData.GetShortName() + ":";
 
                     //历遍数组
                     foreach (object v1 in enumerable)
@@ -260,7 +263,7 @@ namespace EventDataS
                 {
                     //添加名字和数据
                     string data = v.ToString();
-                    message = eventData.enumKey + " : " + $"<color=red>{data}</color>";
+                    message = eventData.GetShortName() + " : " + $"<color=red>{data}</color>";
                 }
 
 

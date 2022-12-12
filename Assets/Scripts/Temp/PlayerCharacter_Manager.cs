@@ -117,6 +117,7 @@ public class PlayerCharacter_Manager : MonoBehaviour
                 direction = direction.normalized;
                 //计算期望速度
                 v = direction * speed.Data * moveInput;
+
                 return v;
             };
             Vector2 projectVector = groundNormal.Rotate(90);
