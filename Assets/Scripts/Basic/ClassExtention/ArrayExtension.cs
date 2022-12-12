@@ -21,6 +21,14 @@ public static class ExtensionArray
         }
         source[index] = newMember;
     }
+    public static void Add<T>(this List<T> source, params T[] newMembers)
+    {
+        foreach (var item in newMembers)
+        {
+            source.Add(item);
+        }
+    }
+   
     public static T Add<T>(this List<T> source, Action<T> beforeAction) where T : class, new()
     {
         T t = new T();

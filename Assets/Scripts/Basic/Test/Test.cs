@@ -22,11 +22,9 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        //功能启用器
-        (Action Enable, Action Disable) FunctionEnabler = (null, null);
-        FunctionEnabler.Enable += () => Debug.Log("启用");
-        FunctionEnabler.Disable += () => Debug.Log("禁用");
-        FunctionEnabler.Enable?.Invoke();
+        Vector2 v2 = new Vector2(0, 2);
+        Vector2 v3 = v2.Rotate(90);
+        Debug.Log(v3);
 
     }
 

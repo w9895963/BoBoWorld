@@ -170,7 +170,7 @@ namespace OtStateUtility
                 if (enabled == value) return;
                 enabled = value;
                 ConditionCheck();
-                OrderRun.Run(() => function?.Invoke(enabled));
+                ActionF.QueueAction(() => function?.Invoke(enabled));
 
             }
         }

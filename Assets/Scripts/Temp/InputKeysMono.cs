@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using EventData;
+using EventDataS;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,7 +19,7 @@ public class InputKeysMono : MonoBehaviour
             move.Data = d.ReadValueAsVector2();
         };
 
-        
+
 
 
         List<(string InputActionName, System.Enum CmDataName)> nameMapList = new List<(string InputActionName, System.Enum CmDataName)>

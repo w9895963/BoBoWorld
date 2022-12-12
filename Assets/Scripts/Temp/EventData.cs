@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using EventData.EventDataUtil;
+using EventDataS.EventDataUtil;
 using UnityEngine;
 
-namespace EventData
+namespace EventDataS
 {
 
 
@@ -172,7 +172,6 @@ namespace EventData
         public class EventData<T> : EventData
         {
             public T data;
-            public List<Action<T>> onUpdatedActionT = new List<Action<T>>();
 
             public EventData() : base()
             {
@@ -184,6 +183,7 @@ namespace EventData
             //方法：设置数据
             public void SetData(T data)
             {
+                // Debug.Log("SetData" + data.ToString());//调试
                 //如果输入参数与data相同则不执行
                 if (data == null && this.data == null)
                 {
@@ -196,18 +196,19 @@ namespace EventData
                 this.data = data;
 
 
-                //执行onUpdatedAction
-                onUpdatedActionT.ForEach(action => action(data));
-
                 //执行conditionActionList
                 conditionActionList.ForEach(conditionAction =>
                 {
-                    bool isConditionMet = conditionAction.conditionList.All(condition => condition());
+
+
+                    var isConditionMet = conditionAction.conditionList.All(condition => condition());
+
 
 
                     if (isConditionMet)
                     {
-                        conditionAction.action();
+
+                        ActionF.QueueAction(conditionAction.action);
                     }
                 });
             }
@@ -267,14 +268,6 @@ namespace EventData
     {
 
 
-        //方法：获取事件数据赋值Action
-        public static Action<T> GetDataSetter<T>(System.Enum name, GameObject gameObject = null)
-        {
-            EventData<T> eventDataT = EventDataUtil.EventData.GetEventData<T>(name, gameObject);
-
-
-            return (T data) => { eventDataT.SetData(data); };
-        }
 
         //方法：获取数据操作器，全局数据
         public static EventDataHandler<T> GetData_global<T>(System.Enum name)
@@ -293,18 +286,48 @@ namespace EventData
 
 
 
+        /// <summary>  当任意一个数据更新时执行action ，返回启用和禁用方法 </summary>
+        public static (Action Enable, Action Disable) OnDataUpdate(Action action, params EventDataHandler[] datas)
+        {
+            ConditionAction conditionAction = new ConditionAction();
+            conditionAction.action = action;
+
+            Action enable = () =>
+            {
+                datas.ForEach(data =>
+                {
+                    data.eventData.conditionActionList.AddNotHas(conditionAction);
+                });
+            };
+            Action disable = () =>
+            {
+                datas.ForEach(data =>
+                {
+                    data.eventData.conditionActionList.Remove(conditionAction);
+                });
+            };
+            return (enable, disable);
+        }
+        public static void OnDataUpdate(Action action, ref (Action Enable, Action Disable) enabler, params EventDataHandler[] datas)
+        {
+            (Action Enable, Action Disable) enableAction = OnDataUpdate(action, datas);
+            enabler.Enable += enableAction.Enable;
+            enabler.Disable += enableAction.Disable;
+        }
 
 
 
 
-        ///<summary> 创建数据条件,返回运行器 </summary>
-        public static (Action Enable, Action Disable) CreateDataCondition(Action action, params (EventDataUtil.EventData data, Func<bool> check)[] conditionChecks)
+        ///<summary> 创建数据条件,返回启用器</summary>
+        public static (Action Enable, Action Disable) OnDataCondition(Action action, params (EventDataUtil.EventData data, Func<bool> check)[] conditionChecks)
         {
             ConditionAction conditionAction = new ConditionAction();
             conditionAction.action = action;
             conditionChecks.ForEach(conditionCheck =>
             {
-                conditionAction.conditionList.Add(conditionCheck.check);
+                //如果check存在则添加到conditionList
+                if (conditionCheck.check != null)
+                    conditionAction.conditionList.Add(conditionCheck.check);
             });
             Action enable = () =>
             {
@@ -323,14 +346,17 @@ namespace EventData
             return (enable, disable);
         }
 
-        ///<summary> 创建数据条件,输入启用器 </summary>
-        public static void CreateDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (EventDataUtil.EventData data, Func<bool> check)[] conditionChecks)
+        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (EventDataUtil.EventData data, Func<bool> check)[] conditionChecks)
         {
-            (Action Enable, Action Disable) enableAction = CreateDataCondition(action, conditionChecks);
+            (Action Enable, Action Disable) enableAction = OnDataCondition(action, conditionChecks);
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
-
+        
+        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, List<(EventDataUtil.EventData data, Func<bool> check)> conditionChecks)
+        {
+            OnDataCondition(action, ref enabler, conditionChecks.ToArray());
+        }
 
 
 
@@ -344,10 +370,20 @@ namespace EventData
 
 
 
+    public class EventDataHandler
+    {
+        public EventData eventData;
+
+    }
+
+
+
+
+
 
 
     //类型:数据操作器
-    public class EventDataHandler<T>
+    public class EventDataHandler<T> : EventDataHandler
     {
         //字段：事件数据
         private EventData<T> eventDataT;
@@ -355,6 +391,7 @@ namespace EventData
         public EventDataHandler(EventData<T> eventDataT)
         {
             this.eventDataT = eventDataT;
+            this.eventData = eventDataT;
         }
 
 
@@ -369,7 +406,6 @@ namespace EventData
         public (Action Enable, Action Disable) SetDataTo(Action<T> act)
         {
             ConditionAction conditionAction = new ConditionAction();
-            conditionAction.conditionList.Add(() => true);
             conditionAction.action = () => { act(Data); };
             Action enable = () => eventDataT.conditionActionList.Add(conditionAction);
             Action disable = () => { eventDataT.conditionActionList.Remove(conditionAction); };
@@ -384,23 +420,17 @@ namespace EventData
         }
 
 
-        //方法：获得数据判断方法，数据更新
-        public (EventDataUtil.EventData data, Func<bool> check) OnUpdate()
-        {
-            return (eventDataT, () => { return true; });
-        }
-        //方法：获得数据判断方法，数据为真
-        public (EventDataUtil.EventData data, Func<bool> check) OnTrue()
-        {
-            return (eventDataT, () => { return Data.Equals(true); });
-        }
-        //方法：获得数据判断方法，数据为假
-        public (EventDataUtil.EventData data, Func<bool> check) OnFalse()
-        {
-            return (eventDataT, () => { return Data.Equals(false); });
-        }
+        //属性：获得数据判断方法，数据更新
+        public (EventDataUtil.EventData data, Func<bool> check) OnUpdate => (eventDataT, null);
+
+        //属性：获得数据判断方法，数据为真
+        public (EventDataUtil.EventData data, Func<bool> check) OnTrue => (eventDataT, () => { return Data.Equals(true); }
+        );
+        //属性：获得数据判断方法，数据为假
+        public (EventDataUtil.EventData data, Func<bool> check) OnFalse => (eventDataT, () => { return Data.Equals(false); }
+        );
         //方法：获得数据判断方法，自定义判断
-        public (EventDataUtil.EventData data, Func<bool> check) OnCheck(Func<bool> check)
+        public (EventDataUtil.EventData data, Func<bool> check) OnCustom(Func<bool> check)
         {
             return (eventDataT, check);
         }

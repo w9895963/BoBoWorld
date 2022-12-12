@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using NaughtyAttributes;
 
-namespace EventData
+namespace EventDataS
 {
     //只在编辑器下运行
 

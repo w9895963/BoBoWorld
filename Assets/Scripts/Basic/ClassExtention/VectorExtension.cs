@@ -49,8 +49,11 @@ public static class VectorExtension
 
     public static Vector2 Rotate(this Vector2 vector, float angle)
     {
-        return Quaternion.AngleAxis(angle, Vector3.forward) * vector;
+        
+        return Quaternion.AngleAxis(angle, Vector3.back) * vector;
     }
+
+
     public static Vector2 RotateTo(this Vector2 vector, Vector2 to)
     {
         return to.normalized * vector.magnitude;
