@@ -22,11 +22,18 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        Vector2 v2 = new Vector2(0, 2);
-        Vector2 v3 = v2.Rotate(90);
-        Debug.Log(v3);
+        string[] str = new string[3]{ "1", "2", "3" };
+        System.Object obj = str;
+        Debug.Log(obj is IEnumerable); 
 
     }
+    public void TestMethod2(ref Vector2 obj)
+    {
+        Type type = obj.GetType();
+        type.Name.Log();
+        
+    }
+
 
 
     private void Start()

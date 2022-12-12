@@ -11,11 +11,78 @@ public class PlayerCharacter_Manager : MonoBehaviour
     private void Awake()
     {
 
-        //*判断是否站在地面上
+        //判断是否站在地面上    
+        JudgeOnGround();
 
 
-        //*行走功能
 
+
+        //计算移动施力
+        CalculateMoveForce();
+
+
+
+
+
+        //将玩家配置添加到事件数据 
+        AddConfigToEventData();
+
+
+
+
+
+
+
+    }
+
+
+    //判断是否站在地面上
+    private void JudgeOnGround()
+    {
+        //获得刚体
+        Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
+        //获得地面法线
+        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData_local<Vector2>(gameObject, EventDataName.PlayerObject.地面法线);
+        //获得是否站在地面上
+        EventDataHandler<bool> onGroundH = EventDataF.GetData_local<bool>(gameObject, EventDataName.PlayerObject.已站在地面上);
+
+
+        Enabler.Enable += () =>
+        {
+            BasicEvent.OnCollision2D_Enter.Add(gameObject, OnCollisionEnter2D);
+            BasicEvent.OnCollision2D_Exit.Add(gameObject, onCollisionStay2D);
+            BasicEvent.OnCollision2D_Exit.Add(gameObject, onCollisionExit2D);
+        };
+        Enabler.Disable += () =>
+        {
+            BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
+            BasicEvent.OnCollision2D_Exit.Remove(gameObject, onCollisionStay2D);
+            BasicEvent.OnCollision2D_Exit.Remove(gameObject, onCollisionExit2D);
+        };
+
+
+
+
+        //碰撞事件
+        void OnCollisionEnter2D(Collision2D collision)
+        {
+
+        }
+        void onCollisionStay2D(Collision2D collision)
+        {
+
+        }
+        void onCollisionExit2D(Collision2D collision)
+        {
+
+        }
+    }
+
+
+
+    //计算移动施力
+    private void CalculateMoveForce()
+    {
         //获得刚体
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         //获得移动输入
@@ -26,14 +93,16 @@ public class PlayerCharacter_Manager : MonoBehaviour
         EventDataHandler<float> speed = EventDataF.GetData_local<float>(gameObject, EventDataName.PlayerConfig.移动速度);
         //获得最大力
         EventDataHandler<float> maxForceH = EventDataF.GetData_local<float>(gameObject, EventDataName.PlayerConfig.移动最大施力);
+
         //创建施力数据
         EventDataHandler<Vector2> moveForceH = EventDataF.GetData_local<Vector2>(gameObject, EventDataName.PlayerObject.移动施力);
-        //添加数据更新事件
-        var list = new List<(EventDataS.EventDataUtil.EventData, Func<bool>)>();
+
+
+        //*计算移动施力
+        var list = new List<(EventDataS.EventDataCore.EventData, Func<bool>)>();
         list.Add(moveInputH.OnUpdate, groundNormalH.OnUpdate, speed.OnUpdate, maxForceH.OnUpdate);
         EventDataF.OnDataCondition(CalculateMoveForce, ref Enabler, list);
-
-        //方法：计算移动施力
+        //计算移动施力
         void CalculateMoveForce()
         {
             Vector2 currentVelocity = rigidbody2D.velocity;
@@ -57,27 +126,20 @@ public class PlayerCharacter_Manager : MonoBehaviour
             //施力赋值器
             moveForceH.Data = moveForce;
         }
-
-
-
-
-
-        //*将属性添加到事件数据 
-        Enabler.Enable += AddConfigToEventData;
-
     }
-
-
-
-
-    //将属性添加到事件数据 
+    //将玩家配置添加到事件数据 
     private void AddConfigToEventData()
     {
-        //获取配置管理器
-        ConfigManager configManager = FindObjectOfType<ConfigManager>();
-        //添加配置到事件数据
-        configManager.AddConfigToEventData<PlayerCharacter_Config, EventDataName.PlayerConfig>(gameObject);
+        Enabler.Enable += () =>
+        {
+            //获取配置管理器
+            ConfigManager configManager = FindObjectOfType<ConfigManager>();
+            //添加配置到事件数据
+            configManager.AddConfigToEventData<PlayerCharacter_Config, EventDataName.PlayerConfig>(gameObject);
+        };
     }
+
+
 
 
 

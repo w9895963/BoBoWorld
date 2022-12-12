@@ -16,6 +16,7 @@ namespace EventDataName
         站在地面上,
         地面法线,
         移动施力,
+        已站在地面上,
     }
 }
 

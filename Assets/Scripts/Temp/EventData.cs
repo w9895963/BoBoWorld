@@ -2,7 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using EventDataS.EventDataUtil;
+using EventDataName;
+using EventDataS.EventDataCore;
 using UnityEngine;
 
 namespace EventDataS
@@ -11,7 +12,7 @@ namespace EventDataS
 
     //*Region  ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     #region            EventDataUtil
-    namespace EventDataUtil
+    namespace EventDataCore
     {
         // 全局事件数据存储字典
         public static class GlobalData
@@ -200,16 +201,10 @@ namespace EventDataS
                 conditionActionList.ForEach(conditionAction =>
                 {
 
-
-                    var isConditionMet = conditionAction.conditionList.All(condition => condition());
-
+                    conditionAction.CheckAndRun();
 
 
-                    if (isConditionMet)
-                    {
 
-                        ActionF.QueueAction(conditionAction.action);
-                    }
                 });
             }
             //方法：获取数据
@@ -243,6 +238,22 @@ namespace EventDataS
         {
             public System.Action action;
             public List<Func<bool>> conditionList = new List<Func<bool>>();
+
+
+            //方法: 检测并运行
+            public void CheckAndRun()
+            {
+                var isConditionMet = conditionList.All(condition => condition());
+
+
+
+                if (isConditionMet)
+                {
+                    ActionF.QueueAction(action);
+                }
+
+            }
+
         }
 
 
@@ -272,16 +283,24 @@ namespace EventDataS
         //方法：获取数据操作器，全局数据
         public static EventDataHandler<T> GetData_global<T>(System.Enum name)
         {
-            EventData<T> eventDataT = EventDataUtil.EventData.GetEventData<T>(name);
+            EventData<T> eventDataT = EventDataCore.EventData.GetEventData<T>(name);
             EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventDataT);
             return dataOperator;
         }
         //方法：获取数据操作器，局部数据
         public static EventDataHandler<T> GetData_local<T>(GameObject gameObject, System.Enum name)
         {
-            EventData<T> eventDataT = EventDataUtil.EventData.GetEventData<T>(name, gameObject);
+            EventData<T> eventDataT = EventDataCore.EventData.GetEventData<T>(name, gameObject);
             EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventDataT);
             return dataOperator;
+        }
+
+
+        //方法：设置数据，物体数据
+        public static void SetData_local<T>(GameObject gameObject, System.Enum name, T data)
+        {
+            EventData<T> eventDataT = EventDataCore.EventData.GetEventData<T>(name, gameObject);
+            eventDataT.SetData(data);
         }
 
 
@@ -319,7 +338,7 @@ namespace EventDataS
 
 
         ///<summary> 创建数据条件,返回启用器</summary>
-        public static (Action Enable, Action Disable) OnDataCondition(Action action, params (EventDataUtil.EventData data, Func<bool> check)[] conditionChecks)
+        public static (Action Enable, Action Disable) OnDataCondition(Action action, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
         {
             ConditionAction conditionAction = new ConditionAction();
             conditionAction.action = action;
@@ -346,24 +365,17 @@ namespace EventDataS
             return (enable, disable);
         }
 
-        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (EventDataUtil.EventData data, Func<bool> check)[] conditionChecks)
+        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
         {
             (Action Enable, Action Disable) enableAction = OnDataCondition(action, conditionChecks);
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
-        
-        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, List<(EventDataUtil.EventData data, Func<bool> check)> conditionChecks)
+
+        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, List<(EventDataCore.EventData data, Func<bool> check)> conditionChecks)
         {
             OnDataCondition(action, ref enabler, conditionChecks.ToArray());
         }
-
-
-
-
-
-
-
 
 
     }
@@ -421,16 +433,16 @@ namespace EventDataS
 
 
         //属性：获得数据判断方法，数据更新
-        public (EventDataUtil.EventData data, Func<bool> check) OnUpdate => (eventDataT, null);
+        public (EventDataCore.EventData data, Func<bool> check) OnUpdate => (eventDataT, null);
 
         //属性：获得数据判断方法，数据为真
-        public (EventDataUtil.EventData data, Func<bool> check) OnTrue => (eventDataT, () => { return Data.Equals(true); }
+        public (EventDataCore.EventData data, Func<bool> check) OnTrue => (eventDataT, () => { return Data.Equals(true); }
         );
         //属性：获得数据判断方法，数据为假
-        public (EventDataUtil.EventData data, Func<bool> check) OnFalse => (eventDataT, () => { return Data.Equals(false); }
+        public (EventDataCore.EventData data, Func<bool> check) OnFalse => (eventDataT, () => { return Data.Equals(false); }
         );
         //方法：获得数据判断方法，自定义判断
-        public (EventDataUtil.EventData data, Func<bool> check) OnCustom(Func<bool> check)
+        public (EventDataCore.EventData data, Func<bool> check) OnCustom(Func<bool> check)
         {
             return (eventDataT, check);
         }

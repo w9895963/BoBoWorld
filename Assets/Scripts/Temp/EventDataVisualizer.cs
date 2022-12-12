@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using EventDataS.EventDataCore;
 using NaughtyAttributes;
+using UnityEngine;
 
 namespace EventDataS
 {
@@ -20,7 +21,7 @@ namespace EventDataS
 #if UNITY_EDITOR
             //
             [Label("全局数据")]
-            
+
             //字段：全局数据条目列表
             public List<DataItem> GlobalData = new List<DataItem>();
             //字段：本地数据条目列表
@@ -42,13 +43,13 @@ namespace EventDataS
             public void UpdateData()
             {
                 //获得事件数据存储字典
-                Dictionary<System.Enum, EventDataUtil.EventData> eventDataDict = EventDataUtil.GlobalData.holderDict;
-                Dictionary<System.Enum, EventDataUtil.EventData> eventDataDict_this = null;
+                Dictionary<System.Enum, EventDataCore.EventData> eventDataDict = EventDataCore.GlobalData.holderDict;
+                Dictionary<System.Enum, EventDataCore.EventData> eventDataDict_this = null;
                 //如果组件存在
-                if (gameObject.GetComponent<EventDataUtil.EventDataStoreMono>() != null)
+                if (gameObject.GetComponent<EventDataCore.EventDataStoreMono>() != null)
                 {
                     //获取本物体上的字典
-                    eventDataDict_this = gameObject.GetComponent<EventDataUtil.EventDataStoreMono>().dateHolderDict;
+                    eventDataDict_this = gameObject.GetComponent<EventDataCore.EventDataStoreMono>().dateHolderDict;
                 }
 
 
@@ -63,7 +64,7 @@ namespace EventDataS
 
             //方法：往数据列表中添加数据
 
-            private void AddData(List<DataItem> ObjectData, Dictionary<System.Enum, EventDataUtil.EventData> eventDataDict)
+            private void AddData(List<DataItem> ObjectData, Dictionary<System.Enum, EventDataCore.EventData> eventDataDict)
             {
                 //空则退出
                 if (eventDataDict == null || eventDataDict.Count == 0)
@@ -71,22 +72,16 @@ namespace EventDataS
                     return;
                 }
                 //将所有值和索引转换成列表
-                List<KeyValuePair<System.Enum, EventDataUtil.EventData>> eventDataList = eventDataDict.ToList();
+                List<KeyValuePair<System.Enum, EventDataCore.EventData>> eventDataList = eventDataDict.ToList();
                 //排序
                 eventDataList.Sort((a, b) => { return a.Key.GetType().FullName.CompareTo(b.Key.GetType().FullName); });
                 //转化成DataItem列表
-                List<DataItem> ObjectDataListAll = eventDataList.Select(eventData => new DataItem()
-                {
-                    全名 = eventData.Key.GetType().FullName + "." + eventData.Key.ToString(),
-                    数据 = eventData.Value.GetData().ToString(),
-                    dataName = eventData.Key.ToString(),
-                    //字符串插值将名字与值加起来
-                    name = $"{eventData.Key.ToString()}:{eventData.Value.GetData().ToString()}",
-                    eventData = eventData.Value,
-                }).ToList();
+                List<DataItem> ObjectDataListAll = eventDataList.Select(eventData => new DataItem(eventData.Value)).ToList();
+
+
                 //*往ObjectData中添加不重复的数据
                 // 获得ObjectData中所有eventData的列表
-                List<EventDataUtil.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
+                List<EventDataCore.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
                 ObjectData.AddRange(ObjectDataListAll.Where(dataItem => !eventDataList_ObjectData.Contains(dataItem.eventData)));
             }
             //方法：添加自动更新事件
@@ -103,7 +98,7 @@ namespace EventDataS
                     //标记已经添加事件
                     dataItem.isAddedEvent = true;
                     //添加事件
-                    EventDataUtil.ConditionAction conditionAction = new EventDataUtil.ConditionAction();
+                    EventDataCore.ConditionAction conditionAction = new EventDataCore.ConditionAction();
                     conditionAction.conditionList.Add(() => true);
                     conditionAction.action = () =>
                     {
@@ -116,6 +111,55 @@ namespace EventDataS
 
             }
 
+
+
+            [Button("打印数据")]
+            public void DebugLog()
+            {
+                //打印内容
+                string log = "";
+                //选择所有打印的数据
+                List<DataItem> dataItemList = GlobalData.Where(dataItem => dataItem.打印).ToList();
+                //如果有
+                if (dataItemList.Count > 0)
+                {
+                    //添加标题
+                    log += $"全局数据{dataItemList.Count}个:";
+                    //历遍数据条目
+                    foreach (DataItem dataItem in dataItemList)
+                    {
+                        //打印数据
+                        log += "\n";
+                        log += dataItem.GetDebugLog();
+                    }
+                }
+                //选择所有打印的本地数据
+                List<DataItem> dataItemList_ObjectData = ObjectData.Where(dataItem => dataItem.打印).ToList();
+                //如果有
+                if (dataItemList_ObjectData.Count > 0)
+                {
+                    //如果上面有数据
+                    if (log != "")
+                    {
+                        log += "\n";
+                    }
+                    //添加标题
+                    log += $"本地数据{dataItemList_ObjectData.Count}个:";
+                    //历遍数据条目
+                    foreach (DataItem dataItem in dataItemList_ObjectData)
+                    {
+                        //打印数据
+                        log += "\n";
+                        log += dataItem.GetDebugLog();
+                    }
+                }
+                //如果没有数据
+                if (log == "")
+                {
+                    log = "没有勾选数据";
+                }
+                Debug.LogFormat(log);
+            }
 
 
 #endif
@@ -131,14 +175,97 @@ namespace EventDataS
 
             public string 全名;
             public string 数据;
+            public bool 打印 = false;
 
-            public EventDataUtil.EventData eventData;
+            public EventDataCore.EventData eventData;
             //隐藏显示
             [HideInInspector]
             public string dataName;
             //是否已经添加事件
             [HideInInspector]
             public bool isAddedEvent = false;
+
+
+            //构造函数
+            public DataItem(EventDataCore.EventData eventData)
+            {
+                this.eventData = eventData;
+                全名 = eventData.enumKey.GetType().FullName + "." + eventData.enumKey.ToString();
+                数据 = ExtractData();
+                dataName = eventData.enumKey.ToString();
+                //字符串插值将名字与值加起来
+                name = $"{eventData.enumKey.ToString()}:{数据}";
+            }
+            //方法：抽取数据
+            private string ExtractData()
+            {
+                //定义输出字符串
+                string message = "";
+                object v = eventData.GetData();
+                //分类处理
+                if (v is System.Collections.IEnumerable)
+                {
+                    //转换成可枚举的
+                    System.Collections.IEnumerable enumerable = (System.Collections.IEnumerable)v;
+                    //添加名字
+                    message += eventData.enumKey + ":";
+
+                    //历遍数组
+                    foreach (object v1 in enumerable)
+                    {
+                        //添加数据
+                        message += v1.ToString() + ",";
+                    }
+                    //去掉最后一个逗号
+                    message = message.Substring(0, message.Length - 1);
+                }
+                else
+                {
+                    //添加数据
+                    message += v.ToString();
+                }
+                return message;
+            }
+
+
+
+
+            //方法：输出日志
+            public string GetDebugLog()
+            {
+                //定义输出字符串
+                string message = "";
+                object v = eventData.GetData();
+
+
+                //如果是可枚举的
+                if (v is System.Collections.IEnumerable)
+                {
+                    //转换成可枚举的
+                    System.Collections.IEnumerable enumerable = (System.Collections.IEnumerable)v;
+                    //添加名字
+                    message += eventData.enumKey + ":";
+
+                    //历遍数组
+                    foreach (object v1 in enumerable)
+                    {
+                        //添加分隔符
+                        if (message != "")
+                            message += ",";
+                        //添加数据
+                        message += $"<color=red>{v1}</color>";
+                    }
+                }
+                else
+                {
+                    //添加名字和数据
+                    string data = v.ToString();
+                    message = eventData.enumKey + " : " + $"<color=red>{data}</color>";
+                }
+
+
+                return message;
+            }
         }
 
     }
