@@ -43,7 +43,7 @@ namespace EventDataS
             public void UpdateData()
             {
                 //获得事件数据存储字典
-                Dictionary<string, EventDataCore.EventData> eventDataDict = EventDataCore.GlobalData.holderDictStr;
+                Dictionary<string, EventDataCore.EventData> eventDataDict = EventDataCore.GlobalData.globalDict;
                 Dictionary<string, EventDataCore.EventData> eventDataDict_this = null;
                 //如果组件存在
                 if (gameObject.GetComponent<EventDataCore.EventDataStoreMono>() != null)

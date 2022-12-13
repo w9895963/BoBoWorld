@@ -1,7 +1,11 @@
 using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Security;
+using Microsoft.CSharp;
 using Timer.Base;
 using UnityEngine;
 using static CommonFunction.Static;
@@ -22,16 +26,13 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        string[] str = new string[3]{ "1", "2", "3" };
-        System.Object obj = str;
-        Debug.Log(obj is IEnumerable); 
-
+     
     }
     public void TestMethod2(ref Vector2 obj)
     {
         Type type = obj.GetType();
         type.Name.Log();
-        
+
     }
 
 

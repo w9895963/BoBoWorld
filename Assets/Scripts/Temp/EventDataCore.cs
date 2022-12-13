@@ -7,16 +7,72 @@ namespace EventDataS
 {
     namespace EventDataCore
     {
-                // 全局事件数据存储字典
+        // 全局事件数据存储字典
         public static class GlobalData
         {
-            public static Dictionary<string, EventData> holderDictStr = new Dictionary<string, EventData>();
+            public static Dictionary<string, EventData> globalDict = new Dictionary<string, EventData>();
+            //所有本地字典
+            public static List<Dictionary<string, EventData>> localDicts = new List<Dictionary<string, EventData>>();
+
+            public static bool HasData(string dataName)
+            {
+                return globalDict.ContainsKey(dataName);
+            }
+
+            public static void AddData<T>(EventData<T> globalDataT)
+            {
+                //*添加全局数据
+                //是否已经是全局数据
+                if (globalDataT.isGlobal)
+                {
+                    //报错
+                    Debug.LogError($"当前数据{globalDataT.Key}已经是全局数据，有冲突风险");
+                }
+                //设为全局数据
+                globalDataT.isGlobal = true;
+                //添加到全局字典
+                globalDict.Add(globalDataT.Key, globalDataT);
+                //*将所有本地字典同步到全局字典
+                foreach (var localDic in localDicts)
+                {
+                    //如果本地字典中已经有了这个数据 //则合并数据
+                    if (localDic.ContainsKey(globalDataT.Key))
+                    {
+                        //如果不是同一个则
+                        EventData eventData = localDic[globalDataT.Key];
+                        if (eventData != globalDataT)
+                        {
+                            //建立同步更新 
+                            globalDataT.LinkTo(eventData.ToEventData<T>());
+                        }
+                    }
+                }
+                //设置全局数据完成, 执行一次数据更新
+                globalDataT.UpdateData();
+            }
         }
 
         // 基于物体的事件数据存储字典, Unity 组件
         public class EventDataStoreMono : MonoBehaviour
         {
             public Dictionary<string, EventData> dateHolderDictStr = new Dictionary<string, EventData>();
+
+            public static Dictionary<string, EventData> GetLocalDict(GameObject gameObject)
+            {
+                var store = gameObject.GetComponent<EventDataStoreMono>();
+                if (store == null)
+                {
+                    store = gameObject.AddComponent<EventDataStoreMono>();
+                    //登记
+                    GlobalData.localDicts.Add(store.dateHolderDictStr);
+                }
+                return store.dateHolderDictStr;
+            }
+
+            public bool HasData(string name)
+            {
+                return dateHolderDictStr.ContainsKey(name);
+            }
         }
 
 
@@ -96,44 +152,9 @@ namespace EventDataS
 
 
 
-            //静态方法：获取带参数的事件数据
-            public static EventData<T> GetEventData<T>(string key, GameObject gameObject = null)
-            {
-                EventData<T> eventDataT;
-                eventDataT = null;
-                Dictionary<string, EventData> holderDict = GlobalData.holderDictStr;
-                if (gameObject == null)
-                {
-                    if (GlobalData.holderDictStr.ContainsKey(key))
-                    {
-                        eventDataT = GlobalData.holderDictStr[key].ToEventData<T>();
-                    }
-                    else
-                    {
-                        eventDataT = new EventData<T>(key);
-                        GlobalData.holderDictStr.Add(key, eventDataT);
-                    }
-                }
-                else
-                {
-                    EventDataStoreMono eventDataMono = gameObject.GetComponent<EventDataStoreMono>();
-                    if (eventDataMono == null)
-                    {
-                        eventDataMono = gameObject.AddComponent<EventDataStoreMono>();
-                    }
 
-                    if (eventDataMono.dateHolderDictStr.ContainsKey(key))
-                    {
-                        eventDataT = eventDataMono.dateHolderDictStr[key].ToEventData<T>();
-                    }
-                    else
-                    {
-                        eventDataT = new EventData<T>(key);
-                        eventDataMono.dateHolderDictStr.Add(key, eventDataT);
-                    }
-                }
-                return eventDataT;
-            }
+
+
 
         }
 
@@ -142,6 +163,7 @@ namespace EventDataS
         public class EventData<T> : EventData
         {
             public T data;
+            public bool isGlobal;
 
             public EventData(string key) : base(key)
             {
@@ -165,15 +187,17 @@ namespace EventDataS
                 }
                 this.data = data;
 
+                //更新数据
+                UpdateData();
 
+            }
+
+            public void UpdateData()
+            {
                 //执行conditionActionList
                 conditionActionList.ForEach(conditionAction =>
                 {
-
                     conditionAction.CheckAndRun();
-
-
-
                 });
             }
             //方法：获取数据
@@ -195,6 +219,20 @@ namespace EventDataS
                 }
                 return false;
             }
+
+
+
+            //方法：建立同步更新    
+            public void LinkTo(EventData<T> eventData)
+            {
+                ConditionAction conditionAction = new ConditionAction();
+                conditionAction.action = () => eventData.SetData(this.data);
+                conditionActionList.Add(conditionAction);
+            }
+
+
+
+
         }
 
 
@@ -206,6 +244,7 @@ namespace EventDataS
         public class ConditionAction
         {
             public System.Action action;
+            public System.Action actionOnFail;
             public List<Func<bool>> conditionList = new List<Func<bool>>();
 
 
@@ -219,6 +258,11 @@ namespace EventDataS
                 if (isConditionMet)
                 {
                     ActionF.QueueAction(action);
+                }
+                else
+                {
+
+                    ActionF.QueueAction(actionOnFail);
                 }
 
             }

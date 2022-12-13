@@ -93,10 +93,8 @@ public class ConfigManager : MonoBehaviour
 
         static void SetData<T>(System.Enum dataName, object dataValue, GameObject gameObject)
         {
-            if (gameObject == null)
-                EventDataF.GetData_global<T>(dataName).Data = (T)dataValue;
-            else
-                EventDataF.GetData_local<T>(gameObject, dataName).Data = (T)dataValue;
+
+            EventDataF.GetData<T>(gameObject, dataName).Data = (T)dataValue;
         }
     }
 

@@ -8,9 +8,11 @@ namespace EventDataS
     //*公用方法需要的类:EventDataHandler
     public class EventDataHandler
     {
+
         public EventData eventData;
 
     }
+
     //类型:数据操作器
     public class EventDataHandler<T> : EventDataHandler
     {
@@ -22,6 +24,7 @@ namespace EventDataS
             this.eventDataT = eventDataT;
             this.eventData = eventDataT;
         }
+
 
 
         //属性：数据
@@ -47,6 +50,9 @@ namespace EventDataS
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
+
+
+
 
 
         //属性：获得数据判断方法，数据更新
@@ -75,30 +81,59 @@ namespace EventDataS
     //*公用方法
     public static class EventDataF
     {
+        //*静态方法：新建数据
 
-        //方法：获取数据操作器，全局数据,字符串版本
-        public static EventDataHandler<T> GetData_global<T>(string name)
+        private static EventData<T> CreateDataCore<T>(GameObject gameObject, string key, bool isGlobal = false)
         {
-            EventData<T> eventDataT = EventDataCore.EventData.GetEventData<T>(name);
-            EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventDataT);
-            return dataOperator;
-        }
-        //方法：获取数据操作器，局部数据,字符串版本
-        public static EventDataHandler<T> GetData_local<T>(GameObject gameObject, string name)
-        {
-            EventData<T> eventDataT = EventDataCore.EventData.GetEventData<T>(name, gameObject);
-            EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventDataT);
-            return dataOperator;
+            EventData<T> eventDataT = new EventData<T>(key);
+            EventDataStoreMono.GetLocalDict(gameObject).Add(key, eventDataT);
+            if (isGlobal)
+            {
+                GlobalData.AddData(eventDataT);
+            }
+            return eventDataT;
         }
 
+        /// <summary>新建全局数据，枚举版本</summary>
+        public static EventDataHandler<T> CreateGlobalData<T>(GameObject gameObject, System.Enum key)
+        {
+            return new EventDataHandler<T>(CreateDataCore<T>(gameObject, key.ToString(), true));
+        }
 
 
-        //方法：获取数据操作器，全局数据
-        public static EventDataHandler<T> GetData_global<T>(System.Enum name)
-        => GetData_global<T>(name.GetFullName());
-        //方法：获取数据操作器，局部数据
-        public static EventDataHandler<T> GetData_local<T>(GameObject gameObject, System.Enum name)
-        => GetData_local<T>(gameObject, name.GetFullName());
+
+
+
+        //*静态方法：获取带参数的事件数据
+        private static EventData<T> GetEventData_Core<T>(string key, GameObject gameObject = null)
+        {
+            EventData<T> eventDataT;
+            //本地
+            Dictionary<string, EventData> loDict = EventDataStoreMono.GetLocalDict(gameObject);
+
+            //新建或获取本地数据
+            eventDataT = loDict.GetOrCreate(key, new EventData<T>(key)).ToEventData<T>();
+
+            return eventDataT;
+        }
+
+
+        /// <summary>获得数据，先局部后全局数据，字符串版本</summary>
+        public static EventDataHandler<T> GetData<T>(GameObject gameObject, string dataName)
+        {
+            EventData<T> eventData = GetEventData_Core<T>(dataName, gameObject);
+            EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventData);
+            return dataOperator;
+        }
+        /// <summary>获得数据，先局部后全局数据，枚举版本</summary>
+        public static EventDataHandler<T> GetData<T>(GameObject gameObject, System.Enum dataName)
+        {
+            return GetData<T>(gameObject, dataName.GetFullName());
+        }
+
+
+
+
 
 
 
@@ -106,7 +141,7 @@ namespace EventDataS
         //方法：设置数据，物体数据，字符串版本
         public static void SetData_local<T>(GameObject gameObject, string name, T data)
         {
-            EventData<T> eventDataT = EventDataCore.EventData.GetEventData<T>(name, gameObject);
+            EventData<T> eventDataT = GetEventData_Core<T>(name, gameObject);
             eventDataT.SetData(data);
         }
         //方法：设置数据，物体数据
@@ -147,11 +182,12 @@ namespace EventDataS
 
 
 
-        ///<summary> 创建数据条件,返回启用器</summary>
-        public static (Action Enable, Action Disable) OnDataCondition(Action action, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        /// <summary> 创建数据条件,返回启用器 </summary>
+        private static (Action Enable, Action Disable) OnDataConditionCore(Action action, Action actionOnFail, (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
         {
             ConditionAction conditionAction = new ConditionAction();
             conditionAction.action = action;
+            conditionAction.actionOnFail = actionOnFail;
             conditionChecks.ForEach(conditionCheck =>
             {
                 //如果check存在则添加到conditionList
@@ -175,16 +211,37 @@ namespace EventDataS
             return (enable, disable);
         }
 
-        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        ///<summary> 创建数据条件,返回启用器</summary>
+        public static (Action Enable, Action Disable) OnDataCondition(Action action, Action actionOnFail, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
         {
-            (Action Enable, Action Disable) enableAction = OnDataCondition(action, conditionChecks);
+            return OnDataConditionCore(action, actionOnFail, conditionChecks);
+        }
+
+        public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        {
+            (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, actionOnFail, conditionChecks);
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
 
+        public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, List<(EventDataCore.EventData data, Func<bool> check)> conditionChecks)
+        {
+            (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, actionOnFail, conditionChecks.ToArray());
+            enabler.Enable += enableAction.Enable;
+            enabler.Disable += enableAction.Disable;
+        }
+        //单参数版本
+        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        {
+            (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, null, conditionChecks);
+            enabler.Enable += enableAction.Enable;
+            enabler.Disable += enableAction.Disable;
+        }
         public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, List<(EventDataCore.EventData data, Func<bool> check)> conditionChecks)
         {
-            OnDataCondition(action, ref enabler, conditionChecks.ToArray());
+            (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, null, conditionChecks.ToArray());
+            enabler.Enable += enableAction.Enable;
+            enabler.Disable += enableAction.Disable;
         }
 
 

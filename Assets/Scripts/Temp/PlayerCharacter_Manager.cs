@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using EventDataS;
 using UnityEngine;
 
+
 public class PlayerCharacter_Manager : MonoBehaviour
 {
     //功能启用器
@@ -42,9 +43,9 @@ public class PlayerCharacter_Manager : MonoBehaviour
         //获得刚体
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         //获得地面法线
-        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData_local<Vector2>(gameObject, EventDataName.PlayerObject.地面法线);
+        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData<Vector2>(gameObject, EventDataName.PlayerObject.地面法线);
         //获得是否站在地面上
-        EventDataHandler<bool> onGroundH = EventDataF.GetData_local<bool>(gameObject, EventDataName.PlayerObject.已站在地面上);
+        EventDataHandler<bool> onGroundH = EventDataF.GetData<bool>(gameObject, EventDataName.PlayerObject.已站在地面上);
 
 
         Enabler.Enable += () =>
@@ -86,22 +87,22 @@ public class PlayerCharacter_Manager : MonoBehaviour
         //获得刚体
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         //获得移动输入
-        EventDataHandler<Vector2> moveInputH = EventDataF.GetData_global<Vector2>(EventDataName.Input.移动);
+        EventDataHandler<Vector2> moveInputH = EventDataF.GetData<Vector2>(gameObject, EventDataName.Input.移动);
         //获得地面法线
-        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData_local<Vector2>(gameObject, EventDataName.PlayerObject.地面法线);
+        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData<Vector2>(gameObject, EventDataName.PlayerObject.地面法线);
         //获得行走速度
-        EventDataHandler<float> speed = EventDataF.GetData_local<float>(gameObject, EventDataName.PlayerConfig.移动速度);
+        EventDataHandler<float> speed = EventDataF.GetData<float>(gameObject, EventDataName.PlayerConfig.移动速度);
         //获得最大力
-        EventDataHandler<float> maxForceH = EventDataF.GetData_local<float>(gameObject, EventDataName.PlayerConfig.移动最大施力);
+        EventDataHandler<float> maxForceH = EventDataF.GetData<float>(gameObject, EventDataName.PlayerConfig.移动最大施力);
 
         //创建施力数据
-        EventDataHandler<Vector2> moveForceH = EventDataF.GetData_local<Vector2>(gameObject, EventDataName.PlayerObject.移动施力);
+        EventDataHandler<Vector2> moveForceH = EventDataF.GetData<Vector2>(gameObject, EventDataName.PlayerObject.移动施力);
 
 
         //*计算移动施力
         var list = new List<(EventDataS.EventDataCore.EventData, Func<bool>)>();
         list.Add(moveInputH.OnUpdate, groundNormalH.OnUpdate, speed.OnUpdate, maxForceH.OnUpdate);
-        EventDataF.OnDataCondition(CalculateMoveForce, ref Enabler, list);
+        EventDataF.OnDataCondition(CalculateMoveForce, null, ref Enabler, list);
         //计算移动施力
         void CalculateMoveForce()
         {
