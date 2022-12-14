@@ -37,6 +37,7 @@ namespace ConfigureS
 
             //获取数据行走输入
             EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>(gameObject, 导入参数[0].DataName);
+            DataHandler<Vector2> moveInputD = 导入参数[0].GetDataHandler<Vector2>(gameObject);
             //获取数据地表法线
             EventDataHandler<Vector2> groundNormal = EventDataF.GetData<Vector2>(gameObject, 导入参数[1].DataName);
             Func<float> speedAc = 导入参数[2].GetDataAccessor<float>();
@@ -51,7 +52,7 @@ namespace ConfigureS
             //获取刚体
             Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
 
-
+            // enabler = ConfigureF.OnDataCondition(CalculateMoveForce, OnFail,导入参数);
             enabler = EventDataF.OnDataCondition(CalculateMoveForce, OnFail, moveInput.OnCustom(() => moveInput.Data.x != 0), groundNormal.OnUpdate);
 
 

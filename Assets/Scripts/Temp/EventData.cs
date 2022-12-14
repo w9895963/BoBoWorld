@@ -11,6 +11,30 @@ namespace EventDataS
 
         public EventData eventData;
 
+        //属性：数据
+        public System.Object Data
+        {
+            get => eventData.GetData();
+        }
+
+
+
+
+        //属性：获得数据判断方法，数据更新
+        public (EventDataCore.EventData data, Func<bool> check) OnUpdate => (eventData, null);
+
+        //属性：获得数据判断方法，数据为真
+        public (EventDataCore.EventData data, Func<bool> check) OnTrue => (eventData, () => { return Data.Equals(true); }
+        );
+        //属性：获得数据判断方法，数据为假
+        public (EventDataCore.EventData data, Func<bool> check) OnFalse => (eventData, () => { return Data.Equals(false); }
+        );
+        //方法：获得数据判断方法，自定义判断
+        public (EventDataCore.EventData data, Func<bool> check) OnCustom(Func<bool> check)
+        {
+            return (eventData, check);
+        }
+
     }
 
     //类型:数据操作器
@@ -28,7 +52,7 @@ namespace EventDataS
 
 
         //属性：数据
-        public T Data
+        public new T Data
         {
             get => eventDataT.GetData();
             set => eventDataT.SetData(value);
@@ -55,20 +79,7 @@ namespace EventDataS
 
 
 
-        //属性：获得数据判断方法，数据更新
-        public (EventDataCore.EventData data, Func<bool> check) OnUpdate => (eventDataT, null);
 
-        //属性：获得数据判断方法，数据为真
-        public (EventDataCore.EventData data, Func<bool> check) OnTrue => (eventDataT, () => { return Data.Equals(true); }
-        );
-        //属性：获得数据判断方法，数据为假
-        public (EventDataCore.EventData data, Func<bool> check) OnFalse => (eventDataT, () => { return Data.Equals(false); }
-        );
-        //方法：获得数据判断方法，自定义判断
-        public (EventDataCore.EventData data, Func<bool> check) OnCustom(Func<bool> check)
-        {
-            return (eventDataT, check);
-        }
 
     }
 
@@ -83,38 +94,57 @@ namespace EventDataS
     {
         //*静态方法：新建数据
 
-        private static EventData<T> CreateDataCore<T>(GameObject gameObject, string key, bool isGlobal = false)
-        {
-            EventData<T> eventDataT = new EventData<T>(key);
-            EventDataStoreMono.GetLocalDict(gameObject).Add(key, eventDataT);
-            if (isGlobal)
-            {
-                GlobalData.AddData(eventDataT);
-            }
-            return eventDataT;
-        }
-
         /// <summary>新建全局数据，枚举版本</summary>
         public static EventDataHandler<T> CreateGlobalData<T>(GameObject gameObject, System.Enum key)
         {
-            return new EventDataHandler<T>(CreateDataCore<T>(gameObject, key.ToString(), true));
+            return new EventDataHandler<T>(new EventData<T>(key.ToString(), gameObject, true));
         }
 
 
 
 
 
-        //*静态方法：获取带参数的事件数据
-        private static EventData<T> GetEventData_Core<T>(string key, GameObject gameObject = null)
+        //*静态方法：获取事件数据
+        private static EventData<T> GetEventData_Core<T>(string key, GameObject gameObject)
         {
             EventData<T> eventDataT;
             //本地
-            Dictionary<string, EventData> loDict = EventDataStoreMono.GetLocalDict(gameObject);
+            Dictionary<string, EventData> loDict = EventDataLocalMono.GetLocalDict(gameObject);
 
-            //新建或获取本地数据
-            eventDataT = loDict.GetOrCreate(key, new EventData<T>(key)).ToEventData<T>();
+            //尝获取本地数据
+            if (loDict.TryGetValue(key, out EventData eventData))
+            {
+                eventDataT = eventData as EventData<T>;
+                if (eventDataT == null)
+                {
+                    Debug.LogError("数据类型不匹配");
+                }
+            }
+            //新建本地数据
+            else
+            {
+                eventDataT = new EventData<T>(key, gameObject);
+            }
+
+
+
 
             return eventDataT;
+        }
+        private static EventData GetEventData_Core(string key, GameObject gameObject)
+        {
+            EventData eventData;
+            //本地
+            Dictionary<string, EventData> loDict = EventDataLocalMono.GetLocalDict(gameObject);
+
+            //新建或获取本地数据
+            if (!loDict.TryGetValue(key, out eventData))
+            {
+                eventData = new EventData(key, gameObject);
+            }
+            Debug.Log("获取数据：" + key);
+            Debug.Log("数据类型：" + eventData.GetType());
+            return eventData;
         }
 
 
@@ -128,7 +158,7 @@ namespace EventDataS
         /// <summary>获得数据，先局部后全局数据，枚举版本</summary>
         public static EventDataHandler<T> GetData<T>(GameObject gameObject, System.Enum dataName)
         {
-            return GetData<T>(gameObject, dataName.GetFullName());
+            return GetData<T>(gameObject, dataName.ToString());
         }
 
 

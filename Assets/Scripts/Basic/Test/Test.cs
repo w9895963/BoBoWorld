@@ -26,13 +26,28 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-     
+        new TestClass2();
     }
     public void TestMethod2(ref Vector2 obj)
     {
         Type type = obj.GetType();
         type.Name.Log();
 
+    }
+    public class TestClass
+    {
+        public TestClass()
+        {
+            Debug.Log("TestClass");
+        }
+    }
+
+    public class TestClass2:TestClass
+    {
+        public TestClass2()
+        {
+            Debug.Log("TestClass2");
+        }
     }
 
 

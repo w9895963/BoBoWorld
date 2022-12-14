@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EventDataS;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ using UnityEngine;
 //命名空间：配置
 namespace ConfigureS
 {
-    //类：输入数据,可序列化
+    //类：输入数据,可序列化,界面显示类
     [System.Serializable]
     public class ImportData
     {
@@ -106,7 +107,7 @@ namespace ConfigureS
         {
             导入方式 = ImportType.恒定数据;
             数据名 = name;
-            SetData(data);
+            SetDataForConstructor(data);
             OnValueChanged();
         }
         public ImportData(System.Object data, System.Enum Name)
@@ -115,11 +116,12 @@ namespace ConfigureS
             数据名 = Name.ToString();
 
             //历遍枚举Name的类型
-            SetData(data);
+            SetDataForConstructor(data);
             OnValueChanged();
         }
 
-
+        //*内部:界面相关
+        //当界面值改变时
         private void OnValueChanged()
         {
             //设置隐藏数据列表
@@ -182,14 +184,17 @@ namespace ConfigureS
             }
             else if (导入方式 == ImportType.恒定数据)
             {
-                title += GetData().ToString();
+                title += GetCustomData().ToString();
             }
             title += $" => {数据名}";
             return title;
+
+
+
         }
 
-        //方法：获取数据
-        private object GetData()
+        //方法：获取恒定数据
+        public object GetCustomData()
         {
 
             if (数据类型 == DataType.浮点数)
@@ -219,20 +224,17 @@ namespace ConfigureS
 
             return null;
         }
-        public T GetData<T>()
-        {
-            return (T)GetData();
-        }
+
         //方法：获取数据访问器
         public Func<T> GetDataAccessor<T>()
         {
-            return () => (T)GetData();
+            return () => (T)GetCustomData();
         }
 
 
 
-        //方法：赋予数据
-        private void SetData(object data)
+        //方法：构造赋予数据
+        private void SetDataForConstructor(object data)
         {
             if (数据类型 == DataType.浮点数)
             {
@@ -268,6 +270,8 @@ namespace ConfigureS
 
 
 
+
+        //*外部接口
         //属性:数据名,字符串,get
         public string DataName
         {
@@ -286,7 +290,27 @@ namespace ConfigureS
         }
 
 
+        public DataHandler<T> GetDataHandler<T>(GameObject gameObject)
+        {
+            return new DataHandler<T>(this, gameObject);
+        }
 
+
+        //方法：获取数据处理
+        public EventDataHandler GetEventDataHandler(GameObject gameObject)
+        {
+            //如果是恒定数据
+            if (导入方式 == ImportType.恒定数据)
+            {
+               return null;
+            }
+            //获取事件数据
+            // EventDataF.GetData(DataName, out EventDataS.EventDataCore.EventData eventData);
+            return null;
+        }
+
+
+        //*枚举
         //枚举：导入方式
         public enum ImportType
         {
@@ -402,6 +426,87 @@ namespace ConfigureS
         {
             为真,
             为假,
+        }
+    }
+
+    public class DataHandler
+    {
+        
+    }
+    //类：数据处理器
+    public class DataHandler<T>
+    {
+        private GameObject gameObject;
+        //导入数据
+        private ImportData importData;
+        //恒定数据
+        private T constantData;
+        //外部数据
+        private EventDataHandler<T> dataHandler;
+
+
+
+        //*构造函数
+        public DataHandler(ImportData importData, GameObject gameObject)
+        {
+            this.importData = importData;
+            this.gameObject = gameObject;
+            //*获取数据
+            //如果导入方式为恒定数据
+            if (importData.导入方式 == ImportData.ImportType.恒定数据)
+            {
+                constantData = (T)(object)importData.GetCustomData();
+            }
+            //如果导入方式为预设名
+            else if (importData.导入方式 == ImportData.ImportType.从预设数据导入)
+            {
+                dataHandler = EventDataF.GetData<T>(gameObject, importData.预设名);
+            }
+            //如果导入方式为自定义名
+            else if (importData.导入方式 == ImportData.ImportType.从自定义数据导入)
+            {
+                dataHandler = EventDataF.GetData<T>(gameObject, importData.自定义名);
+            }
+        }
+
+
+
+
+        //方法：设置数据
+        public void SetData(T data)
+        {
+            //如果外部数据为空则报错
+            if (dataHandler == null)
+            {
+                Debug.LogError("尝试为恒定数据赋值");
+                return;
+            }
+            //如果外部数据不为空则设置数据
+            dataHandler.Data = data;
+        }
+        //方法：获取数据
+        public T GetData()
+        {
+            //*已经获取过数据则直接返回
+            //如果数据或事件数据不为空则返回
+            if (constantData != null)
+            {
+                return constantData;
+            }
+            //如果事件数据不为空则返回
+            if (dataHandler != null)
+            {
+                return dataHandler.Data;
+            }
+
+            //*如果都为空则返回默认值,报错
+            Debug.LogError("数据为空");
+            return default(T);
+        }
+        //方法：获取事件数据
+        public EventDataHandler GetEventDataHandler()
+        {
+            return dataHandler;
         }
     }
 

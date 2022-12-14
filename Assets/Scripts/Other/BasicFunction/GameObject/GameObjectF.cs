@@ -73,7 +73,8 @@ public static class GameObjectF
                 gameObject = new GameObject(name);
             }
             //添加到字典
-            nameToGameObject.Set(name, gameObject);
+            nameToGameObject[name] = gameObject;
+
         }
 
         return gameObject;

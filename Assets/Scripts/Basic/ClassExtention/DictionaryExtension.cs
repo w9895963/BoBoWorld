@@ -5,26 +5,21 @@ using UnityEngine;
 
 public static class DictionaryExtension
 {
-    public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key, V defaultValue)
+    public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key, Func<V> defaultValue)
     {
         bool v = dict.ContainsKey(key);
         if (v == false)
         {
-            dict.Add(key, defaultValue);
-            
+            dict.Add(key, defaultValue());
+
         }
 
         return dict[key];
     }
     public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key) where V : new()
     {
-        return GetOrCreate<K, V>(dict, key, new V());
+        return GetOrCreate<K, V>(dict, key, () => new V());
     }
-   
-
-
-
-
 
     public static V TryGetValue<K, V>(this Dictionary<K, V> dict, K key) where V : class
     {
@@ -36,20 +31,18 @@ public static class DictionaryExtension
 
         return dict[key];
     }
-   
 
 
-
-    public static void Set<K, V>(this Dictionary<K, V> dict, K key, V value)
+    public static bool Exist<K, V>(this Dictionary<K, V> dict, K key, V value)
     {
         bool v = dict.ContainsKey(key);
         if (v == false)
         {
-            dict.Add(key, value);
+            return false;
         }
         else
         {
-            dict[key] = value;
+            return dict[key].Equals(value);
         }
 
     }

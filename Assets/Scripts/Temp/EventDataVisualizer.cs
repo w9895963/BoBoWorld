@@ -43,18 +43,13 @@ namespace EventDataS
             public void UpdateData()
             {
                 //获得事件数据存储字典
-                Dictionary<string, EventDataCore.EventData> eventDataDict = EventDataCore.GlobalData.globalDict;
-                Dictionary<string, EventDataCore.EventData> eventDataDict_this = null;
+                List<KeyValuePair<string, EventDataCore.EventData>> eventDataGo = EventDataCore.GlobalData.GetDictList();
+                List<KeyValuePair<string, EventDataCore.EventData>> eventDataLo = EventDataCore.EventDataLocalMono.GetLocalDict(gameObject).ToList();
                 //如果组件存在
-                if (gameObject.GetComponent<EventDataCore.EventDataStoreMono>() != null)
-                {
-                    //获取本物体上的字典
-                    eventDataDict_this = gameObject.GetComponent<EventDataCore.EventDataStoreMono>().dateHolderDictStr;
-                }
-                
 
-                AddData(GlobalData, eventDataDict);
-                AddData(ObjectData, eventDataDict_this);
+
+                AddData(GlobalData, eventDataGo);
+                AddData(ObjectData, eventDataLo);
 
                 AddDataAutoUpdateEvent(GlobalData);
                 AddDataAutoUpdateEvent(ObjectData);
@@ -64,7 +59,7 @@ namespace EventDataS
 
             //方法：往数据列表中添加数据
 
-            private void AddData(List<DataItem> ObjectData, Dictionary<string, EventDataCore.EventData> eventDataDict)
+            private void AddData(List<DataItem> ObjectData,  List<KeyValuePair<string, EventDataCore.EventData>> eventDataDict)
             {
                 //空则退出
                 if (eventDataDict == null || eventDataDict.Count == 0)
@@ -72,7 +67,7 @@ namespace EventDataS
                     return;
                 }
                 //将所有值和索引转换成列表
-                List<KeyValuePair<string, EventDataCore.EventData>> eventDataList = eventDataDict.ToList();
+                List<KeyValuePair<string, EventDataCore.EventData>> eventDataList = eventDataDict;
                 //排序
                 eventDataList.Sort((a, b) => { return a.Key.GetType().FullName.CompareTo(b.Key.GetType().FullName); });
                 //转化成DataItem列表
