@@ -1,9 +1,5 @@
 using System;
-using System.CodeDom.Compiler;
-using System.Collections;
 using System.Collections.Generic;
-using EventDataS;
-using Microsoft.CSharp;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -11,239 +7,6 @@ using UnityEngine;
 //命名空间：配置
 namespace ConfigureS
 {
-    //类：配置管理器
-    [CreateAssetMenu(fileName = "配置管理器", menuName = "动态配置/配置管理器", order = 0)]
-    //可脚本化对象
-    public class ConfigureManager : ScriptableObject
-    {
-        [Expandable]
-        //配置文件列表
-        public List<ConfigureBase> ConfigObjects = new List<ConfigureBase>();
-
-
-
-
-    }
-
-
-
-    //类:配置基类
-    public class ConfigureBase : ScriptableObject
-    {
-        //字段:启用器
-        public (Action Enable, Action Disable) enabler = (null, null);
-
-
-
-        //方法:将字段链接到事件数据
-        public void LinkFieldToEventData()
-        {
-            //历遍字段
-            foreach (var item in GetType().GetFields())
-            {
-                //如果字段类型是LinkData
-                if (item.FieldType == typeof(InData<>))
-                {
-
-                }
-            }
-        }
-
-        public virtual (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
-        {
-            return (null, null);
-        }
-
-        public List<EventDataHandler> GetEventDataHandlers()
-        {
-            return null;
-        }
-
-
-
-    }
-
-
-    //配置:計算行走施力
-    [CreateAssetMenu(fileName = "計算行走施力", menuName = "动态配置/計算行走施力", order = 1)]
-    public class WalkConfig : ConfigureBase
-    {
-        //导入数据
-        public List<ImportData> 导入参数 = new List<ImportData>();
-        //导出
-        [Space]
-        public List<ExportData> 导出参数 = new List<ExportData>();
-
-
-
-
-
-
-
-        //覆盖方法:创建启用器
-        public override (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
-        {
-            //创建启用器
-            (Action Enable, Action Disable) enabler = (null, null);
-
-            //如果导入参数<2则返回
-            if (导入参数.Count < 2)
-            {
-                return enabler;
-            }
-
-            //获取数据行走输入
-            EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>(gameObject, 导入参数[0].DataName);
-            //获取数据地表法线
-            EventDataHandler<Vector2> groundNormal = EventDataF.GetData<Vector2>(gameObject, 导入参数[1].DataName);
-            Func<float> speedAc = 导入参数[2].GetDataAccessor<float>();
-            Func<float> maxForceAc = 导入参数[3].GetDataAccessor<float>();
-
-
-
-
-
-            //获取数据行走施力
-            EventDataHandler<Vector2> moveForce = EventDataF.GetData<Vector2>(gameObject, 导出参数[0].DataName);
-            //获取刚体
-            Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-
-
-            enabler = EventDataF.OnDataCondition(CalculateMoveForce, OnFail, moveInput.OnCustom(() => moveInput.Data.x != 0), groundNormal.OnUpdate);
-
-
-
-
-
-            //计算移动施力
-            void CalculateMoveForce()
-            {
-                Vector2 currentVelocity = rigidbody2D.velocity;
-                float mass = rigidbody2D.mass;
-                Vector2 groundNormalV = groundNormal.Data.magnitude > 0 ? groundNormal.Data.normalized : Vector2.up;
-                float moveInputV = moveInput.Data.x;
-
-                float speed = speedAc();
-                float maxForce = maxForceAc();
-                Func<Vector2> targetVelocity = () =>
-                {
-                    Vector2 v = default;
-
-                    //行走方向向量
-                    Vector2 direction = groundNormalV.y >= 0 ? groundNormalV.Rotate(90) : groundNormalV.Rotate(-90);
-                    direction = direction.normalized;
-
-                    //计算期望速度
-                    v = direction * speed * moveInputV;
-
-                    return v;
-                };
-                Vector2 projectVector = groundNormalV.Rotate(90);
-
-
-                //施力赋值
-                Vector2 vector2 = PhysicMathF.CalcForceByVel(currentVelocity, targetVelocity(), maxForce, projectVector, mass);
-                moveForce.Data = vector2;
-
-            }
-
-            void OnFail()
-            {
-                moveForce.Data = Vector2.zero;
-            }
-
-
-
-
-            return enabler;
-        }
-
-
-
-        //基本方法:重设
-        private void Reset()
-        {
-            //重设导入参数
-            导入参数 = new List<ImportData>()
-            {
-                new ImportData(ObjectDataName.输入指令_移动 ,DataType.浮点数),
-                new ImportData(ObjectDataName.地表法线 ,DataType.向量),
-                new ImportData(10f, DataName.行走速度),
-                new ImportData(10f, "最大加速度"),
-            };
-            //重设导出参数
-            导出参数 = new List<ExportData>()
-            {
-                new ExportData(ObjectDataName.行走施力),
-            };
-        }
-
-
-        public enum DataName
-        {
-            输入指令_移动,
-            地表法线,
-            行走速度,
-            最大加速度,
-        }
-
-
-
-
-
-
-    }
-
-    //枚举：对象数据名称
-    public enum ObjectDataName
-    {
-        输入指令_移动,
-        输入指令_跳跃,
-        输入指令_冲刺,
-        行走方向,
-        地表法线,
-        行走施力,
-    }
-
-
-    //静态类：核心方法
-    public static class CoreF
-    {
-        //方法:将字段链接到事件数据
-
-    }
-
-
-    //类：事件数据类型T
-    [System.Serializable]
-    public class InData<T>
-    {
-        public string dataName;
-        //数据
-        private T data;
-        public EventDataHandler<T> dataHandler;
-
-        public InData(string dataName)
-        {
-            this.dataName = dataName;
-        }
-
-        //属性:数据
-        public T Data { get => dataHandler.Data; set => dataHandler.Data = value; }
-    }
-
-
-    //枚举：数据类型
-    public enum DataType
-    {
-        浮点数,
-        整数,
-        布尔值,
-        字符串,
-        向量,
-        游戏物体,
-    }
-
     //类：输入数据,可序列化
     [System.Serializable]
     public class ImportData
@@ -264,7 +27,7 @@ namespace ConfigureS
         [HideIf("hide0")]
         [AllowNesting]
         //数据名称
-        public ObjectDataName 预设名;
+        public DataName 预设名;
 
         //*自定义导入数据名
         private bool hide1 = true;
@@ -321,7 +84,7 @@ namespace ConfigureS
 
         //*构造函数       
 
-        public ImportData(ObjectDataName name, DataType type)
+        public ImportData(DataName name, DataType type)
         {
             数据类型 = type;
             导入方式 = ImportType.从预设数据导入;
@@ -535,6 +298,7 @@ namespace ConfigureS
 
     }
 
+
     //类：导出数据,可序列化
     [System.Serializable]
     public class ExportData
@@ -551,7 +315,7 @@ namespace ConfigureS
         [HideIf("hide0")]
         [AllowNesting]
         //数据名称
-        public ObjectDataName 预设名;
+        public DataName 预设名;
 
 
         private bool hide1 = true;
@@ -577,7 +341,7 @@ namespace ConfigureS
             }
         }
 
-        public ExportData(ObjectDataName name)
+        public ExportData(DataName name)
         {
             this.name = name.ToString();
             导入名 = NameType.可选预设;
@@ -628,7 +392,7 @@ namespace ConfigureS
     public class Condition
     {
         //数据名
-        public ObjectDataName 数据名;
+        public DataName 数据名;
         //条件执行条件
         public ConditionType 执行条件;
 
@@ -643,16 +407,28 @@ namespace ConfigureS
 
 
 
-    //类：数据存储器
-    public class DataHolder
+
+    //*枚举
+    //枚举：数据类型
+    public enum DataType
     {
-        //导入数据列表
-        public List<EventDataHandler> importDatas = new List<EventDataHandler>();
-        //导出数据列表
-        public List<EventDataHandler> exportDatas = new List<EventDataHandler>();
+        浮点数,
+        整数,
+        布尔值,
+        字符串,
+        向量,
+        游戏物体,
     }
-
-
+    //枚举：对象数据名称
+    public enum DataName
+    {
+        输入指令_移动,
+        输入指令_跳跃,
+        输入指令_冲刺,
+        行走方向,
+        地表法线,
+        行走施力,
+    }
 
 }
 

@@ -10,9 +10,7 @@ using UnityEngine;
 namespace ConfigureS
 {
 
-
-
-    public class ConfigureBuilder : MonoBehaviour
+    public class ConfigureBuilderMono : MonoBehaviour
     {
         [Expandable]
         //配置管理器
