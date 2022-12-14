@@ -240,7 +240,7 @@ public static class ExtensionMethodBasic
     #endregion
     // * Region UnityEvent End---------------------------------- 
 
-
+    /// <summary>获取枚举的全名,包含类</summary>
     public static string GetFullName(this System.Enum enumName)
     {
         //获取枚举类型
@@ -250,6 +250,23 @@ public static class ExtensionMethodBasic
 
 
         return typeName + "." + name;
+    }
+    /// <summary>获取枚举类型的所有字符串值</summary>
+    public static string[] GetAllNamesToString(this System.Enum enumName)
+    {
+        //为空则返回空的字符串数组
+        if (enumName == null) return new string[0];
+        //设定返回列表
+        List<string> list = new List<string>();
+        //历遍枚举enumName类型的所有值
+        foreach (System.Enum e in System.Enum.GetValues(enumName.GetType()))
+        {
+            list.Add(e.ToString());
+        }
+
+
+
+        return list.ToArray();
     }
 
 }
