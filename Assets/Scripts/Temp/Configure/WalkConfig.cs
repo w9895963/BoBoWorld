@@ -36,10 +36,10 @@ namespace ConfigureS
             }
 
             //获取数据行走输入
-            EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>(gameObject, 导入参数[0].DataName);
+            EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>( 导入参数[0].DataName,gameObject);
             DataHandler<Vector2> moveInputD = 导入参数[0].GetDataHandler<Vector2>(gameObject);
             //获取数据地表法线
-            EventDataHandler<Vector2> groundNormal = EventDataF.GetData<Vector2>(gameObject, 导入参数[1].DataName);
+            EventDataHandler<Vector2> groundNormal = EventDataF.GetData<Vector2>( 导入参数[1].DataName,gameObject);
             Func<float> speedAc = 导入参数[2].GetDataAccessor<float>();
             Func<float> maxForceAc = 导入参数[3].GetDataAccessor<float>();
 
@@ -48,7 +48,7 @@ namespace ConfigureS
 
 
             //获取数据行走施力
-            EventDataHandler<Vector2> moveForce = EventDataF.GetData<Vector2>(gameObject, 导出参数[0].DataName);
+            EventDataHandler<Vector2> moveForce = EventDataF.GetData<Vector2>( 导出参数[0].DataName,gameObject);
             //获取刚体
             Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
 
@@ -62,6 +62,7 @@ namespace ConfigureS
             //计算移动施力
             void CalculateMoveForce()
             {
+                Debug.Log("计算移动施力");
                 Vector2 currentVelocity = rigidbody2D.velocity;
                 float mass = rigidbody2D.mass;
                 Vector2 groundNormalV = groundNormal.Data.magnitude > 0 ? groundNormal.Data.normalized : Vector2.up;
@@ -93,6 +94,7 @@ namespace ConfigureS
 
             void OnFail()
             {
+                Debug.Log("计算移动施力失败");
                 moveForce.Data = Vector2.zero;
             }
 

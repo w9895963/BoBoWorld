@@ -13,7 +13,7 @@ public class InputKeysMono : MonoBehaviour
         InputActionAsset asset = GameObject.FindObjectOfType<PlayerInput>().actions;
 
 
-        EventDataHandler<Vector2> move = EventDataF.CreateGlobalData<Vector2>(gameObject, ConfigureS.DataName.输入指令_移动);
+        EventDataHandler<Vector2> move = EventDataF.GetData<Vector2>(ConfigureS.DataName.输入指令_移动);
         asset.FindAction("Move").performed += (d) =>
         {
             move.Data = d.ReadValueAsVector2();
@@ -29,7 +29,7 @@ public class InputKeysMono : MonoBehaviour
         };
 
 
-        List<EventDataHandler<bool>> list = nameMapList.Select((name) => EventDataF.CreateGlobalData<bool>(gameObject, name.CmDataName)).ToList();
+        List<EventDataHandler<bool>> list = nameMapList.Select((name) => EventDataF.GetData<bool>(name.CmDataName)).ToList();
 
         nameMapList.ForEach((names, i) =>
         {

@@ -43,8 +43,8 @@ namespace EventDataS
             public void UpdateData()
             {
                 //获得事件数据存储字典
-                List<KeyValuePair<string, EventDataCore.EventData>> eventDataGo = EventDataCore.GlobalData.GetDictList();
-                List<KeyValuePair<string, EventDataCore.EventData>> eventDataLo = EventDataCore.EventDataLocalMono.GetLocalDict(gameObject).ToList();
+                List<KeyValuePair<string, EventDataCore.EventData>> eventDataGo = EventDataCore.DataHolder.GetGlobalDict().ToList();
+                List<KeyValuePair<string, EventDataCore.EventData>> eventDataLo = EventDataCore.DataHolder.GetLocalDict(gameObject).ToList();
                 //如果组件存在
 
 

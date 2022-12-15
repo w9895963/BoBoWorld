@@ -28,7 +28,7 @@ public static class ExtensionArray
             source.Add(item);
         }
     }
-   
+
     public static T Add<T>(this List<T> source, Action<T> beforeAction) where T : class, new()
     {
         T t = new T();
@@ -46,6 +46,18 @@ public static class ExtensionArray
         }
 
     }
+    public static void AddNotHas<T>(this List<T> source, IEnumerable<T> newMembers)
+    {
+        foreach (var item in newMembers)
+        {
+            if (!source.Contains(item))
+            {
+                source.Add(item);
+            }
+        }
+
+    }
+
     public static void AddNotHas<T>(this List<T> source, T newMember, System.Predicate<T> match)
     {
         if (!source.Exists(match))
@@ -54,6 +66,18 @@ public static class ExtensionArray
         }
 
     }
+
+    public static void AddNotNull<T>(this List<T> source, T newMember)
+    {
+        if (newMember != null)
+        {
+            source.Add(newMember);
+        }
+    }
+
+
+
+
 
     public static T FIndOrAdd<T>(this List<T> list, T newMember, System.Predicate<T> match)
     {

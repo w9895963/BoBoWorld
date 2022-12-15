@@ -94,7 +94,7 @@ public class ConfigManager : MonoBehaviour
         static void SetData<T>(System.Enum dataName, object dataValue, GameObject gameObject)
         {
 
-            EventDataF.GetData<T>(gameObject, dataName).Data = (T)dataValue;
+            EventDataF.GetData<T>( dataName,gameObject).Data = (T)dataValue;
         }
     }
 

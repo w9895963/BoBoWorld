@@ -460,12 +460,12 @@ namespace ConfigureS
             //如果导入方式为预设名
             else if (importData.导入方式 == ImportData.ImportType.从预设数据导入)
             {
-                dataHandler = EventDataF.GetData<T>(gameObject, importData.预设名);
+                dataHandler = EventDataF.GetData<T>( importData.预设名,gameObject);
             }
             //如果导入方式为自定义名
             else if (importData.导入方式 == ImportData.ImportType.从自定义数据导入)
             {
-                dataHandler = EventDataF.GetData<T>(gameObject, importData.自定义名);
+                dataHandler = EventDataF.GetData<T>( importData.自定义名,gameObject);
             }
         }
 

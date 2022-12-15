@@ -5,161 +5,29 @@ using UnityEngine;
 
 namespace EventDataS
 {
-    //*公用方法需要的类:EventDataHandler
-    public class EventDataHandler
-    {
-
-        public EventData eventData;
-
-        //属性：数据
-        public System.Object Data
-        {
-            get => eventData.GetData();
-        }
-
-
-
-
-        //属性：获得数据判断方法，数据更新
-        public (EventDataCore.EventData data, Func<bool> check) OnUpdate => (eventData, null);
-
-        //属性：获得数据判断方法，数据为真
-        public (EventDataCore.EventData data, Func<bool> check) OnTrue => (eventData, () => { return Data.Equals(true); }
-        );
-        //属性：获得数据判断方法，数据为假
-        public (EventDataCore.EventData data, Func<bool> check) OnFalse => (eventData, () => { return Data.Equals(false); }
-        );
-        //方法：获得数据判断方法，自定义判断
-        public (EventDataCore.EventData data, Func<bool> check) OnCustom(Func<bool> check)
-        {
-            return (eventData, check);
-        }
-
-    }
-
-    //类型:数据操作器
-    public class EventDataHandler<T> : EventDataHandler
-    {
-        //字段：事件数据
-        private EventData<T> eventDataT;
-
-        public EventDataHandler(EventData<T> eventDataT)
-        {
-            this.eventDataT = eventDataT;
-            this.eventData = eventDataT;
-        }
-
-
-
-        //属性：数据
-        public new T Data
-        {
-            get => eventDataT.GetData();
-            set => eventDataT.SetData(value);
-        }
-
-        //方法：同步数据
-        public (Action Enable, Action Disable) SetDataTo(Action<T> act)
-        {
-            ConditionAction conditionAction = new ConditionAction();
-            conditionAction.action = () => { act(Data); };
-            Action enable = () => eventDataT.conditionActionList.Add(conditionAction);
-            Action disable = () => { eventDataT.conditionActionList.Remove(conditionAction); };
-
-            return (enable, disable);
-        }
-        public void SetDataTo(Action<T> act, ref (Action Enable, Action Disable) enabler)
-        {
-            (Action Enable, Action Disable) enableAction = SetDataTo(act);
-            enabler.Enable += enableAction.Enable;
-            enabler.Disable += enableAction.Disable;
-        }
-
-
-
-
-
-
-
-    }
-
-
-
-
-
-
-
     //*公用方法
     public static class EventDataF
     {
-        //*静态方法：新建数据
 
-        /// <summary>新建全局数据，枚举版本</summary>
-        public static EventDataHandler<T> CreateGlobalData<T>(GameObject gameObject, System.Enum key)
+
+
+
+        ///* <summary>获得数据，根据输入判断全局与否</summary>
+        public static EventDataHandler<T> GetData<T>(string dataName, GameObject gameObject = null)
         {
-            return new EventDataHandler<T>(new EventData<T>(key.ToString(), gameObject, true));
-        }
-
-
-
-
-
-        //*静态方法：获取事件数据
-        private static EventData<T> GetEventData_Core<T>(string key, GameObject gameObject)
-        {
-            EventData<T> eventDataT;
-            //本地
-            Dictionary<string, EventData> loDict = EventDataLocalMono.GetLocalDict(gameObject);
-
-            //尝获取本地数据
-            if (loDict.TryGetValue(key, out EventData eventData))
-            {
-                eventDataT = eventData as EventData<T>;
-                if (eventDataT == null)
-                {
-                    Debug.LogError("数据类型不匹配");
-                }
-            }
-            //新建本地数据
-            else
-            {
-                eventDataT = new EventData<T>(key, gameObject);
-            }
-
-
-
-
-            return eventDataT;
-        }
-        private static EventData GetEventData_Core(string key, GameObject gameObject)
-        {
-            EventData eventData;
-            //本地
-            Dictionary<string, EventData> loDict = EventDataLocalMono.GetLocalDict(gameObject);
-
-            //新建或获取本地数据
-            if (!loDict.TryGetValue(key, out eventData))
-            {
-                eventData = new EventData(key, gameObject);
-            }
-            Debug.Log("获取数据：" + key);
-            Debug.Log("数据类型：" + eventData.GetType());
-            return eventData;
-        }
-
-
-        /// <summary>获得数据，先局部后全局数据，字符串版本</summary>
-        public static EventDataHandler<T> GetData<T>(GameObject gameObject, string dataName)
-        {
-            EventData<T> eventData = GetEventData_Core<T>(dataName, gameObject);
+            EventData<T> eventData = EventDataCoreF.GetEventData(dataName, typeof(T), gameObject) as EventData<T>;
             EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventData);
             return dataOperator;
         }
-        /// <summary>获得数据，先局部后全局数据，枚举版本</summary>
-        public static EventDataHandler<T> GetData<T>(GameObject gameObject, System.Enum dataName)
+        /// <summary>获得数据，根据输入判断全局与否，枚举版本</summary>
+        public static EventDataHandler<T> GetData<T>(System.Enum dataName, GameObject gameObject = null)
         {
-            return GetData<T>(gameObject, dataName.ToString());
+            EventData<T> eventData = EventDataCoreF.GetEventData(dataName.ToString(), typeof(T), gameObject) as EventData<T>;
+            EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventData);
+            return dataOperator;
         }
+
+
 
 
 
@@ -171,12 +39,16 @@ namespace EventDataS
         //方法：设置数据，物体数据，字符串版本
         public static void SetData_local<T>(GameObject gameObject, string name, T data)
         {
-            EventData<T> eventDataT = GetEventData_Core<T>(name, gameObject);
+            EventData<T> eventDataT = EventDataCoreF.GetEventData(name, typeof(T), gameObject) as EventData<T>;
             eventDataT.SetData(data);
         }
         //方法：设置数据，物体数据
         public static void SetData_local<T>(GameObject gameObject, System.Enum name, T data)
         => SetData_local<T>(gameObject, name.GetFullName(), data);
+
+
+
+
 
 
 
@@ -212,9 +84,14 @@ namespace EventDataS
 
 
 
-        /// <summary> 创建数据条件,返回启用器 </summary>
+
+
+
+
+        /// *<summary> 创建数据条件,返回启用器 </summary>
         private static (Action Enable, Action Disable) OnDataConditionCore(Action action, Action actionOnFail, (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
         {
+            Debug.Log("创建条件");
             ConditionAction conditionAction = new ConditionAction();
             conditionAction.action = action;
             conditionAction.actionOnFail = actionOnFail;
@@ -272,6 +149,15 @@ namespace EventDataS
             (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, null, conditionChecks.ToArray());
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
+        }
+
+
+
+
+        /// <summary> 创建数据条件,返回启用器 </summary>
+        public static (Action Enable, Action Disable) GetLocalDict(Action action, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        {
+            return OnDataConditionCore(action, null, conditionChecks);
         }
 
 

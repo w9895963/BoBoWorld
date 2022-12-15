@@ -46,4 +46,26 @@ public static class DictionaryExtension
         }
 
     }
+
+    /// *<summary>添加并返回被覆盖的,返回是否替换成功</summary>
+    public static bool AddAndReplace<K, V>(this Dictionary<K, V> dict, K key, V value, out V oldValue)
+    {
+        bool isExist = dict.ContainsKey(key);
+        //如果存在
+        if (isExist)
+        {
+            //如果不同,则替换
+            if (dict[key].Equals(value) == false)
+            {
+                oldValue = dict[key];
+                dict[key] = value;
+                return true;
+            }
+        }
+        dict[key] = value;
+        oldValue = default;
+        return false;
+
+    }
+
 }

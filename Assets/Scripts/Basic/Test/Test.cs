@@ -26,7 +26,8 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        new TestClass2();
+        string text = typeof(int).Name;
+        Debug.Log(text);
     }
     public void TestMethod2(ref Vector2 obj)
     {
@@ -34,21 +35,7 @@ public class Test : MonoBehaviour
         type.Name.Log();
 
     }
-    public class TestClass
-    {
-        public TestClass()
-        {
-            Debug.Log("TestClass");
-        }
-    }
 
-    public class TestClass2:TestClass
-    {
-        public TestClass2()
-        {
-            Debug.Log("TestClass2");
-        }
-    }
 
 
 

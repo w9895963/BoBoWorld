@@ -43,9 +43,9 @@ public class PlayerCharacter_Manager : MonoBehaviour
         //获得刚体
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         //获得地面法线
-        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData<Vector2>(gameObject, EventDataName.PlayerObject.地面法线);
+        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData<Vector2>( EventDataName.PlayerObject.地面法线,gameObject);
         //获得是否站在地面上
-        EventDataHandler<bool> onGroundH = EventDataF.GetData<bool>(gameObject, EventDataName.PlayerObject.已站在地面上);
+        EventDataHandler<bool> onGroundH = EventDataF.GetData<bool>( EventDataName.PlayerObject.已站在地面上,gameObject);
 
 
         Enabler.Enable += () =>
@@ -87,16 +87,16 @@ public class PlayerCharacter_Manager : MonoBehaviour
         //获得刚体
         Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
         //获得移动输入
-        EventDataHandler<Vector2> moveInputH = EventDataF.GetData<Vector2>(gameObject, EventDataName.Input.移动);
+        EventDataHandler<Vector2> moveInputH = EventDataF.GetData<Vector2>( EventDataName.Input.移动,gameObject);
         //获得地面法线
-        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData<Vector2>(gameObject, EventDataName.PlayerObject.地面法线);
+        EventDataHandler<Vector2> groundNormalH = EventDataF.GetData<Vector2>( EventDataName.PlayerObject.地面法线,gameObject);
         //获得行走速度
-        EventDataHandler<float> speed = EventDataF.GetData<float>(gameObject, EventDataName.PlayerConfig.移动速度);
+        EventDataHandler<float> speed = EventDataF.GetData<float>( EventDataName.PlayerConfig.移动速度,gameObject);
         //获得最大力
-        EventDataHandler<float> maxForceH = EventDataF.GetData<float>(gameObject, EventDataName.PlayerConfig.移动最大施力);
+        EventDataHandler<float> maxForceH = EventDataF.GetData<float>( EventDataName.PlayerConfig.移动最大施力,gameObject);
 
         //创建施力数据
-        EventDataHandler<Vector2> moveForceH = EventDataF.GetData<Vector2>(gameObject, EventDataName.PlayerObject.移动施力);
+        EventDataHandler<Vector2> moveForceH = EventDataF.GetData<Vector2>( EventDataName.PlayerObject.移动施力,gameObject);
 
 
         //*计算移动施力
