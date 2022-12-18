@@ -34,7 +34,12 @@ public class Test : MonoBehaviour
         Type type = obj.GetType();
         type.Name.Log();
 
+
+
     }
+
+
+  
 
 
 

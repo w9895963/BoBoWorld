@@ -78,6 +78,8 @@ namespace EventDataS
             public T data;
             public override Func<System.Object> DataGetter => () => { return data; };
 
+            
+
 
             public EventData(string key, GameObject gameObject = null) : base(key, gameObject)
             {

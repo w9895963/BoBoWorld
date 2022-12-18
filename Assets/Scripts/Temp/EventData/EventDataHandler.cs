@@ -56,22 +56,8 @@ namespace EventDataS
             set => eventDataT.SetData(value);
         }
 
-        //方法：同步数据
-        public (Action Enable, Action Disable) SetDataTo(Action<T> act)
-        {
-            ConditionAction conditionAction = new ConditionAction();
-            conditionAction.action = () => { act(Data); };
-            Action enable = () => eventDataT.conditionActionList.Add(conditionAction);
-            Action disable = () => { eventDataT.conditionActionList.Remove(conditionAction); };
-
-            return (enable, disable);
-        }
-        public void SetDataTo(Action<T> act, ref (Action Enable, Action Disable) enabler)
-        {
-            (Action Enable, Action Disable) enableAction = SetDataTo(act);
-            enabler.Enable += enableAction.Enable;
-            enabler.Disable += enableAction.Disable;
-        }
+  
+  
 
 
 
