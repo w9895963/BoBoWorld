@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using EventDataS.Core;
+using EventData.Core;
 using NaughtyAttributes;
 using UnityEngine;
 
-namespace EventDataS
+namespace EventData
 {
     //只在编辑器下运行
 
@@ -59,7 +59,7 @@ namespace EventDataS
 
             //方法：往数据列表中添加数据
 
-            private void AddData(List<DataItem> ObjectData,  List<KeyValuePair<string, Core.EventData>> eventDataDict)
+            private void AddData(List<DataItem> ObjectData, List<KeyValuePair<string, Core.EventData>> eventDataDict)
             {
                 //空则退出
                 if (eventDataDict == null || eventDataDict.Count == 0)
@@ -99,7 +99,7 @@ namespace EventDataS
                     conditionAction.conditionList.Add(() => true);
                     conditionAction.action = () =>
                     {
-                        dataItem.数据 = dataItem.eventData.GetData().ToString();
+                        dataItem.数据 = dataItem.eventData.GetData()?.ToString();
                         dataItem.name = $"{dataItem.shortName}:{dataItem.数据}";
                     };
                     dataItem.eventData.conditionActionList.Add(conditionAction);
@@ -217,11 +217,11 @@ namespace EventDataS
                     //去掉最后一个逗号
                     message = message.Substring(0, message.Length - 1);
                 }
-                else
+                else if (v != null)
                 {
-                    //添加数据
                     message += v.ToString();
                 }
+
                 return message;
             }
 

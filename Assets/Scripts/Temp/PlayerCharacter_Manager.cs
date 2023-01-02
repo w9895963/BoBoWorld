@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using EventDataS;
+using EventData;
 using UnityEngine;
 
 
@@ -100,7 +100,7 @@ public class PlayerCharacter_Manager : MonoBehaviour
 
 
         //*计算移动施力
-        var list = new List<(EventDataS.Core.EventData, Func<bool>)>();
+        var list = new List<(EventData.Core.EventData, Func<bool>)>();
         list.Add(moveInputH.OnUpdate, groundNormalH.OnUpdate, speed.OnUpdate, maxForceH.OnUpdate);
         EventDataF.OnDataCondition(CalculateMoveForce, null, ref Enabler, list);
         //计算移动施力

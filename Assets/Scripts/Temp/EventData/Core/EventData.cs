@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace EventDataS
+namespace EventData
 {
     namespace Core
     {
@@ -18,15 +18,22 @@ namespace EventDataS
             public List<ConditionAction> conditionActionList = new List<ConditionAction>();
             //所有本地字典
             private GameObject gameObject;
+            private System.Type type;
+
+            public GameObject GameObject { get => gameObject; }
+            public System.Type Type { get => type; }
+
+
             public bool IsGlobal { get => gameObject == null; }
             public string Key { get => stringKey; }
-            public GameObject GameObject { get => gameObject; }
+
             public virtual Func<object> DataGetter { get => null; }
 
-            public EventData(string stringKey, GameObject gameObject = null)
+            public EventData(string stringKey, GameObject gameObject = null, System.Type type = null)
             {
                 this.stringKey = stringKey;
                 this.gameObject = gameObject;
+                this.type = type;
             }
 
 
@@ -45,7 +52,7 @@ namespace EventDataS
 
 
             //方法：获得数据
-            public  System.Object GetData()
+            public System.Object GetData()
             {
                 if (DataGetter == null)
                 {
@@ -66,7 +73,7 @@ namespace EventDataS
                 });
             }
 
-        
+
         }
         //类：带参数的事件数据
         public class EventData<T> : EventData
@@ -75,11 +82,11 @@ namespace EventDataS
             public override Func<System.Object> DataGetter => () => { return data; };
 
 
-            public EventData(string key, GameObject gameObject = null) : base(key, gameObject)
+            public EventData(string key, GameObject gameObject = null) : base(key, gameObject, typeof(T))
             {
             }
 
-   
+
 
 
 
@@ -88,14 +95,24 @@ namespace EventDataS
             {
                 // Debug.Log("SetData" + data.ToString());//调试
                 //如果输入参数与data相同则不执行
-                if (data == null && this.data == null)
+                
+
+
+                if (data == null)
+                {
+                    if (this.data == null)
+                    {
+                        return;
+                    }
+                }
+                else if (data.Equals(this.data))
                 {
                     return;
                 }
-                if (data.Equals(this.data))
-                {
-                    return;
-                }
+
+
+
+
                 this.data = data;
 
                 //更新数据
@@ -110,8 +127,8 @@ namespace EventDataS
                 return data;
             }
 
-        
-        
+
+
 
 
 

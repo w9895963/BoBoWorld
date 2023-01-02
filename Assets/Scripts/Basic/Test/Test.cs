@@ -26,16 +26,22 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        string text = typeof(int).Name;
-        Debug.Log(text);
+        TestClass<Action<string>> testClass = new TestClass<Action<string>>();
+        testClass.obj = (s) => { Debug.Log(1); };
+        var obj = testClass.obj;
+        obj+= (s) => { Debug.Log(s); };
+        testClass.obj = default;
+        testClass.obj.Invoke("123");
     }
     public void TestMethod2(ref Vector2 obj)
     {
         Type type = obj.GetType();
         type.Name.Log();
+    }
 
-
-
+    public class TestClass<T>
+    {
+        public T obj;
     }
 
 

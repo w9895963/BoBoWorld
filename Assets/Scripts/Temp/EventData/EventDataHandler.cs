@@ -1,13 +1,18 @@
 using System;
-using EventDataS.Core;
+using EventData.Core;
 
-namespace EventDataS
+namespace EventData
 {
     //*公用方法需要的类:EventDataHandler
     public class EventDataHandler
     {
 
-        public EventData eventData;
+        private Core.EventData eventData;
+
+        public EventDataHandler(Core.EventData eventData)
+        {
+            this.eventData = eventData;
+        }
 
         //属性：数据
         public System.Object Data
@@ -41,10 +46,10 @@ namespace EventDataS
         //字段：事件数据
         private EventData<T> eventDataT;
 
-        public EventDataHandler(EventData<T> eventDataT)
+        public EventDataHandler(EventData<T> eventDataT):base(eventDataT)
         {
             this.eventDataT = eventDataT;
-            this.eventData = eventDataT;
+            
         }
 
 

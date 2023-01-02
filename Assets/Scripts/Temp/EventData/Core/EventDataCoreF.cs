@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using EventDataS.Core;
+using EventData.Core;
 using UnityEngine;
 
-namespace EventDataS
+namespace EventData
 {
     namespace Core
     {
@@ -16,36 +16,55 @@ namespace EventDataS
             public static EventData GetEventData(string key, System.Type type = null, GameObject gameObject = null)
             {
                 //~获取数据
-                EventData eventData = DataHolder.GetEventData(key, gameObject);
-                //~存在,且类型相同,则返回
-                if (eventData != null && (type == null || eventData.GetType() == type))
-                    return eventData;
-
-                //~新建并添加
-                eventData = CreateEventData(key, type, gameObject);
-                EventData replacedData = DataHolder.AddAndReplaceData(key, eventData, gameObject);
-                //~替换老数据的事件数据
-                //~将所有替换数据
-                if (replacedData != null)
+                EventData eventData;
+                //如果是本地数据
+                if (gameObject != null)
                 {
-                    eventData.conditionActionList = replacedData.conditionActionList;
-                    ReplaceEventDataInHandle(eventData, replacedData);
+                    //获取全局数据
+                    eventData = DataHolder.GetEventData(key);
+                    //如果不存在则获取本地数据
+                    if (eventData == null)
+                    {
+                        eventData = DataHolder.GetEventData(key, gameObject);
+                    }
+                }
+                else
+                {
+                    //获取全局数据
+                    eventData = DataHolder.GetEventData(key);
                 }
 
 
+                //~存在则返回,不存在则新建
+                //如果存在
+                if (eventData != null)
+                {
+                    //如果类型不同
+                    if (type != null && eventData.Type != type)
+                    {
+                        Debug.LogError($"({eventData.Type}) EventDataCoreF.GetEventData: " + key + " is not " + type.Name);
+                        return null;
+                    }
+                    else
+                    {
+                        return eventData;
+                    }
+                }
+                else
+                {
 
+                    //新建
+                    eventData = CreateEventData(key, type, gameObject);
+                    DataHolder.Add(key, eventData, gameObject);
+                    return eventData;
 
+                }
 
-
-
-
-
-
-                return eventData;
             }
 
-            /// *<summary>新建事件数据</summary>
-            public static EventData CreateEventData(string key, System.Type type = null, GameObject gameObject = null)
+
+            /// <summary>新建事件数据</summary>
+            private static EventData CreateEventData(string key, System.Type type = null, GameObject gameObject = null)
             {
                 EventData eventData;
 
@@ -53,7 +72,7 @@ namespace EventDataS
                 if (type == null)
                 {
                     //新建
-                    eventData = new EventData(key, gameObject);
+                    eventData = new EventData(key, gameObject, type);
                 }
                 else
                 {
@@ -138,6 +157,7 @@ namespace EventDataS
                 if (eventData == null)
                 {
                     //用反射来新建EventData
+                    Debug.Log($"({type}) EventDataCoreF.CreateEventData: " + key + " is not " + type.Name);
                     //获取EventData的构造函数
                     ConstructorInfo constructor = type.GetConstructor(new Type[] { typeof(string), typeof(GameObject) });
                     //实例化
@@ -147,34 +167,100 @@ namespace EventDataS
                 return eventData;
             }
 
-            /// *<summary>字典:事件数据:事件数据处理器</summary>
-            private static Dictionary<EventData, List<EventDataHandler>> EventData_HandlerDic = new Dictionary<EventData, List<EventDataHandler>>();
-
-            /// *<summary>将EventDataHandler的引用更新,添加到字典</summary>
-            public static void ReplaceEventDataInHandle(EventData eventDataTo, EventData eventDataFrom)
+            /// *<summary>获取事件数据,不存在则添加,使用类型参数</summary>
+            public static EventData<T> GetEventData<T>(string key, GameObject gameObject = null)
             {
-                //如果字典中包含该事件数据
-                if (EventData_HandlerDic.ContainsKey(eventDataFrom))
+                //~获取数据
+                EventData eventData;
+                //如果是本地数据
+                if (gameObject != null)
                 {
-                    //获取该事件数据的处理器
-                    List<EventDataHandler> handlers = EventData_HandlerDic[eventDataFrom];
-                    //遍历处理器
-                    for (int i = 0; i < handlers.Count; i++)
+                    //获取全局数据
+                    eventData = DataHolder.GetEventData(key);
+                    //如果不存在则获取本地数据
+                    if (eventData == null)
                     {
-                        //将EventDataHandler的引用更新
-                        handlers[i].eventData = eventDataTo;
+                        eventData = DataHolder.GetEventData(key, gameObject);
                     }
-                    //添加到字典
-                    EventData_HandlerDic.Add(eventDataTo, handlers);
-                    //移除
-                    EventData_HandlerDic.Remove(eventDataFrom);
+                }
+                else
+                {
+                    //获取全局数据
+                    eventData = DataHolder.GetEventData(key);
+                }
+
+
+                //~存在则返回,不存在则新建
+                //如果存在
+                if (eventData != null)
+                {
+                    //如果类型不同
+                    if (eventData.Type != typeof(T))
+                    {
+                        Debug.LogError($"({eventData.Type}) EventDataCoreF.GetEventData: " + key + " is not " + typeof(T));
+                        return null;
+                    }
+                    else
+                    {
+                        return eventData as EventData<T>;
+                    }
+                }
+                else
+                {
+
+                    //新建
+                    eventData = new EventData<T>(key, gameObject);
+                    DataHolder.Add(key, eventData, gameObject);
+                    return eventData as EventData<T>;
+
                 }
             }
 
 
 
 
+
+
+
+            /// *<summary> 创建数据条件,返回启用器 </summary>
+            public static (Action Enable, Action Disable) OnDataConditionCore(Action action, Action actionOnFail, (Core.EventData data, Func<bool> check)[] conditionChecks)
+            {
+                ConditionAction conditionAction = new ConditionAction();
+                conditionAction.action = action;
+                conditionAction.actionOnFail = actionOnFail;
+                conditionChecks.ForEach(conditionCheck =>
+                {
+                    //如果check存在则添加到conditionList
+                    conditionAction.conditionList.AddNotNull(conditionCheck.check);
+                });
+
+
+
+                Action enable = () =>
+                {
+                    conditionChecks.ForEach(conditionCheck =>
+                    {
+                        conditionCheck.data.conditionActionList.Add(conditionAction);
+                    });
+                };
+                Action disable = () =>
+                {
+                    conditionChecks.ForEach(conditionCheck =>
+                    {
+                        conditionCheck.data.conditionActionList.Remove(conditionAction);
+                    });
+                };
+                return (enable, disable);
+            }
+
+
+
         }
+
+
+
+
+
     }
 
 
