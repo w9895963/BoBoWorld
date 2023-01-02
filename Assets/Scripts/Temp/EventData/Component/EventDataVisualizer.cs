@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using EventDataS.EventDataCore;
+using EventDataS.Core;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -43,8 +43,8 @@ namespace EventDataS
             public void UpdateData()
             {
                 //获得事件数据存储字典
-                List<KeyValuePair<string, EventDataCore.EventData>> eventDataGo = EventDataCore.DataHolder.GetGlobalDict().ToList();
-                List<KeyValuePair<string, EventDataCore.EventData>> eventDataLo = EventDataCore.DataHolder.GetLocalDict(gameObject).ToList();
+                List<KeyValuePair<string, Core.EventData>> eventDataGo = Core.DataHolder.GetGlobalDict().ToList();
+                List<KeyValuePair<string, Core.EventData>> eventDataLo = Core.DataHolder.GetLocalDict(gameObject).ToList();
                 //如果组件存在
 
 
@@ -59,7 +59,7 @@ namespace EventDataS
 
             //方法：往数据列表中添加数据
 
-            private void AddData(List<DataItem> ObjectData,  List<KeyValuePair<string, EventDataCore.EventData>> eventDataDict)
+            private void AddData(List<DataItem> ObjectData,  List<KeyValuePair<string, Core.EventData>> eventDataDict)
             {
                 //空则退出
                 if (eventDataDict == null || eventDataDict.Count == 0)
@@ -67,7 +67,7 @@ namespace EventDataS
                     return;
                 }
                 //将所有值和索引转换成列表
-                List<KeyValuePair<string, EventDataCore.EventData>> eventDataList = eventDataDict;
+                List<KeyValuePair<string, Core.EventData>> eventDataList = eventDataDict;
                 //排序
                 eventDataList.Sort((a, b) => { return a.Key.GetType().FullName.CompareTo(b.Key.GetType().FullName); });
                 //转化成DataItem列表
@@ -76,7 +76,7 @@ namespace EventDataS
 
                 //*往ObjectData中添加不重复的数据
                 // 获得ObjectData中所有eventData的列表
-                List<EventDataCore.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
+                List<Core.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
                 ObjectData.AddRange(ObjectDataListAll.Where(dataItem => !eventDataList_ObjectData.Contains(dataItem.eventData)));
             }
 
@@ -95,7 +95,7 @@ namespace EventDataS
                     //标记已经添加事件
                     dataItem.isAddedEvent = true;
                     //添加事件
-                    EventDataCore.ConditionAction conditionAction = new EventDataCore.ConditionAction();
+                    Core.ConditionAction conditionAction = new Core.ConditionAction();
                     conditionAction.conditionList.Add(() => true);
                     conditionAction.action = () =>
                     {
@@ -174,7 +174,7 @@ namespace EventDataS
             public string 数据;
             public bool 打印 = false;
 
-            public EventDataCore.EventData eventData;
+            public Core.EventData eventData;
             //隐藏显示
             [HideInInspector]
             public string shortName;
@@ -184,7 +184,7 @@ namespace EventDataS
 
 
             //构造函数
-            public DataItem(EventDataCore.EventData eventData)
+            public DataItem(Core.EventData eventData)
             {
                 this.eventData = eventData;
                 全名 = eventData.Key;

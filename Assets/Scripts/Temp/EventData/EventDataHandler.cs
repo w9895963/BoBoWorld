@@ -1,5 +1,5 @@
 using System;
-using EventDataS.EventDataCore;
+using EventDataS.Core;
 
 namespace EventDataS
 {
@@ -19,16 +19,16 @@ namespace EventDataS
 
 
         //属性：获得数据判断方法，数据更新
-        public (EventDataCore.EventData data, Func<bool> check) OnUpdate => (eventData, null);
+        public (Core.EventData data, Func<bool> check) OnUpdate => (eventData, null);
 
         //属性：获得数据判断方法，数据为真
-        public (EventDataCore.EventData data, Func<bool> check) OnTrue => (eventData, () => { return Data.Equals(true); }
+        public (Core.EventData data, Func<bool> check) OnTrue => (eventData, () => { return Data.Equals(true); }
         );
         //属性：获得数据判断方法，数据为假
-        public (EventDataCore.EventData data, Func<bool> check) OnFalse => (eventData, () => { return Data.Equals(false); }
+        public (Core.EventData data, Func<bool> check) OnFalse => (eventData, () => { return Data.Equals(false); }
         );
         //方法：获得数据判断方法，自定义判断
-        public (EventDataCore.EventData data, Func<bool> check) OnCustom(Func<bool> check)
+        public (Core.EventData data, Func<bool> check) OnCustom(Func<bool> check)
         {
             return (eventData, check);
         }

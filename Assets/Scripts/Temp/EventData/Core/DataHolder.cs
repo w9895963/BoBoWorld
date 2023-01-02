@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 namespace EventDataS
 {
-    namespace EventDataCore
+    namespace Core
     {
         public static class DataHolder
         {

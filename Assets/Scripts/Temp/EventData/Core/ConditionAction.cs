@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace EventDataS
 {
-    namespace EventDataCore
+    namespace Core
     {
         //条件操作
         public class ConditionAction

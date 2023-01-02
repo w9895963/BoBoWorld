@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace EventDataS
 {
-    namespace EventDataCore
+    namespace Core
     {
 
 
@@ -66,11 +66,7 @@ namespace EventDataS
                 });
             }
 
-            //方法：合并数据条件
-            public void MergeDataCondition(EventData localData)
-            {
-                conditionActionList.AddNotHas(localData.conditionActionList);
-            }
+        
         }
         //类：带参数的事件数据
         public class EventData<T> : EventData
@@ -78,30 +74,12 @@ namespace EventDataS
             public T data;
             public override Func<System.Object> DataGetter => () => { return data; };
 
-            
-
 
             public EventData(string key, GameObject gameObject = null) : base(key, gameObject)
             {
             }
 
-            //构造函数
-            public EventData(string key, GameObject gameObject, bool isGlobal = false, List<ConditionAction> conditionActionList = null) : base(key, gameObject)
-            {
-                if (conditionActionList != null)
-                    this.conditionActionList = conditionActionList;
-                //获得字典
-                var localDict = DataHolder.GetLocalDict(gameObject);
-                //添加
-                localDict[key] = this;
-                //如果是全局数据
-                if (isGlobal)
-                {
-                    //添加到全局字典
-                    GlobalDataHolder.AddData(this);
-                }
-
-            }
+   
 
 
 
@@ -132,19 +110,8 @@ namespace EventDataS
                 return data;
             }
 
-            //方法：数据是否相同
-            public bool IsDataSame(T data)
-            {
-                if (data == null && this.data == null)
-                {
-                    return true;
-                }
-                if (data.Equals(this.data))
-                {
-                    return true;
-                }
-                return false;
-            }
+        
+        
 
 
 

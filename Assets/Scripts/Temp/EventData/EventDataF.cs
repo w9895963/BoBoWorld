@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using EventDataS.EventDataCore;
+using EventDataS.Core;
 using UnityEngine;
 
 namespace EventDataS
@@ -89,7 +89,7 @@ namespace EventDataS
 
 
         /// *<summary> 创建数据条件,返回启用器 </summary>
-        private static (Action Enable, Action Disable) OnDataConditionCore(Action action, Action actionOnFail, (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        private static (Action Enable, Action Disable) OnDataConditionCore(Action action, Action actionOnFail, (Core.EventData data, Func<bool> check)[] conditionChecks)
         {
             Debug.Log("创建条件");
             ConditionAction conditionAction = new ConditionAction();
@@ -119,32 +119,32 @@ namespace EventDataS
         }
 
         ///<summary> 创建数据条件,返回启用器</summary>
-        public static (Action Enable, Action Disable) OnDataCondition(Action action, Action actionOnFail, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        public static (Action Enable, Action Disable) OnDataCondition(Action action, Action actionOnFail, params (Core.EventData data, Func<bool> check)[] conditionChecks)
         {
             return OnDataConditionCore(action, actionOnFail, conditionChecks);
         }
 
-        public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, params (Core.EventData data, Func<bool> check)[] conditionChecks)
         {
             (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, actionOnFail, conditionChecks);
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
 
-        public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, List<(EventDataCore.EventData data, Func<bool> check)> conditionChecks)
+        public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, List<(Core.EventData data, Func<bool> check)> conditionChecks)
         {
             (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, actionOnFail, conditionChecks.ToArray());
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
         //单参数版本
-        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (Core.EventData data, Func<bool> check)[] conditionChecks)
         {
             (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, null, conditionChecks);
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
-        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, List<(EventDataCore.EventData data, Func<bool> check)> conditionChecks)
+        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, List<(Core.EventData data, Func<bool> check)> conditionChecks)
         {
             (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, null, conditionChecks.ToArray());
             enabler.Enable += enableAction.Enable;
@@ -155,7 +155,7 @@ namespace EventDataS
 
 
         /// <summary> 创建数据条件,返回启用器 </summary>
-        public static (Action Enable, Action Disable) GetLocalDict(Action action, params (EventDataCore.EventData data, Func<bool> check)[] conditionChecks)
+        public static (Action Enable, Action Disable) GetLocalDict(Action action, params (Core.EventData data, Func<bool> check)[] conditionChecks)
         {
             return OnDataConditionCore(action, null, conditionChecks);
         }
