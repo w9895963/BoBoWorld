@@ -79,11 +79,7 @@ namespace EventData
 
 
 
-        /// <summary> 创建数据条件,返回启用器 </summary>
-        public static (Action Enable, Action Disable) GetLocalDict(Action action, params (Core.EventData data, Func<bool> check)[] conditionChecks)
-        {
-            return OnDataConditionCore(action, null, conditionChecks);
-        }
+    
 
 
     }

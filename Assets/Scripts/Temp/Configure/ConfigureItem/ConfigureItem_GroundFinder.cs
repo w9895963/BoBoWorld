@@ -22,7 +22,10 @@ namespace Configure
             //地表最大角度
             public float 地表最大角度 = 10;
 
-            public List<Tag> 地表碰撞体标签 = new List<Tag>(1);
+            [Label("地表碰撞体标签")]
+            [Tag]
+            public List<string> collisionTags = new List<string>();
+
             //脚本说明
             [Label("其他信息")]
             public ShowOnlyText 脚本说明_ = new ShowOnlyText("输入: 无", "输出: 地面法线, 站立地面");
@@ -46,14 +49,10 @@ namespace Configure
                 (Action Enable, Action Disable) enabler = (null, null);
 
                 //碰撞标签
-                List<string> collisionTags = 地表碰撞体标签.Select(tag => tag.tag).ToList();
 
                 List<(GameObject, ContactPoint2D[])> groundObjects = new List<(GameObject, ContactPoint2D[])>();
 
 
-                // var collisionStart = EventDataF.GetData<Action<Collision2D>>(DataName.Unity事件_碰撞开始, gameObject);
-                // var collisionStay = EventDataF.GetData<Action<Collision2D>>(DataName.Unity事件_碰撞持续, gameObject);
-                // var collisionEnd = EventDataF.GetData<Action<Collision2D>>(DataName.Unity事件_碰撞结束, gameObject);
 
                 //重力方向
                 var gravityD = EventDataF.GetData<Vector2>(DataName.重力向量, gameObject);
@@ -72,17 +71,6 @@ namespace Configure
                     BasicEvent.OnCollision2D_Stay.Add(gameObject, OnCollisionStay2D);
                     BasicEvent.OnCollision2D_Exit.Add(gameObject, OnCollisionExit2D);
 
-                    // Action<Collision2D> collisionStartAct = collisionStart.Data;
-                    // collisionStartAct += OnCollisionEnter2D;
-                    // collisionStart.Data = collisionStartAct;
-
-                    // Action<Collision2D> collisionStayAct = collisionStay.Data;
-                    // collisionStayAct += OnCollisionStay2D;
-                    // collisionStay.Data = collisionStayAct;
-
-                    // Action<Collision2D> collisionEndAct = collisionEnd.Data;
-                    // collisionEndAct += OnCollisionExit2D;
-                    // collisionEnd.Data = collisionEndAct;
                 };
 
                 enabler.Disable = () =>
@@ -90,17 +78,6 @@ namespace Configure
                     BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
                     BasicEvent.OnCollision2D_Stay.Remove(gameObject, OnCollisionStay2D);
                     BasicEvent.OnCollision2D_Exit.Remove(gameObject, OnCollisionExit2D);
-                    // Action<Collision2D> collisionStartAct = collisionStart.Data;
-                    // collisionStartAct -= OnCollisionEnter2D;
-                    // collisionStart.Data = collisionStartAct;
-
-                    // Action<Collision2D> collisionStayAct = collisionStay.Data;
-                    // collisionStayAct -= OnCollisionStay2D;
-                    // collisionStay.Data = collisionStayAct;
-
-                    // Action<Collision2D> collisionEndAct = collisionEnd.Data;
-                    // collisionEndAct -= OnCollisionExit2D;
-                    // collisionEnd.Data = collisionEndAct;
                 };
 
 

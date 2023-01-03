@@ -14,6 +14,7 @@ namespace Configure
     //可脚本化对象
     public class ConfigureItemManager : ScriptableObject
     {
+        // [NaughtyAttributes.ReorderableList]
         [Expandable]
         //配置文件列表
         public List<ConfigureBase> 配置文件 = new List<ConfigureBase>();
