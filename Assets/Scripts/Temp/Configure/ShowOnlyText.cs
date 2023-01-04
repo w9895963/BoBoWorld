@@ -14,12 +14,12 @@ namespace Configure
         [ResizableTextArea]
         public string 脚本说明;
 
-      
+
         public ShowOnlyText(params string[] texts)
         {
             this.脚本说明 = string.Join("\n", texts);
         }
-       
+
 
     }
 

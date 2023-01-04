@@ -37,28 +37,10 @@ namespace EventData
 
 
 
-            //添加上下文菜单
-            [ContextMenu("更新数据")]
-            //*方法：更新数据
-            public void UpdateData()
-            {
-                //获得事件数据存储字典
-                List<KeyValuePair<string, Core.EventData>> eventDataGo = Core.DataHolder.GetGlobalDict().ToList();
-                List<KeyValuePair<string, Core.EventData>> eventDataLo = Core.DataHolder.GetLocalDict(gameObject).ToList();
-                //如果组件存在
 
-
-                AddData(GlobalData, eventDataGo);
-                AddData(ObjectData, eventDataLo);
-
-                AddDataAutoUpdateEvent(GlobalData);
-                AddDataAutoUpdateEvent(ObjectData);
-
-            }
 
 
             //方法：往数据列表中添加数据
-
             private void AddData(List<DataItem> ObjectData, List<KeyValuePair<string, Core.EventData>> eventDataDict)
             {
                 //空则退出
@@ -79,7 +61,6 @@ namespace EventData
                 List<Core.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
                 ObjectData.AddRange(ObjectDataListAll.Where(dataItem => !eventDataList_ObjectData.Contains(dataItem.eventData)));
             }
-
 
             //方法：添加自动更新事件
             private void AddDataAutoUpdateEvent(List<DataItem> ObjectData)
@@ -107,6 +88,30 @@ namespace EventData
                 }
 
             }
+
+
+
+
+
+
+            [Button("更新数据")]
+            //*方法：更新数据
+            public void UpdateData()
+            {
+                //获得事件数据存储字典
+                List<KeyValuePair<string, Core.EventData>> eventDataGo = Core.DataHolder.GetGlobalDict().ToList();
+                List<KeyValuePair<string, Core.EventData>> eventDataLo = Core.DataHolder.GetLocalDict(gameObject).ToList();
+                //如果组件存在
+
+
+                AddData(GlobalData, eventDataGo);
+                AddData(ObjectData, eventDataLo);
+
+                AddDataAutoUpdateEvent(GlobalData);
+                AddDataAutoUpdateEvent(ObjectData);
+
+            }
+
 
 
 

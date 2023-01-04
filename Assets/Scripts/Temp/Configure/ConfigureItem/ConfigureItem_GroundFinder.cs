@@ -19,15 +19,18 @@ namespace Configure
         [CreateAssetMenu(fileName = "地表检测", menuName = "动态配置/地表检测", order = 1)]
         public partial class ConfigureItem_GroundFinder : ConfigureBase
         {
+            [Header("固定参数")]
             //地表最大角度
+            [Tooltip("大于此角度则不视为地面")]
             public float 地表最大角度 = 10;
 
+            [Tooltip("此标签外的物体不被视为地面")]
             [Label("地表碰撞体标签")]
             [Tag]
             public List<string> collisionTags = new List<string>();
 
             //脚本说明
-            [Label("其他信息")]
+            [Label("说明")]
             public ShowOnlyText 脚本说明_ = new ShowOnlyText("输入: 无", "输出: 地面法线, 站立地面");
 
             //必要组件

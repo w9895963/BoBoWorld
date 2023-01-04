@@ -10,17 +10,7 @@ public static class ExtensionArray
 
 
 
-    public static void Add<T>(this List<T> source, int index, T newMember)
-    {
-        if (source.Count <= index)
-        {
-            for (int i = source.Count; i < index + 1; i++)
-            {
-                source.Add(default);
-            }
-        }
-        source[index] = newMember;
-    }
+
     public static void Add<T>(this List<T> source, params T[] newMembers)
     {
         foreach (var item in newMembers)
@@ -29,12 +19,26 @@ public static class ExtensionArray
         }
     }
 
-    public static T Add<T>(this List<T> source, Action<T> beforeAction) where T : class, new()
+
+    /// <summary>添加到列表中的特定位置,如果列表长度不够则填补</summary>
+    public static void AddToIndex<T>(this List<T> source, int index, T addMember, T defaultMember = default)
     {
-        T t = new T();
-        beforeAction(t);
-        source.Add(t);
-        return t;
+        if (source.Count <= index)
+        {
+            for (int i = source.Count; i < index + 1; i++)
+            {
+                source.Add(defaultMember);
+            }
+        }
+        source[index] = addMember;
+    }
+    /// <summary>填充列表直到特定长度</summary>
+    public static void AddTillLength<T>(this List<T> source, int length, T addMember)
+    {
+        while (source.Count < length)
+        {
+            source.Add(addMember);
+        }
     }
 
 

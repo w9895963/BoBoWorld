@@ -20,7 +20,7 @@ namespace EventData
             get => eventData.GetData();
         }
 
-
+      
 
 
         //属性：获得数据判断方法，数据更新

@@ -11,6 +11,8 @@ namespace EventData
         输入指令_跳跃,
         输入指令_冲刺,
 
+        运动速度,
+
 
         重力向量,
         地表法线,
@@ -19,6 +21,8 @@ namespace EventData
 
         行走施力,
         跳跃施力,
+        重力施力,
+        
     }
 
 
@@ -37,6 +41,8 @@ namespace EventData
             {DataName.输入指令_跳跃, typeof(bool)},
             {DataName.输入指令_冲刺, typeof(bool)},
 
+            {DataName.运动速度, typeof(Vector2)},
+
             {DataName.重力向量, typeof(Vector2)},
             {DataName.地表法线, typeof(Vector2)},
             {DataName.站在地面, typeof(bool)},
@@ -44,6 +50,8 @@ namespace EventData
             
             {DataName.行走施力, typeof(Vector2)},
             {DataName.跳跃施力, typeof(Vector2)},
+            {DataName.重力施力, typeof(Vector2)},
+
         };
 
 

@@ -22,7 +22,7 @@ namespace Configure
             //脚本说明
 
             [Label("其他信息")]
-            public ShowOnlyText info = new ShowOnlyText("输入: 输入指令_移动, 地表法线", "输出: 行走施力");
+            public ShowOnlyText info_ = new ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力","输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
 
 
 
@@ -43,8 +43,12 @@ namespace Configure
 
                 //获取数据行走输入
                 EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>(DataName.输入指令_移动);
+                //获取数据运动速度
+                EventDataHandler<Vector2> moveSpeed = EventDataF.GetData<Vector2>(DataName.运动速度, gameObject);
                 //获取数据地表法线
                 EventDataHandler<Vector2> groundNormal = EventDataF.GetData<Vector2>(DataName.地表法线, gameObject);
+                //获取数据当前速度
+                EventDataHandler<Vector2> currentVelocity = EventDataF.GetData<Vector2>(DataName.运动速度, gameObject);
 
                 //获取数据行走施力
                 EventDataHandler<Vector2> moveForce = EventDataF.GetData<Vector2>(DataName.行走施力, gameObject);
@@ -53,7 +57,10 @@ namespace Configure
                 Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
 
                 // enabler = ConfigureF.OnDataCondition(CalculateMoveForce, OnFail,导入参数);
-                enabler = EventDataF.OnDataCondition(CalculateMoveForce, OnFail, moveInput.OnCustom(() => moveInput.Data.x != 0), groundNormal.OnUpdate);
+                enabler = EventDataF.OnDataCondition(CalculateMoveForce, OnFail,
+                moveInput.OnCustom(() => moveInput.Data.x != 0),
+                groundNormal.OnUpdate,
+                moveSpeed.OnUpdate);
 
 
 
@@ -63,7 +70,8 @@ namespace Configure
                 void CalculateMoveForce()
                 {
                     // Debug.Log("计算移动施力");
-                    Vector2 currentVelocity = rigidbody2D.velocity;
+                    Vector2 currentVelocity = moveSpeed.Data;
+                    // Debug.Log("当前速度:" + currentVelocity);
                     float mass = rigidbody2D.mass;
                     Vector2 groundNormalV = groundNormal.Data.magnitude > 0 ? groundNormal.Data.normalized : Vector2.up;
                     float moveInputV = moveInput.Data.x;
@@ -80,6 +88,8 @@ namespace Configure
 
                         //计算期望速度
                         v = direction * speed * moveInputV;
+
+                        // Debug.Log("期望速度:" + v);
 
                         return v;
                     };

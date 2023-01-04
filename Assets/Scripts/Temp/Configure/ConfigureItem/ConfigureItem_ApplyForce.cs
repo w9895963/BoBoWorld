@@ -27,7 +27,7 @@ namespace Configure
             public ShowOnlyText info = new ShowOnlyText("将所选向量数据作为力应用到刚体上");
 
             //必要组件
-            public override List<Type> requiredTypes => new List<Type>() { typeof(ConstantForce2D), typeof(Rigidbody2D) };
+            public override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D) };
 
 
 
@@ -49,30 +49,69 @@ namespace Configure
 
 
                 //获取施力数据列表
-                List<EventDataHandler<Vector2>> forceList = 施力数据列表.Select(x => EventDataF.GetData<Vector2>(x, gameObject)).ToList();
+                List<EventDataHandler<Vector2>> forceDList = 施力数据列表.Select(x => EventDataF.GetData<Vector2>(x, gameObject)).Where(x => x != null).ToList();
 
 
-                //获取施力组件
-                ConstantForce2D constantForce2D = gameObject.GetComponent<ConstantForce2D>();
-
-                enabler = EventDataF.OnDataCondition(CalculateMoveForce, OnFail, forceList.Select(x => x.OnUpdate).ToArray());
-
+                //获取物理组件
+                Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
 
 
 
 
-                //计算移动施力
-                void CalculateMoveForce()
+
+
+                //启动器表
+                List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>(forceDList.Count);
+
+
+
+
+                //力列表
+                List<Vector2> forceList = new List<Vector2>(){Vector2.zero};
+               
+                //递增历遍施力数据列表
+                for (int i = 0; i < forceDList.Count; i++)
                 {
-                    //将施力数据相加
-                    Vector2 force = forceList.Select(x => x.Data).Aggregate((x, y) => x + y);
-                    constantForce2D.force = force;
+                    //获取施力数据
+                    EventDataHandler<Vector2> forceD = forceDList[i];
+
+                    (Action Enable, Action Disable) value = EventDataF.OnDataCondition(() =>
+                    {
+                        //获取施力数据
+                        forceList.AddToIndex(i, forceD.Data);
+                    }, null, forceD.OnUpdate);
+
+                    enablerList.Add(value);
 
                 }
 
-                void OnFail()
+
+
+
+
+                enabler.Enable = () =>
                 {
-                    constantForce2D.force = Vector2.zero;
+                    enablerList.ForEach(x => x.Enable());
+                    BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
+                };
+                enabler.Disable = () =>
+                {
+                    enablerList.ForEach(x => x.Disable());
+                    BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);
+                };
+
+
+
+
+                void FixedUpdate()
+                {
+                    Vector2 force = forceList.Aggregate((x, y) => x + y);
+                    //等于0时不计算
+                    if (force.magnitude == 0)
+                    {
+                        return;
+                    }
+                    rigidbody2D.AddForce(force);
                 }
 
 

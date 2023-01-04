@@ -18,10 +18,16 @@ namespace Configure
         [Expandable]
         //配置文件列表
         public List<ConfigureBase> 配置文件 = new List<ConfigureBase>();
+
+
+
+
     }
 
 
 
+
+   
 
 
 

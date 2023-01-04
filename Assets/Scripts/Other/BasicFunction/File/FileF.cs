@@ -119,7 +119,7 @@ public static class FileF
         }
         else
         {
-            list.Add(index, newLine);
+            list.AddToIndex(index, newLine);
         }
 
 
