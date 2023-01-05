@@ -95,21 +95,10 @@ namespace EventData
             {
                 // Debug.Log("SetData" + data.ToString());//调试
                 //如果输入参数与data相同则不执行
-                
-
-
-                if (data == null)
-                {
-                    if (this.data == null)
-                    {
-                        return;
-                    }
-                }
-                else if (data.Equals(this.data))
+                if (System.Object.Equals(this.data, data))
                 {
                     return;
                 }
-
 
 
 

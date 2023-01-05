@@ -26,12 +26,8 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        TestClass<Action<string>> testClass = new TestClass<Action<string>>();
-        testClass.obj = (s) => { Debug.Log(1); };
-        var obj = testClass.obj;
-        obj+= (s) => { Debug.Log(s); };
-        testClass.obj = default;
-        testClass.obj.Invoke("123");
+        System.Object.Equals(null, null).Log();
+
     }
     public void TestMethod2(ref Vector2 obj)
     {
@@ -39,13 +35,10 @@ public class Test : MonoBehaviour
         type.Name.Log();
     }
 
-    public class TestClass<T>
-    {
-        public T obj;
-    }
 
 
-  
+
+
 
 
 
