@@ -20,12 +20,12 @@ namespace EventData
         {
 #if UNITY_EDITOR
             //
-            [Label("全局数据")]
+            [NaughtyAttributes.Label("全局数据")]
 
             //字段：全局数据条目列表
             public List<DataItem> GlobalData = new List<DataItem>();
             //字段：本地数据条目列表
-            [Label("本地数据")]
+            [NaughtyAttributes.Label("本地数据")]
             public List<DataItem> ObjectData = new List<DataItem>();
 
 

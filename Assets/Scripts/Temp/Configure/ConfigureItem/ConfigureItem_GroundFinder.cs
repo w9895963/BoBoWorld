@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EventData;
-using NaughtyAttributes;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,25 +15,63 @@ namespace Configure
 
     namespace ConfigureItem
     {
+
         [CreateAssetMenu(fileName = "地表检测", menuName = "动态配置/地表检测", order = 1)]
         public partial class ConfigureItem_GroundFinder : ConfigureBase
         {
+            public bool test;
             [Header("固定参数")]
             //地表最大角度
             [Tooltip("大于此角度则不视为地面")]
+            [NaughtyAttributes.ShowIf("test")]
             public float 地表最大角度 = 10;
+            [OneLine.OneLine]
+            public DataAccess<float> maxAngle = new DataAccess<float>();
+
+
+            [SerializeReference, SubclassSelector]
+            public Configure.DataNameDropdownHelper dataNameHelper;
+
+
+
+
+
 
             [Tooltip("此标签外的物体不被视为地面")]
-            [Label("地表碰撞体标签")]
-            [Tag]
+            [OneLine.OneLine]
+            [OneLine.HideLabel]
+            [NaughtyAttributes.Label("地表碰撞体标签"), NaughtyAttributes.Tag]
             public List<string> collisionTags = new List<string>();
 
+
+
+
             //脚本说明
-            [Label("说明")]
+            [NaughtyAttributes.Label("说明")]
             public ShowOnlyText 脚本说明_ = new ShowOnlyText("输入: 无", "输出: 地面法线, 站立地面");
 
             //必要组件
             public override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
+
+
+
+
+
+            //类:数据访问
+            [System.Serializable]
+            public class DataAccess<T>
+            {
+                [Tooltip("使用共享数据")]
+                public bool import;
+                [NaughtyAttributes.AllowNesting, NaughtyAttributes.DisableIf("import"), NaughtyAttributes.Label("")]
+                [OneLine.OneLine, OneLine.HideLabel]
+                public T data;
+
+                [NaughtyAttributes.AllowNesting, NaughtyAttributes.EnableIf("import")]
+                [OneLine.OneLine, OneLine.HideLabel]
+                public Configure.DataNameDropdown<T> dataName;
+            }
+
 
 
 
@@ -174,14 +211,7 @@ namespace Configure
             }
 
 
-            [System.Serializable]
-            public class Tag
-            {
-                [AllowNesting]
-                [Tag]
-                public string tag;
 
-            }
 
 
         }

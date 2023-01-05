@@ -22,7 +22,7 @@ namespace EventData
                 //判断key是否存在DataName中
                 if (Enum.IsDefined(typeof(DataName), key))
                 {
-                    System.Type type = DataNameAddition.DataNameType.Get((DataName)Enum.Parse(typeof(DataName), key));
+                    System.Type type = DataNameF.GetType((DataName)Enum.Parse(typeof(DataName), key));
                     if (type != typeof(T))
                     {
                         Debug.LogError($"数据名[{key}]对应的类型为[{type}], 但是你使用的类型为[{typeof(T)}]");

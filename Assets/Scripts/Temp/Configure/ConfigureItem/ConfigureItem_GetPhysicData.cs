@@ -19,7 +19,7 @@ namespace Configure
             [NaughtyAttributes.InfoBox("无参数", EInfoBoxType.Normal)]
 
             //脚本说明
-            [Label("其他信息")]
+            [NaughtyAttributes.Label("其他信息")]
             public ShowOnlyText info = new ShowOnlyText("从Unity组件中获得物理数据:", "运动速度");
 
             //必要组件

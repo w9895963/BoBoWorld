@@ -25,13 +25,14 @@ namespace Configure
             requiredTypes = types.Count == 0 ? "无" : string.Join("\n", types);
 
         }
-        [Label("缺失组件")]
+        [NaughtyAttributes.Label("缺失组件")]
         [ReadOnly]
         [ResizableTextArea]
         public string requiredTypes = "无";
 
         //*按钮:更新配置
-        [Button("更新配置")]
+        [Button("热更新配置")]
+        [Tooltip("修改内容后,可以用这个按钮更新配置")]
         private void UpdateConfigures()
         {
             enabled = false;
@@ -41,7 +42,9 @@ namespace Configure
 
 
         //*配置列表
-        [Label("配置列表")]
+        [NaughtyAttributes.Label("配置列表")]
+        [OneLine.ReadOnlyExpandable]
+
         public List<ConfigureItemManager> configList = new List<ConfigureItemManager>();
 
 
