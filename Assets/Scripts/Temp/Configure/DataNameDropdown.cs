@@ -13,9 +13,11 @@ namespace Configure
     [System.Serializable]
     public class DataNameDropdown<T> : DataNameDropdownHelper
     {
-        // [AllowNesting]
+        [AllowNesting]
         [NaughtyAttributes.Label("")]
         [Dropdown("UpdateDropdownNames")]
+        [StackableDecorator.Label(0)]
+        [StackableDecorator.StackableField]
         public string dataName;
 
         public DataNameDropdown(System.Enum name = null)
@@ -43,7 +45,27 @@ namespace Configure
     {
         [NaughtyAttributes.Label("")]
         [Dropdown("UpdateDropdownNames")]
+        [StackableDecorator.StackableField]
         public string dataName;
+
+
+
+
+        public List<string> UpdateDropdownNames => DataNameF.GetNamesOnType(typeof(Vector2));
+
+
+    }
+
+    [System.Serializable]
+    public class DataNameDropdownVector : DataNameDropdownHelper
+    {
+        [NaughtyAttributes.Label("")]
+        [Dropdown("UpdateDropdownNames")]
+        [StackableDecorator.StackableField]
+        public string dataName;
+        [StackableDecorator.Label(0)]
+        [StackableDecorator.StackableField]
+        public string dataName2;
 
 
 

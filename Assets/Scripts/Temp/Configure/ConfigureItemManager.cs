@@ -20,9 +20,20 @@ namespace Configure
         public List<ConfigureBase> 配置文件 = new List<ConfigureBase>();
 
 
+        [SerializeReference, SubclassSelector]
+        public List<ConfigureBase_> 配置文件_ = new List<ConfigureBase_>();
 
 
 
+
+
+
+
+        [Button("生成配置文件")]
+        public void 生成配置文件()
+        {
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
 
     }
 

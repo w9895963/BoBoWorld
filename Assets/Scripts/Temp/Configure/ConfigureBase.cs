@@ -33,7 +33,7 @@ namespace Configure
 
 
 
-
+    [System.Serializable]
     //类:配置基类
     public class ConfigureBase_
     {
@@ -51,6 +51,22 @@ namespace Configure
         {
             return (null, null);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
