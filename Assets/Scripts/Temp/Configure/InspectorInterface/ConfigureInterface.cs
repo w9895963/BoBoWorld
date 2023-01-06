@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using EventData;
@@ -16,19 +17,97 @@ namespace Configure
             [HorizontalGroup("info2", true, "", 0, 60, -1)]
             public Configure.Interface.DataGetter<T> data;
 
-
-            public DataGetterHold(T dataPreset = default, string dataNamePreset = "", bool import = false)
+            public DataGetterHold(System.Enum dataNamePreset)
             {
-                data = new DataGetter<T>(dataPreset, dataNamePreset, import);
+                data = new DataGetter<T>(dataNamePreset: dataNamePreset.ToString());
             }
 
+            public DataGetterHold(T dataPreset = default, string dataNamePreset = null)
+            {
+                data = new DataGetter<T>(dataPreset, dataNamePreset);
+            }
+
+            public DataGetterHold(T dataPreset, System.Enum dataNamePreset, bool import)
+            {
+                data = new DataGetter<T>(dataPreset, dataNamePreset.ToString(), import);
+            }
 
             public bool IsConst => !data.import;
             public T DataValue => data.dataBase.DataValue == null ? default : (T)data.dataBase.DataValue;
 
 
             public string DataName => data.dataBase.DataName;
+
+            public (Action Enable, Action Disable) SetDataOnChanged(Action<T> action, GameObject gameObject)
+            {
+                (Action Enable, Action Disable) enabler = default;
+                (Action Enable, Action Disable) updateEnabler = default;
+                EventDataHandler<T> eventDataHandler = null;
+
+
+
+
+
+                if (!IsConst)
+                {
+                    eventDataHandler = EventDataF.GetData<T>(DataName, gameObject);
+                    updateEnabler = EventDataF.OnDataCondition(() => action?.Invoke(eventDataHandler.Data), null, eventDataHandler.OnUpdate);
+                }
+
+                enabler.Enable = () =>
+                {
+                    if (IsConst)
+                    {
+                        action?.Invoke(DataValue);
+                    }
+                    else
+                    {
+                        action?.Invoke(eventDataHandler.Data);
+                        updateEnabler.Enable?.Invoke();
+                    }
+                };
+
+                enabler.Disable = () =>
+                {
+                    if (!IsConst)
+                    {
+                        updateEnabler.Disable?.Invoke();
+                    }
+                };
+
+
+
+                return enabler;
+            }
         }
+
+
+
+
+        [System.Serializable]
+        public class DataSetterHolder<T>
+        {
+            [SerializeField]
+            [StackableField]
+            [HorizontalGroup("info2", true, "", 0)]
+            private DataImport dataImport;
+            public DataSetterHolder(System.Enum dataNamePreset)
+            {
+                dataImport = new DataImport(typeof(T));
+                dataImport.dataName = dataNamePreset.ToString();
+            }
+
+            public EventDataHandler<T> GetEventDataHandler(GameObject gameObject)
+            {
+                return EventDataF.GetData<T>(dataImport.dataName, gameObject);
+            }
+        }
+
+
+
+
+
+
 
 
 
@@ -52,11 +131,27 @@ namespace Configure
             private T dataPreset;
             private string dataNamePreset;
 
-            public DataGetter(T dataPreset = default, string dataNamePreset = "", bool import = false)
+            public DataGetter(T dataPreset = default, string dataNamePreset = null, bool? import = null)
             {
+                //根据情况判断是否引用
+
+                if (dataNamePreset != null)
+                {
+                    this.import = true;
+                }
+                else
+                {
+                    this.import = false;
+                }
+                if (import != null)
+                {
+                    this.import = import.Value;
+                }
+                //参数全部设置
                 this.dataPreset = dataPreset;
                 this.dataNamePreset = dataNamePreset;
-                this.import = import;
+
+                //更新
                 UpdateImport();
             }
 
@@ -82,13 +177,27 @@ namespace Configure
                         dataConstVector.data = (Vector2)(object)dataPreset;
                         dataBase = dataConstVector;
                     }
+                    else if (typeof(T) == typeof(GameObject))
+                    {
+                        DataConstGameObject dataConstGameObject = new DataConstGameObject();
+                        dataConstGameObject.data = (GameObject)(object)dataPreset;
+                        dataBase = dataConstGameObject;
+                    }
+                    //bool
+                    else if (typeof(T) == typeof(bool))
+                    {
+                        DataConstBool dataConstBool = new DataConstBool();
+                        dataConstBool.data = (bool)(object)dataPreset;
+                        dataBase = dataConstBool;
+                    }
+
+                    else
+                    {
+                        Debug.LogError("未知类型: " + typeof(T).ToString());
+                    }
                 }
             }
         }
-
-
-
-
 
 
 
@@ -140,10 +249,25 @@ namespace Configure
 
         }
         [System.Serializable]
+        public class DataConstBool : DataBase
+        {
+            [StackableField, StackableDecorator.Label(0)]
+            public bool data;
+
+
+        }
+        [System.Serializable]
         public class DataConstVector : DataBase
         {
             [StackableField, StackableDecorator.Label(0)]
             public Vector2 data;
+
+        }
+        [System.Serializable]
+        public class DataConstGameObject : DataBase
+        {
+            [StackableField, StackableDecorator.Label(0)]
+            public GameObject data;
 
         }
 
@@ -158,11 +282,12 @@ namespace Configure
 
             public override bool IsConst => false;
             public override string DataName => dataName;
-
             public DataImport(System.Type type)
             {
                 this.type = type;
             }
+
+
 
             private System.Type type;
 
@@ -172,6 +297,12 @@ namespace Configure
 
 
         }
+
+
+
+
+
+
 
 
 

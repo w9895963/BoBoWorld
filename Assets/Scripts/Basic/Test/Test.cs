@@ -28,6 +28,8 @@ public class Test : MonoBehaviour
     {
         System.Object.Equals(null, null).Log();
 
+        List<int> list = new List<int>();
+
     }
     public void TestMethod2(ref Vector2 obj)
     {

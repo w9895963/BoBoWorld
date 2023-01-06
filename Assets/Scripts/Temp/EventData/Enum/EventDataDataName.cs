@@ -17,12 +17,12 @@ namespace EventData
         重力向量,
         地表法线,
         站在地面,
+        地面物体,
 
 
         行走施力,
         跳跃施力,
         重力施力,
-
     }
 
     //数据名对应类型
@@ -42,6 +42,7 @@ namespace EventData
             {DataName.重力向量, typeof(Vector2)},
             {DataName.地表法线, typeof(Vector2)},
             {DataName.站在地面, typeof(bool)},
+            {DataName.地面物体, typeof(GameObject)},
 
 
             {DataName.行走施力, typeof(Vector2)},

@@ -64,7 +64,7 @@ namespace Configure
         {
             enablerList = configList.SelectMany(x => x.配置文件).Select(x => x.CreateEnabler(gameObject)).ToList();
             var enablerList2 = configList.SelectMany(x => x.配置文件_).Select(x => x.CreateEnabler(gameObject)).ToList();
-            Debug.Log(enablerList2.Count);
+            // Debug.Log(enablerList2.Count);
             enablerList.AddRange(enablerList2);
 
             List<ConfigureBase> configures = configList.SelectMany(x => x.配置文件).ToList();

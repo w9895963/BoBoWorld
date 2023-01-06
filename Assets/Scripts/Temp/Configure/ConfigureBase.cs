@@ -33,8 +33,9 @@ namespace Configure
 
 
 
-    [System.Serializable]
     //类:配置基类
+    [System.Serializable]
+    [AddTypeMenu("")]
     public class ConfigureBase_
     {
         //字段:启用器
