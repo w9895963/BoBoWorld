@@ -11,23 +11,23 @@ namespace Configure
     namespace Interface
     {
         [System.Serializable]
-        public class DataGetterHold<T>
+        public class DataHold_NameOrData<T>
         {
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, 60, -1)]
             public Configure.Interface.DataGetter<T> data;
 
-            public DataGetterHold(System.Enum dataNamePreset)
+            public DataHold_NameOrData(System.Enum dataNamePreset)
             {
                 data = new DataGetter<T>(dataNamePreset: dataNamePreset.ToString());
             }
 
-            public DataGetterHold(T dataPreset = default, string dataNamePreset = null)
+            public DataHold_NameOrData(T dataPreset = default, string dataNamePreset = null)
             {
                 data = new DataGetter<T>(dataPreset, dataNamePreset);
             }
 
-            public DataGetterHold(T dataPreset, System.Enum dataNamePreset, bool import)
+            public DataHold_NameOrData(T dataPreset, System.Enum dataNamePreset, bool import)
             {
                 data = new DataGetter<T>(dataPreset, dataNamePreset.ToString(), import);
             }
@@ -85,21 +85,30 @@ namespace Configure
 
 
         [System.Serializable]
-        public class DataSetterHolder<T>
+        public class DataHolder_NameDropDown<T>
         {
-            [SerializeField]
+            // [SerializeField]
+            // [StackableField]
+            // [HorizontalGroup("info2", true, "", 0)]
+            [AllowNesting]
+            [NaughtyAttributes.Label("")]
+            [Dropdown("UpdateDropdownNames")]
             [StackableField]
-            [HorizontalGroup("info2", true, "", 0)]
-            private DataImport dataImport;
-            public DataSetterHolder(System.Enum dataNamePreset)
+            public string dataName;
+            public DataHolder_NameDropDown(System.Enum dataNamePreset)
             {
-                dataImport = new DataImport(typeof(T));
-                dataImport.dataName = dataNamePreset.ToString();
+                dataName = dataNamePreset.ToString();
             }
 
             public EventDataHandler<T> GetEventDataHandler(GameObject gameObject)
             {
-                return EventDataF.GetData<T>(dataImport.dataName, gameObject);
+                return EventDataF.GetData<T>(dataName, gameObject);
+            }
+
+
+            private string[] UpdateDropdownNames()
+            {
+                return EventData.DataNameF.GetNamesOnType(typeof(T)).ToArray();
             }
         }
 
@@ -276,8 +285,9 @@ namespace Configure
         [System.Serializable]
         public class DataImport : DataBase
         {
-            [AllowNesting, Dropdown("UpdateDropdownNames"), NaughtyAttributes.Label("")]
-            [StackableField]
+            [AllowNesting, Dropdown("UpdateDropdownNames")]
+            [NaughtyAttributes.Label("")]
+            // [StackableField]
             public string dataName;
 
             public override bool IsConst => false;
@@ -285,6 +295,7 @@ namespace Configure
             public DataImport(System.Type type)
             {
                 this.type = type;
+                updateDropdownNames = DataNameF.GetNamesOnType(type);
             }
 
 
@@ -293,7 +304,8 @@ namespace Configure
 
 
 
-            private List<string> UpdateDropdownNames => DataNameF.GetNamesOnType(type);
+            private List<string> UpdateDropdownNames => updateDropdownNames;
+            private List<string> updateDropdownNames;
 
 
         }

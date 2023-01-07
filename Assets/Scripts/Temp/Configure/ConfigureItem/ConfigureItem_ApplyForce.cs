@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Configure;
+using Configure.Interface;
 using EventData;
 using NaughtyAttributes;
 using UnityEditor;
@@ -22,12 +23,21 @@ namespace Configure
 
             [NaughtyAttributes.Label("施力数据列表")]
             [OneLine.OneLine]
-            
+
             // [OneLine.HideLabel]
             public List<DataNameDropdown<Vector2>> forceNameList = new List<DataNameDropdown<Vector2>>(){
                 new DataNameDropdown<Vector2>(EventData.DataName.行走施力),
                 new DataNameDropdown<Vector2>(EventData.DataName.跳跃施力),
                 new DataNameDropdown<Vector2>(EventData.DataName.重力施力),};
+
+            [NaughtyAttributes.Label("施力数据列表")]
+            [OneLine.OneLine]
+            public List<DataHolder_NameDropDown<Vector2>> forceNameListIn_ = new List<DataHolder_NameDropDown<Vector2>>(){
+                new  (EventData.DataName.行走施力),
+                new  (EventData.DataName.跳跃施力),
+                new  (EventData.DataName.重力施力),};
+
+            public DataHolder_NameDropDown<Vector2> forceNameListIn2 = new DataHolder_NameDropDown<Vector2>(EventData.DataName.行走施力);
 
 
 

@@ -14,7 +14,7 @@ namespace Configure
     [AddComponentMenu("配置/配置安装器")]
     public class ConfigureBuilderMono : MonoBehaviour
     {
-        //*检查缺失组件
+        //*按钮:检查缺失组件
         [Button("检查缺失组件")]
         private void CheckRequiredTypes()
         {
@@ -30,20 +30,11 @@ namespace Configure
         [ResizableTextArea]
         public string requiredTypes = "无";
 
-        //*按钮:更新配置
-        [Button("热更新配置")]
-        [Tooltip("修改内容后,可以用这个按钮更新配置")]
-        private void UpdateConfigures()
-        {
-            enabled = false;
-            UpdateEnablers();
-            enabled = true;
-        }
 
 
         //*配置列表
         [NaughtyAttributes.Label("配置列表")]
-        [OneLine.ReadOnlyExpandable]
+        [OneLine.Expandable(true)]
 
         public List<ConfigureItemManager> configList = new List<ConfigureItemManager>();
 
@@ -53,6 +44,12 @@ namespace Configure
         private Dictionary<ConfigureBase, (Action Enable, Action Disable)> enablers = new Dictionary<ConfigureBase, (Action Enable, Action Disable)>();
         //列表:配置启用器列表
         private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
+        private Dictionary<ConfigureBase_, ConfigureRunner> runnerList = new();
+
+
+
+
+
 
 
 
@@ -63,9 +60,6 @@ namespace Configure
         public void UpdateEnablers()
         {
             enablerList = configList.SelectMany(x => x.配置文件).Select(x => x.CreateEnabler(gameObject)).ToList();
-            var enablerList2 = configList.SelectMany(x => x.配置文件_).Select(x => x.CreateEnabler(gameObject)).ToList();
-            // Debug.Log(enablerList2.Count);
-            enablerList.AddRange(enablerList2);
 
             List<ConfigureBase> configures = configList.SelectMany(x => x.配置文件).ToList();
             //~添加新的配置启用器
@@ -88,6 +82,43 @@ namespace Configure
                     enablers.Remove(item);
                 }
             }
+        }
+        public void UpdateRunnersAndEnabled()
+        {
+            List<ConfigureBase_> configureBase_s = configList.SelectMany(x => x.配置文件_).ToList();
+
+            foreach (var item in configureBase_s)
+            {
+                if (!runnerList.ContainsKey(item))
+                {
+                    var runner = item.CreateRunner(gameObject);
+                    runner.Initialize();
+                    runnerList.Add(item, runner);
+                }
+            }
+            foreach (var item in runnerList.Keys.ToList())
+            {
+                if (!configureBase_s.Contains(item))
+                {
+                    runnerList[item].Enabled = false;
+                    runnerList[item].Destroy();
+                    runnerList.Remove(item);
+                }
+            }
+
+
+
+            foreach (var item in runnerList.Keys)
+            {
+                if (this.enabled)
+                {
+                    runnerList[item].Enabled = item.Enabled;
+                }
+                else
+                {
+                    runnerList[item].Enabled = false;
+                }
+            }
 
 
 
@@ -102,10 +133,19 @@ namespace Configure
             UpdateEnablers();
         }
         void OnEnable()
-             => enablerList.ForEach(x => x.Enable?.Invoke());
+        {
+            enablerList.ForEach(x => x.Enable?.Invoke());
+            UpdateRunnersAndEnabled();
+
+        }
 
         void OnDisable()
-            => enablerList.ForEach(x => x.Disable?.Invoke());
+        {
+            enablerList.ForEach(x => x.Disable?.Invoke());
+            UpdateRunnersAndEnabled();
+        }
+
+
 
 
 

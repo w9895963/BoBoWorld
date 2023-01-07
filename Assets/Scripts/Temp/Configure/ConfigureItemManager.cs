@@ -1,6 +1,7 @@
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CSharp;
 using NaughtyAttributes;
 using UnityEngine;
@@ -14,13 +15,20 @@ namespace Configure
     //可脚本化对象
     public class ConfigureItemManager : ScriptableObject
     {
+
+
+
         // [NaughtyAttributes.ReorderableList]
-        [Expandable]
         //配置文件列表
+        [Expandable]
         public List<ConfigureBase> 配置文件 = new List<ConfigureBase>();
 
 
-        [SerializeReference, SubclassSelector]
+
+
+        [SerializeReference]
+        [SubclassSelector]
+        [InspectorName("配置文件列表")]
         public List<ConfigureBase_> 配置文件_ = new List<ConfigureBase_>();
 
 
@@ -28,11 +36,24 @@ namespace Configure
 
 
 
-
-        [Button("生成配置文件")]
-        public void 生成配置文件()
+        //方法:热更新
+        [Button("热更新")]
+        public void HotUpdate()
         {
-            UnityEditor.EditorUtility.SetDirty(this);
+            //如果游戏不在运行则返回且报错
+            if (!Application.isPlaying)
+            {
+                Debug.LogError("游戏不在运行");
+                return;
+            }
+            //找到启用且有自身的组件
+            var components = FindObjectsOfType<ConfigureBuilderMono>().Where(x => x.enabled & x.configList.Contains(this));
+            components.ForEach(x =>
+            {
+                x.enabled = false;
+                x.enabled = true;
+            });
+
         }
 
     }
