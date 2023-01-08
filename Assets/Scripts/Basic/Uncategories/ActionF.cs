@@ -15,7 +15,7 @@ public static class ActionF
     {
         //如果空则退出
         if (action == null) return;
-        
+
         QueueActionList.Add(action);
         if (QueueActionList.Count() == 1)
         {
@@ -26,6 +26,15 @@ public static class ActionF
                 aa?.Invoke();
             }
         }
+    }
+
+
+
+
+    /// <summary>安全执行操作，建议只在不得已的情况下考虑使用, 如界面事件， 依赖于新建物体和更新事件，效率不高</summary>
+    public static void RunActionSafeAndDelay(Action action)
+    {
+        ActionUtility.SafeRunAction.RunAction(action);
     }
 
 

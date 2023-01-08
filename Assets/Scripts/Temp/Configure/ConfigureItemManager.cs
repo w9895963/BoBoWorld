@@ -60,12 +60,16 @@ namespace Configure
             {
                 return;
             }
-            //找到启用且有自身的组件
-            var components = FindObjectsOfType<ConfigureBuilderMono>().Where(x => x.enabled & x.configList.Contains(this));
-            components.ForEach(x =>
+
+
+            ActionF.RunActionSafeAndDelay(() =>
             {
-                x.UpdateRunners();
-                
+                //找到启用且有自身的组件
+                var components2 = FindObjectsOfType<ConfigureBuilderMono>().Where(x => x.enabled & x.configList.Contains(this));
+                components2.ForEach(x =>
+                {
+                    x.UpdateRunners();
+                });
             });
 
         }

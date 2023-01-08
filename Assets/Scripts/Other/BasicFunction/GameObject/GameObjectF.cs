@@ -6,6 +6,10 @@ using UnityEngine;
 
 public static class GameObjectF
 {
+
+
+
+
     public static T FindComponentOrCreateObject<T>() where T : UnityEngine.Component
     {
         T comp = GameObject.FindObjectOfType<T>();
@@ -49,13 +53,25 @@ public static class GameObjectF
 
     }
 
+    ///<summary>安全创建一个空游戏物体</summary>
+    public static GameObject CreateGameObjectSafe(string name = null)
+    {
+        string path = "Prefab/GameObject";
+        //载入资源，从Resources文件夹下
+        GameObject prefab = Resources.Load<GameObject>(path);
+        //实例化
+        GameObject obj = GameObject.Instantiate(prefab);
+        if (name != null)
+        {
+            obj.name = name;
+        }
+
+        return obj;
+
+    }
 
 
-
-    /// <summary>
-    /// 获得某个名字的物体，如果没有就创建一个
-    /// </summary>
-    //字典: 物体名与物体
+    ///<summary>获得某个名字的物体，如果没有就创建一个</summary>
     private static Dictionary<string, GameObject> nameToGameObject = new Dictionary<string, GameObject>();
     public static GameObject GetObjectByNameOrCreate(string name)
     {
@@ -70,7 +86,7 @@ public static class GameObjectF
             if (gameObject == null)
             {
                 //创建一个
-                gameObject = new GameObject(name);
+                gameObject = CreateGameObjectSafe(name);
             }
             //添加到字典
             nameToGameObject[name] = gameObject;
