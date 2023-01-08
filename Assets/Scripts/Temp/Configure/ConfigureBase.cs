@@ -12,7 +12,9 @@ namespace Configure
     public class ConfigureBase : ScriptableObject
     {
         //字段:启用器
-        public virtual List<System.Type> requiredTypes => new List<System.Type>();
+        protected virtual List<System.Type> requiredTypes => new List<System.Type>();
+
+        public virtual List<System.Type> RequiredTypes => requiredTypes;
         //必要组件
 
 
@@ -24,7 +26,7 @@ namespace Configure
         {
             return (null, null);
         }
-       
+
 
 
 
@@ -66,7 +68,8 @@ namespace Configure
 
 
         //必要组件
-        public virtual List<System.Type> requiredTypes => new List<System.Type>();
+        protected virtual List<System.Type> requiredTypes => new List<System.Type>();
+        public virtual List<System.Type> RequiredTypes => requiredTypes;
 
 
 

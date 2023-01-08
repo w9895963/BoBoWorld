@@ -23,7 +23,7 @@ namespace Configure
             public ShowOnlyText info = new ShowOnlyText("从Unity组件中获得物理数据:", "运动速度");
 
             //必要组件
-            public override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D) };
+            protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D) };
 
 
 

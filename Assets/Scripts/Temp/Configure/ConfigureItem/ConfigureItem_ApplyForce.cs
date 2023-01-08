@@ -51,7 +51,7 @@ namespace Configure
 
 
             //必要组件
-            public override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D) };
+            protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D) };
 
 
 

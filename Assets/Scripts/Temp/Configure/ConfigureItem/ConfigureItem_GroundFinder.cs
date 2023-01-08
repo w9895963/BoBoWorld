@@ -71,7 +71,7 @@ namespace Configure
             public ShowOnlyText 脚本说明_ = new ShowOnlyText("判断主体是否站立在地面物体上, 并输出一系列数据");
 
             //必要组件
-            public override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
+            protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
 
 
 

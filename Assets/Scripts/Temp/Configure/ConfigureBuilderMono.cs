@@ -19,8 +19,16 @@ namespace Configure
         private void CheckRequiredTypes()
         {
             //~缺失组件
-            List<string> types = configList.SelectMany(x => x.配置文件).SelectMany(x => x.requiredTypes.Where(y => gameObject.GetComponent(y) == null)).
+            List<string> types = new List<string>();
+            List<string> types_;
+            types_ = configList.SelectMany(x => x.配置文件).SelectMany(x => x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null)).
             Select(x => x.ToString()).ToList();
+            types.AddRange(types_);
+
+
+            types_ = configList.SelectMany(x => x.配置文件_).SelectMany(x => x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null)).
+            Select(x => x.ToString()).ToList();
+            types.AddRange(types_);
 
             requiredTypes = types.Count == 0 ? "无" : string.Join("\n", types);
 
