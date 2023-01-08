@@ -77,22 +77,14 @@ namespace EventData
 
 
                     //添加事件
-                    // (Core.EventData data, System.Func<bool> check)[] checks = { (dataItem.eventData, null) };
-                    // System.Action action = () =>
-                    // {
-                    //     dataItem.数据 = dataItem.eventData.GetData()?.ToString();
-                    //     dataItem.name = $"{dataItem.shortName}:{dataItem.数据}";
-                    // };
-                    // EventDataCoreF.CreateOnDataConditionCoreEnabler(action, null, checks, this).Enable();
-
-                    Core.ConditionAction conditionAction = new Core.ConditionAction();
-                    conditionAction.conditionList.Add(() => true);
-                    conditionAction.action = () =>
+                    (Core.EventData data, System.Func<bool> check)[] checks = { (dataItem.eventData, null) };
+                    System.Action action = () =>
                     {
                         dataItem.数据 = dataItem.eventData.GetData()?.ToString();
                         dataItem.name = $"{dataItem.shortName}:{dataItem.数据}";
                     };
-                    dataItem.eventData.conditionActionList.Add(conditionAction);
+                    EventDataCoreF.CreateOnDataConditionCoreEnabler(action, null, checks, this).Enable();
+
 
                 }
 
