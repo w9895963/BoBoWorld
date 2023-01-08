@@ -28,7 +28,7 @@ namespace Configure
 
             [Tooltip("")]
             [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "最大角度", tooltip = "大于此角度则不视为地面")]
+            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "最大角度", tooltip = "地面向量与重力的夹角大于此角度则不视为地面")]
             public Configure.Interface.DataHold_NameOrData<float> maxAngleGetIn = new Configure.Interface.DataHold_NameOrData<float>(10);
 
             [Tooltip("")]
@@ -109,8 +109,11 @@ namespace Configure
                 (Action Enable, Action Disable) maxAngleSetEnabler = maxAngleGetIn.SetDataOnChanged((x) => maxAngle = x, gameObject);
 
                 //重力方向
-                var gravityD = EventDataF.GetData<Vector2>(DataName.重力向量, gameObject);
-                (Action Enable, Action Disable) gravityEn = gravityIn.SetDataOnChanged((x) => gravity = x, gameObject);
+                (Action Enable, Action Disable) gravityEn = gravityIn.SetDataOnChanged((x) =>
+                {
+                    gravity = x;
+                    // Debug.Log(gravity);
+                }, gameObject);
 
 
                 //地面法线

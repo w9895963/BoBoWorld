@@ -42,7 +42,7 @@ namespace Configure
 
         //*配置列表
         [NaughtyAttributes.Label("配置列表")]
-        [OneLine.Expandable(true)]
+        [NaughtyAttributes.Expandable]
 
         public List<ConfigureItemManager> configList = new List<ConfigureItemManager>();
 

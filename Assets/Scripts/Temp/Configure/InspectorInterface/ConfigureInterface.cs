@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using EventData;
 using NaughtyAttributes;
 using StackableDecorator;
@@ -174,36 +175,38 @@ namespace Configure
                 }
                 else
                 {
-                    if (typeof(T) == typeof(float))
-                    {
-                        DataConstFloat dataConstFloat = new DataConstFloat();
-                        dataConstFloat.data = (float)(object)dataPreset;
-                        dataBase = dataConstFloat;
-                    }
-                    else if (typeof(T) == typeof(Vector2))
-                    {
-                        DataConstVector dataConstVector = new DataConstVector();
-                        dataConstVector.data = (Vector2)(object)dataPreset;
-                        dataBase = dataConstVector;
-                    }
-                    else if (typeof(T) == typeof(GameObject))
-                    {
-                        DataConstGameObject dataConstGameObject = new DataConstGameObject();
-                        dataConstGameObject.data = (GameObject)(object)dataPreset;
-                        dataBase = dataConstGameObject;
-                    }
-                    //bool
-                    else if (typeof(T) == typeof(bool))
-                    {
-                        DataConstBool dataConstBool = new DataConstBool();
-                        dataConstBool.data = (bool)(object)dataPreset;
-                        dataBase = dataConstBool;
-                    }
+                   
 
+
+                    //
+                    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                    System.Type[] types = assembly.GetTypes();
+                    //历遍所有类
+                    Type type = types.Where((t) => t.Namespace == "Configure.Interface")
+                    .Where((t) => t.GetField("data") != null)
+                    .First((t) => t.GetField("data").FieldType == typeof(T));
+                    type.LogSmart();
+                    //如果存在则新建
+                    if (type != null)
+                    {
+
+                        DataBase item = System.Activator.CreateInstance(type) as DataBase;
+
+
+                        Debug.Log(item);
+                        dataBase = item;
+                        dataBase.DataValue = dataPreset;
+
+
+
+
+                    }
                     else
                     {
                         Debug.LogError("未知类型: " + typeof(T).ToString());
                     }
+
+
                 }
             }
         }
@@ -215,16 +218,25 @@ namespace Configure
         public class DataBase
         {
 
-            //判断是否属于DataConst<T>
-            public virtual bool IsConst => true;
             //用反射获得DataConst<T>的data
-            public System.Object DataValue => GetData();
+            public System.Object DataValue
+            {
+                get
+                {
+                    return GetData();
+                }
+                set
+                {
+                    SetData(value);
+                }
+            }
+
             public virtual string DataName => "";
 
 
 
 
-            private System.Object GetData()
+            protected virtual System.Object GetData()
             {
 
                 System.Reflection.FieldInfo[] fieldInfos = this.GetType().GetFields();
@@ -241,6 +253,19 @@ namespace Configure
                 return null;
             }
 
+            protected virtual void SetData(System.Object data)
+            {
+                System.Reflection.FieldInfo[] fieldInfos = this.GetType().GetFields();
+                foreach (System.Reflection.FieldInfo fieldInfo in fieldInfos)
+                {
+                    //找到data
+                    if (fieldInfo.Name == "data")
+                    {
+                        fieldInfo.SetValue(this, data);
+                    }
+                }
+            }
+
 
         }
 
@@ -252,7 +277,7 @@ namespace Configure
         [System.Serializable]
         public class DataConstFloat : DataBase
         {
-            [StackableField, StackableDecorator.Label(0)]
+            [StackableField, StackableDecorator.Label(-1, title = "数值")]
             public float data;
 
 
@@ -268,10 +293,42 @@ namespace Configure
         [System.Serializable]
         public class DataConstVector : DataBase
         {
-            [StackableField, StackableDecorator.Label(0)]
+            [HorizontalGroup("info", true, "", 0, 30, -1, prefix = false)]
+            [StackableField]
+            [SerializeField]
+            private Holder holder = new Holder();
+            [HideInInspector]
             public Vector2 data;
 
+
+
+            [System.Serializable]
+            public class Holder
+            {
+                [StackableDecorator.LabelOnly]
+                [StackableField]
+                public int 向量 = 0;
+                [StackableDecorator.Label(0)]
+                [StackableField]
+                public Vector2 dataInSide;
+            }
+
+
+            protected override System.Object GetData()
+            {
+                return holder.dataInSide;
+            }
+            protected override void SetData(System.Object data)
+            {
+                holder.dataInSide = (Vector2)data;
+            }
+
         }
+
+
+
+
+
         [System.Serializable]
         public class DataConstGameObject : DataBase
         {
@@ -290,7 +347,6 @@ namespace Configure
             // [StackableField]
             public string dataName;
 
-            public override bool IsConst => false;
             public override string DataName => dataName;
             public DataImport(System.Type type)
             {

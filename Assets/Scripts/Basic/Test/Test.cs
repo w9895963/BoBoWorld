@@ -58,13 +58,7 @@ public class Test : MonoBehaviour
     [Button]
     public void 测试方法1()
     {
-        List<int> a = new() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2 };
-        Dictionary<int, int> b = new() { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 7 }, { 8, 8 }, { 9, 9 }, { 10, 10 } };
-
-        //去重,自定义方法
-        a.LogSmart();
-
-        b.LogSmart();
+        typeof(Configure.Interface.DataBase).Namespace.LogSmart();
 
     }
 
