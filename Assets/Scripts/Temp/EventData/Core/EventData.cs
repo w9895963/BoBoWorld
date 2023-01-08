@@ -27,7 +27,9 @@ namespace EventData
             public bool IsGlobal { get => gameObject == null; }
             public string Key { get => stringKey; }
 
-            public virtual Func<object> DataGetter { get => null; }
+
+            protected virtual Func<object> DataGetter { get => null; }
+
 
             public EventData(string stringKey, GameObject gameObject = null, System.Type type = null)
             {
@@ -42,22 +44,13 @@ namespace EventData
 
 
 
-            //方法：获得短名
-            public string GetShortName()
-            {
-                //以点分割取最末尾
-                return stringKey.Split('.').Last();
-            }
+
 
 
 
             //方法：获得数据
             public System.Object GetData()
             {
-                if (DataGetter == null)
-                {
-                    return null;
-                }
                 return DataGetter();
             }
 
@@ -79,7 +72,7 @@ namespace EventData
         public class EventData<T> : EventData
         {
             public T data;
-            public override Func<System.Object> DataGetter => () => { return data; };
+            protected override Func<System.Object> DataGetter => () => { return data; };
 
 
             public EventData(string key, GameObject gameObject = null) : base(key, gameObject, typeof(T))

@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 namespace EventData
@@ -33,7 +34,7 @@ namespace EventData
                 全名 = eventData.Key;
                 数据 = ExtractData();
                 //名字=名字用"."分割的最后一个
-                shortName = eventData.GetShortName();
+                shortName = GetShortName(eventData.Key);
                 //字符串插值将名字与值加起来
                 name = $"{shortName}:{数据}";
             }
@@ -71,6 +72,15 @@ namespace EventData
 
 
 
+            private static string GetShortName(string name)
+            {
+                //以点分割取最末尾
+                return name.Split('.').Last();
+            }
+
+
+
+
             //方法：输出日志
             public string GetDebugLog()
             {
@@ -85,7 +95,7 @@ namespace EventData
                     //转换成可枚举的
                     System.Collections.IEnumerable enumerable = (System.Collections.IEnumerable)v;
                     //添加名字
-                    message += eventData.GetShortName() + ":";
+                    message += GetShortName(eventData.Key) + ":";
 
                     //历遍数组
                     foreach (object v1 in enumerable)
@@ -101,7 +111,8 @@ namespace EventData
                 {
                     //添加名字和数据
                     string data = v.ToString();
-                    message = eventData.GetShortName() + " : " + $"<color=red>{data}</color>";
+                    
+                    message = GetShortName(eventData.Key) + " : " + $"<color=red>{data}</color>";
                 }
 
 
