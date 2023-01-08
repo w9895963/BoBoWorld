@@ -48,38 +48,25 @@ namespace EventData
         {
             return OnDataConditionCore(action, actionOnFail, conditionChecks);
         }
-
+        ///<summary> 创建数据条件,设置启用器</summary>
         public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, params (Core.EventData data, Func<bool> check)[] conditionChecks)
         {
             (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, actionOnFail, conditionChecks);
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
-
-        public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, List<(Core.EventData data, Func<bool> check)> conditionChecks)
+        ///<summary> 创建数据条件,返回启用器</summary>
+        ///<param name="monoBehaviour">当组件是否启用加入条件中</param>
+        public static (Action Enable, Action Disable) OnDataCondition(Action action, (Core.EventData data, Func<bool> check)[] conditionChecks, Action actionOnFail = null, MonoBehaviour monoBehaviour = null)
         {
-            (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, actionOnFail, conditionChecks.ToArray());
-            enabler.Enable += enableAction.Enable;
-            enabler.Disable += enableAction.Disable;
-        }
-        //单参数版本
-        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, params (Core.EventData data, Func<bool> check)[] conditionChecks)
-        {
-            (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, null, conditionChecks);
-            enabler.Enable += enableAction.Enable;
-            enabler.Disable += enableAction.Disable;
-        }
-        public static void OnDataCondition(Action action, ref (Action Enable, Action Disable) enabler, List<(Core.EventData data, Func<bool> check)> conditionChecks)
-        {
-            (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, null, conditionChecks.ToArray());
-            enabler.Enable += enableAction.Enable;
-            enabler.Disable += enableAction.Disable;
+            return OnDataConditionCore(action, actionOnFail, conditionChecks, monoBehaviour);
         }
 
 
 
 
-    
+
+
 
 
     }

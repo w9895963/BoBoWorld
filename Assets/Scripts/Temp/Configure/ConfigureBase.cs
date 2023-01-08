@@ -20,9 +20,13 @@ namespace Configure
 
 
 
-        public virtual (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
+        public virtual (Action Enable, Action Disable) CreateEnabler(GameObject gameObject, MonoBehaviour monoBehaviour = null)
         {
             return (null, null);
+        }
+        public virtual (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
+        {
+            return CreateEnabler(gameObject, null);
         }
 
 

@@ -87,11 +87,23 @@ namespace EventData
 
 
             /// *<summary> 创建数据条件,返回启用器 </summary>
-            public static (Action Enable, Action Disable) OnDataConditionCore(Action action, Action actionOnFail, (Core.EventData data, Func<bool> check)[] conditionChecks)
+            /// *<param name="monoBehaviour">当组件是否启用加入条件中</param>
+            public static (Action Enable, Action Disable) OnDataConditionCore(Action action, Action actionOnFail, (Core.EventData data, Func<bool> check)[] conditionChecks,
+            MonoBehaviour monoBehaviour = null)
+
             {
+                //创建条件实例
                 ConditionAction conditionAction = new ConditionAction();
                 conditionAction.action = action;
                 conditionAction.actionOnFail = actionOnFail;
+
+                //如果组件存在则添加到条件表中
+                if (monoBehaviour != null)
+                {
+                    conditionAction.conditionList.AddNotNull(() => monoBehaviour.enabled);
+                }
+
+                //如果组件存在则添加到conditionList
                 conditionChecks.ForEach(conditionCheck =>
                 {
                     //如果check存在则添加到conditionList

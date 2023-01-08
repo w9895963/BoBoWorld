@@ -22,7 +22,7 @@ namespace Configure
             //脚本说明
 
             [NaughtyAttributes.Label("其他信息")]
-            public ShowOnlyText info_ = new ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力","输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
+            public ShowOnlyText info_ = new ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力", "输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
 
 
 
@@ -35,7 +35,7 @@ namespace Configure
 
 
             //覆盖方法:创建启用器
-            public override (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
+            public override (Action Enable, Action Disable) CreateEnabler(GameObject gameObject, MonoBehaviour monoBehaviour = null)
             {
                 //创建启用器
                 (Action Enable, Action Disable) enabler = (null, null);
@@ -56,11 +56,14 @@ namespace Configure
                 //获取刚体
                 Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
 
-                // enabler = ConfigureF.OnDataCondition(CalculateMoveForce, OnFail,导入参数);
-                enabler = EventDataF.OnDataCondition(CalculateMoveForce, OnFail,
-                moveInput.OnCustom(() => moveInput.Data.x != 0),
-                groundNormal.OnUpdate,
-                moveSpeed.OnUpdate);
+
+
+                (EventData.Core.EventData data, Func<bool> check)[] checks = {
+                    moveInput.OnCustom(() => moveInput.Data.x != 0),
+                    groundNormal.OnUpdate,
+                    moveSpeed.OnUpdate
+                };
+                enabler = EventDataF.OnDataCondition(CalculateMoveForce, conditionChecks: checks, OnFail, monoBehaviour);
 
 
 

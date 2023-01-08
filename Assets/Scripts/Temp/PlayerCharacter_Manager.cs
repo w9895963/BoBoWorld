@@ -102,7 +102,7 @@ public class PlayerCharacter_Manager : MonoBehaviour
         //*计算移动施力
         var list = new List<(EventData.Core.EventData, Func<bool>)>();
         list.Add(moveInputH.OnUpdate, groundNormalH.OnUpdate, speed.OnUpdate, maxForceH.OnUpdate);
-        EventDataF.OnDataCondition(CalculateMoveForce, null, ref Enabler, list);
+        EventDataF.OnDataCondition(CalculateMoveForce, null, ref Enabler, list.ToArray());
         //计算移动施力
         void CalculateMoveForce()
         {

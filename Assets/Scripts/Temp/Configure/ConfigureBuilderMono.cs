@@ -59,7 +59,7 @@ namespace Configure
         //*公共方法:更新配置启用器字典
         public void UpdateEnablers()
         {
-            enablerList = configList.SelectMany(x => x.配置文件).Select(x => x.CreateEnabler(gameObject)).ToList();
+            enablerList = configList.SelectMany(x => x.配置文件).Select(x => x.CreateEnabler(gameObject, this)).ToList();
 
             List<ConfigureBase> configures = configList.SelectMany(x => x.配置文件).ToList();
             //~添加新的配置启用器
@@ -69,7 +69,7 @@ namespace Configure
                 if (!enablers.ContainsKey(item))
                 {
                     //创建启用器
-                    var en = item.CreateEnabler(gameObject);
+                    var en = item.CreateEnabler(gameObject, this);
                     //配置启用器字典添加配置
                     enablers.Add(item, en);
                 }
@@ -82,6 +82,8 @@ namespace Configure
                     enablers.Remove(item);
                 }
             }
+
+            enablerList.ForEach(x => x.Enable?.Invoke());
         }
         public void UpdateRunnersAndEnabled()
         {
@@ -134,14 +136,14 @@ namespace Configure
         }
         void OnEnable()
         {
-            enablerList.ForEach(x => x.Enable?.Invoke());
+            // enablerList.ForEach(x => x.Enable?.Invoke());
             UpdateRunnersAndEnabled();
 
         }
 
         void OnDisable()
         {
-            enablerList.ForEach(x => x.Disable?.Invoke());
+            // enablerList.ForEach(x => x.Disable?.Invoke());
             UpdateRunnersAndEnabled();
         }
 
