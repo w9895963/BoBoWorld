@@ -55,23 +55,38 @@ public static class DebugF
 
 
 
-    public static void Log<T>(this T content) where T : System.IConvertible
+    public static void LogSmart<T>(this T content)
     {
-        Debug.Log(content.ToString());
-    }
-    public static void Log(this UnityEngine.Object content)
-    {
-        Debug.Log(content, content);
+        string v = "";
+        //如果为可枚举的类型
+        if (content is IEnumerable)
+        {
+            //如果为字符串
+            if (content is string)
+            {
+
+            }
+            else
+            {
+                foreach (var item in content as IEnumerable)
+                {
+                    v += $"{item.ToString()}, ";
+                }
+            }
+
+        }
+
+
+        if (v == "")
+        {
+            v = content.ToString();
+        }
+
+
+        Debug.Log(v);
     }
 
-    public static void Log(this Vector2 content)
-    {
-        Debug.Log(content);
-    }
-    public static void Log(this Vector3 content)
-    {
-        Debug.Log(content);
-    }
+
 
 
 

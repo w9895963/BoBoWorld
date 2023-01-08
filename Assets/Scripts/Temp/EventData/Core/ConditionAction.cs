@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace EventData
 {
@@ -13,25 +14,46 @@ namespace EventData
             public System.Action actionOnFail;
             public List<Func<bool>> conditionList = new List<Func<bool>>();
 
+            //条件执行队列
+            public static List<System.Action> ConditionActionQueue = new List<System.Action>();
 
-            //方法: 检测并运行
+
+            ///<summary> 方法: 检测并运行,基础执行版本 </summary>
             public void CheckAndRun()
             {
                 var isConditionMet = conditionList.All(condition => condition());
 
-
-
+                //基础执行
                 if (isConditionMet)
                 {
-                    ActionF.QueueAction(action);
+                    action();
                 }
                 else
                 {
-
-                    ActionF.QueueAction(actionOnFail);
+                    actionOnFail();
                 }
 
+
+
             }
+
+
+            // ///<summary> 方法: 检测并运行,顺序执行版本 </summary>
+            // public void CheckAndRunQueue()
+            // {
+            //     var isConditionMet = conditionList.All(condition => condition());
+
+            //     //顺序执行
+            //     if (isConditionMet)
+            //     {
+            //         ActionF.QueueAction(action);
+            //     }
+            //     else
+            //     {
+
+            //         ActionF.QueueAction(actionOnFail);
+            //     }
+            // }
 
         }
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security;
 using Microsoft.CSharp;
+using NaughtyAttributes;
 using Timer.Base;
 using UnityEngine;
 using static CommonFunction.Static;
@@ -23,24 +24,12 @@ public class Test : MonoBehaviour
         Debug.Log(obj);
 
     }
-    [ContextMenu("Test")]
-    public void TestMethod()
-    {
-        List<bool> a = new List<bool>();
 
-        a.All(b => true).Log();
-
-    }
     public void TestMethod2(ref Vector2 obj)
     {
         Type type = obj.GetType();
-        type.Name.Log();
+        type.Name.LogSmart();
     }
-
-
-
-
-
 
 
 
@@ -61,4 +50,26 @@ public class Test : MonoBehaviour
 
         }
     }
+
+
+
+
+    //*测试方法1
+    [Button]
+    public void 测试方法1()
+    {
+        List<int> a = new() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2 };
+        Dictionary<int, int> b = new() { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 7 }, { 8, 8 }, { 9, 9 }, { 10, 10 } };
+
+        //去重,自定义方法
+        a.LogSmart();
+
+        b.LogSmart();
+
+    }
+
+
+
+
+
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EventData.Core;
 using UnityEngine;
 
 namespace EventData
@@ -43,11 +44,6 @@ namespace EventData
 
 
 
-
-
-
-
-
             //方法：获得数据
             public System.Object GetData()
             {
@@ -58,13 +54,22 @@ namespace EventData
 
             public void ForceUpdateData()
             {
-                // Debug.Log(conditionActionList.Count);//调试
-                //执行conditionActionList
+                // // Debug.Log(conditionActionList.Count);//调试
+                // //执行conditionActionList
+                // conditionActionList.ForEach(conditionAction =>
+                // {
+                //     conditionAction.CheckAndRun();
+                // });
+
+                //分离执行
                 conditionActionList.ForEach(conditionAction =>
-                {
-                    conditionAction.CheckAndRun();
-                });
+               {
+                   SeparatedExecutionQueue.AddCondition(conditionAction);
+               });
+
             }
+
+
 
 
         }
@@ -83,31 +88,53 @@ namespace EventData
 
 
 
-            //方法：设置数据
-            public void SetData(T data)
+            /// <summary>设置数据, 如果不相同则唤起数据事件</summary>
+            public void SetIfNotEqual(T data)
             {
-                // Debug.Log("SetData" + data.ToString());//调试
-                //如果输入参数与data相同则不执行
-                if (System.Object.Equals(this.data, data))
+                //如果不相同则修改
+                if (!System.Object.Equals(this.data, data))
                 {
-                    return;
+                    ModifyData((T) => { return data; });
                 }
 
-
-
-                this.data = data;
-
-                //更新数据
-                ForceUpdateData();
-                // Debug.Log("SetData" + data.ToString());//调试
-
+            }
+            /// <summary>设置数据, 唤起数据事件</summary>
+            public void Set(T data)
+            {
+                ModifyData((T) => { return data; });
+            }
+            /// <summary>修改数据, 唤起数据事件</summary>
+            public void Modify(Func<T, T> modifyFunc)
+            {
+                ModifyData(modifyFunc);
             }
 
-            //方法：获取数据
+            ///<summary> 方法：获取数据 </summary>
             public new T GetData()
             {
                 return data;
             }
+
+
+
+
+
+            private void ModifyData(Func<T, T> modifyFunc)
+            {
+                //更新数据
+                // this.data = modifyFunc(this.data);
+
+                SeparatedExecutionQueue.AddDataAction(() =>
+                {
+                    this.data = modifyFunc(this.data);
+                    //强制更新
+                    ForceUpdateData();
+                });
+
+
+            }
+
+
 
 
 

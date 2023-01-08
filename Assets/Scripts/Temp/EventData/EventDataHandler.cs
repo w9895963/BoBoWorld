@@ -58,7 +58,7 @@ namespace EventData
         public new T Data
         {
             get => eventDataT.GetData();
-            set => eventDataT.SetData(value);
+            set => eventDataT.SetIfNotEqual(value);
         }
 
   
