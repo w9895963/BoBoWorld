@@ -162,7 +162,11 @@ public static class ExtensionArray
         return true;
     }
 
-
+    /// <summary>移除所有相同单位</summary>
+    public static void RemoveAll<T>(this List<T> source, T items)
+    {
+        source.RemoveAll((x) => x.Equals(items));
+    }
 
     public static void RemoveEach<T>(this List<T> source, params T[] items)
     {
@@ -179,7 +183,7 @@ public static class ExtensionArray
     }
 
 
-    public static T RamdomGet<T>(this IEnumerable<T> source)
+    public static T RandomGet<T>(this IEnumerable<T> source)
     {
         int i = UnityEngine.Random.Range(0, source.Count());
         return source.ElementAt(i);

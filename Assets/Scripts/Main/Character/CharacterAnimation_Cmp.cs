@@ -33,7 +33,7 @@ public class CharacterAnimation_Cmp : MonoBehaviour
 
     private GameObject RandomGet(List<AnimatePrefabHolder.AnimatePrefab> animations)
     {
-        return animations.RamdomGet().prefab;
+        return animations.RandomGet().prefab;
     }
 
 

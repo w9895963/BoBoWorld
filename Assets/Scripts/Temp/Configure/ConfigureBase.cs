@@ -24,10 +24,7 @@ namespace Configure
         {
             return (null, null);
         }
-        public virtual (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
-        {
-            return CreateEnabler(gameObject, null);
-        }
+       
 
 
 

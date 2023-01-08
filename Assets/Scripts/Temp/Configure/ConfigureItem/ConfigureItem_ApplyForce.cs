@@ -58,7 +58,8 @@ namespace Configure
 
 
             //覆盖方法:创建启用器
-            public override (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
+            public override (Action Enable, Action Disable) CreateEnabler(GameObject gameObject,MonoBehaviour monoBehaviour)
+           
             {
                 //创建启用器
                 (Action Enable, Action Disable) enabler = (null, null);
@@ -84,6 +85,7 @@ namespace Configure
 
                 //力列表
                 List<Vector2> forceList = new List<Vector2>() { Vector2.zero };
+                // Debug.Log("力列表长度" + forceList.Count);
 
                 //递增历遍施力数据列表
                 for (int i = 0; i < forceDList.Count; i++)
@@ -93,6 +95,7 @@ namespace Configure
 
                     (Action Enable, Action Disable) value = EventDataF.OnDataCondition(() =>
                     {
+                        // Debug.Log("施力数据更新");
                         //获取施力数据
                         forceList.AddToIndex(i, forceD.Data);
                     }, null, forceD.OnUpdate);

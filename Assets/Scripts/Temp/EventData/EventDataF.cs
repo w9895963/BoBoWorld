@@ -46,12 +46,12 @@ namespace EventData
         ///<summary> 创建数据条件,返回启用器</summary>
         public static (Action Enable, Action Disable) OnDataCondition(Action action, Action actionOnFail, params (Core.EventData data, Func<bool> check)[] conditionChecks)
         {
-            return OnDataConditionCore(action, actionOnFail, conditionChecks);
+            return CreateOnDataConditionCoreEnabler(action, actionOnFail, conditionChecks);
         }
         ///<summary> 创建数据条件,设置启用器</summary>
         public static void OnDataCondition(Action action, Action actionOnFail, ref (Action Enable, Action Disable) enabler, params (Core.EventData data, Func<bool> check)[] conditionChecks)
         {
-            (Action Enable, Action Disable) enableAction = OnDataConditionCore(action, actionOnFail, conditionChecks);
+            (Action Enable, Action Disable) enableAction = CreateOnDataConditionCoreEnabler(action, actionOnFail, conditionChecks);
             enabler.Enable += enableAction.Enable;
             enabler.Disable += enableAction.Disable;
         }
@@ -59,7 +59,7 @@ namespace EventData
         ///<param name="monoBehaviour">当组件是否启用加入条件中</param>
         public static (Action Enable, Action Disable) OnDataCondition(Action action, (Core.EventData data, Func<bool> check)[] conditionChecks, Action actionOnFail = null, MonoBehaviour monoBehaviour = null)
         {
-            return OnDataConditionCore(action, actionOnFail, conditionChecks, monoBehaviour);
+            return CreateOnDataConditionCoreEnabler(action, actionOnFail, conditionChecks, monoBehaviour);
         }
 
 

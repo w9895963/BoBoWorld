@@ -38,7 +38,7 @@ namespace Configure
 
 
             //覆盖方法:创建启用器
-            public override (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
+            public override (Action Enable, Action Disable) CreateEnabler(GameObject gameObject, MonoBehaviour monoBehaviour = null)
             {
                 //创建启用器
                 (Action Enable, Action Disable) enabler = (null, null);

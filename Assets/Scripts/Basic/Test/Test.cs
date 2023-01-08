@@ -26,9 +26,9 @@ public class Test : MonoBehaviour
     [ContextMenu("Test")]
     public void TestMethod()
     {
-        System.Object.Equals(null, null).Log();
+        List<bool> a = new List<bool>();
 
-        List<int> list = new List<int>();
+        a.All(b => true).Log();
 
     }
     public void TestMethod2(ref Vector2 obj)

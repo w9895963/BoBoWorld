@@ -88,7 +88,7 @@ namespace EventData
 
             /// *<summary> 创建数据条件,返回启用器 </summary>
             /// *<param name="monoBehaviour">当组件是否启用加入条件中</param>
-            public static (Action Enable, Action Disable) OnDataConditionCore(Action action, Action actionOnFail, (Core.EventData data, Func<bool> check)[] conditionChecks,
+            public static (Action Enable, Action Disable) CreateOnDataConditionCoreEnabler(Action action, Action actionOnFail, (Core.EventData data, Func<bool> check)[] conditionChecks,
             MonoBehaviour monoBehaviour = null)
 
             {
@@ -116,14 +116,14 @@ namespace EventData
                 {
                     conditionChecks.ForEach(conditionCheck =>
                     {
-                        conditionCheck.data.conditionActionList.Add(conditionAction);
+                        conditionCheck.data.conditionActionList.AddNotHas(conditionAction);
                     });
                 };
                 Action disable = () =>
                 {
                     conditionChecks.ForEach(conditionCheck =>
                     {
-                        conditionCheck.data.conditionActionList.Remove(conditionAction);
+                        conditionCheck.data.conditionActionList.RemoveAll(conditionAction);
                     });
                 };
                 return (enable, disable);
