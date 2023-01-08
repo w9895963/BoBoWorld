@@ -21,24 +21,25 @@ namespace Configure
 
         [System.Serializable]
         [AddTypeMenu("物理/地面检测器")]
-        public partial class ConfigureItem_GroundFinder_ : ConfigureBase_
+        public partial class ConfigureItem_GroundFinder : ConfigureBase_
         {
+            [Header("固定参数")]
+            [Tooltip("地面向量与重力的夹角大于此角度则不视为地面")]
+            public float 地面最大夹角 = 10;
+
+            [Tooltip("此标签外的物体不被视为地面")]
+            [NaughtyAttributes.Tag]
+            public List<string> 地面标签 = new List<string>() { "地表碰撞体" };
+
 
             [Header("导入参数")]
 
             [Tooltip("")]
             [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "最大角度", tooltip = "地面向量与重力的夹角大于此角度则不视为地面")]
-            public Configure.Interface.DataHold_NameOrData<float> maxAngleGetIn = new Configure.Interface.DataHold_NameOrData<float>(10);
-
-            [Tooltip("")]
-            [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "重力向量", tooltip = "角色的重力向量")]
-            public Configure.Interface.DataHold_NameOrData<Vector2> gravityIn = new Configure.Interface.DataHold_NameOrData<Vector2>(Vector2.down, DataName.重力向量, true);
+            public Configure.Interface.DataHolder_NameDropDown<Vector2> gravityIn = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
 
-            [Tooltip("此标签外的物体不被视为地面")]
-            [NaughtyAttributes.Tag]
-            public List<string> 地表碰撞体标签 = new List<string>() { "地表碰撞体" };
+
 
 
 
@@ -92,7 +93,7 @@ namespace Configure
 
 
             //覆盖方法:创建运行器
-            public override ConfigureRunner CreateRunner(GameObject gameObject)
+            public override ConfigureRunner CreateRunner(GameObject gameObject, MonoBehaviour monoBehaviour)
             {
 
 
@@ -100,22 +101,22 @@ namespace Configure
 
 
 
-                float maxAngle = 0;
+                float maxAngle = 地面最大夹角;
                 Vector2 gravity = Vector2.down;
                 Vector2 groundNormal = Vector2.zero;
+                List<string> tags = this.地面标签.Distinct().ToList();
+                bool enabled = false;
 
 
 
-                (Action Enable, Action Disable) maxAngleSetEnabler = maxAngleGetIn.SetDataOnChanged((x) => maxAngle = x, gameObject);
 
                 //重力方向
-                (Action Enable, Action Disable) gravityEn = gravityIn.SetDataOnChanged((x) =>
+                gravityIn.GetEventDataHandler(gameObject).BindDataTo((d) =>
                 {
-                    gravity = x;
-                    // Debug.Log(gravity);
-                }, gameObject);
-
-
+                    if (d == Vector2.zero)
+                        return;
+                    gravity = d;
+                });
                 //地面法线
                 var groundNormalD = groundNormalIn.GetEventDataHandler(gameObject);
                 //站立地面
@@ -134,27 +135,23 @@ namespace Configure
 
                 void initialize()
                 {
-
-                }
-
-                void enable()
-                {
-                    groundCollider = new();
-                    maxAngleSetEnabler.Enable();
-                    gravityEn.Enable();
-
                     BasicEvent.OnCollision2D_Enter.Add(gameObject, OnCollisionEnter2D);
                     BasicEvent.OnCollision2D_Stay.Add(gameObject, OnCollisionStay2D);
                     BasicEvent.OnCollision2D_Exit.Add(gameObject, OnCollisionExit2D);
                 }
 
+                void enable()
+                {
+
+                    enabled = true;
+                    groundCollider.Clear();
+
+
+                }
+
                 void disable()
                 {
-                    maxAngleSetEnabler.Disable();
-                    gravityEn.Disable();
-                    BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
-                    BasicEvent.OnCollision2D_Stay.Remove(gameObject, OnCollisionStay2D);
-                    BasicEvent.OnCollision2D_Exit.Remove(gameObject, OnCollisionExit2D);
+                    enabled = false;
 
 
                     groundObjectD.Data = null;
@@ -165,7 +162,9 @@ namespace Configure
 
                 void destroy()
                 {
-
+                    BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
+                    BasicEvent.OnCollision2D_Stay.Remove(gameObject, OnCollisionStay2D);
+                    BasicEvent.OnCollision2D_Exit.Remove(gameObject, OnCollisionExit2D);
                 }
 
 
@@ -173,9 +172,12 @@ namespace Configure
 
                 void OnCollisionEnter2D(Collision2D obj)
                 {
+                    if (enabled == false)
+                        return;
+
 
                     //如果碰撞体标签不包含碰撞体标签则退出
-                    if (!地表碰撞体标签.Contains(obj.gameObject.tag))
+                    if (!tags.Contains(obj.gameObject.tag))
                         return;
 
 
@@ -189,8 +191,10 @@ namespace Configure
                 }
                 void OnCollisionStay2D(Collision2D obj)
                 {
+                    if (enabled == false)
+                        return;
                     //如果碰撞体标签不包含碰撞体标签则退出
-                    if (!地表碰撞体标签.Contains(obj.gameObject.tag))
+                    if (!tags.Contains(obj.gameObject.tag))
                         return;
 
 
@@ -208,8 +212,10 @@ namespace Configure
 
                 void OnCollisionExit2D(Collision2D obj)
                 {
+                    if (enabled == false)
+                        return;
                     //如果碰撞体标签不包含碰撞体标签则退出
-                    if (!地表碰撞体标签.Contains(obj.gameObject.tag))
+                    if (!tags.Contains(obj.gameObject.tag))
                         return;
 
                     ContactPoint2D[] contactPoint2Ds;

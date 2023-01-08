@@ -59,11 +59,11 @@ namespace Configure
 
 
                 (EventData.Core.EventData data, Func<bool> check)[] checks = {
-                    moveInput.OnCustom(() => moveInput.Data.x != 0),
-                    groundNormal.OnUpdate,
-                    moveSpeed.OnUpdate
+                    moveInput.OnCustomCondition(() => moveInput.Data.x != 0),
+                    groundNormal.OnUpdateCondition,
+                    moveSpeed.OnUpdateCondition
                 };
-                enabler = EventDataF.OnDataCondition(CalculateMoveForce, conditionChecks: checks, OnFail, monoBehaviour);
+                enabler = EventDataF.CreateConditionEnabler(CalculateMoveForce, OnFail, checks,  monoBehaviour);
 
 
 

@@ -93,12 +93,12 @@ namespace Configure
                     //获取施力数据
                     EventDataHandler<Vector2> forceD = forceDList[i];
 
-                    (Action Enable, Action Disable) value = EventDataF.OnDataCondition(() =>
+                    (Action Enable, Action Disable) value = EventDataF.CreateConditionEnabler(() =>
                     {
                         // Debug.Log("施力数据更新");
                         //获取施力数据
                         forceList.AddToIndex(i, forceD.Data);
-                    }, null, forceD.OnUpdate);
+                    }, null, forceD.OnUpdateCondition);
 
                     enablerList.Add(value);
 

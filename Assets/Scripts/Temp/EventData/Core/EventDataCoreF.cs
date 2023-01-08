@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using EventData.Core;
 using UnityEngine;
@@ -110,20 +111,21 @@ namespace EventData
                     conditionAction.conditionList.AddNotNull(conditionCheck.check);
                 });
 
-
+                //收集所有数据
+                IEnumerable<EventData> datas = conditionChecks.Select(conditionCheck => conditionCheck.data).Where(data => data != null).Distinct();
 
                 Action enable = () =>
                 {
-                    conditionChecks.ForEach(conditionCheck =>
+                    datas.ForEach(data =>
                     {
-                        conditionCheck.data.conditionActionList.AddNotHas(conditionAction);
+                        data.conditionActionList.AddNotHas(conditionAction);
                     });
                 };
                 Action disable = () =>
                 {
-                    conditionChecks.ForEach(conditionCheck =>
+                    datas.ForEach(data =>
                     {
-                        conditionCheck.data.conditionActionList.RemoveAll(conditionAction);
+                        data.conditionActionList.RemoveAll(conditionAction);
                     });
                 };
                 return (enable, disable);

@@ -61,9 +61,6 @@ namespace Configure
 
 
 
-
-        //字段:启用器
-        public (Action Enable, Action Disable) enabler = (null, null);
         public bool Enabled => interfaceEnabled;
 
 
@@ -73,12 +70,8 @@ namespace Configure
 
 
 
-        public virtual (Action Enable, Action Disable) CreateEnabler(GameObject gameObject)
-        {
-            return (null, null);
-        }
 
-        public virtual ConfigureRunner CreateRunner(GameObject gameObject)
+        public virtual ConfigureRunner CreateRunner(GameObject gameObject, MonoBehaviour monoBehaviour)
         {
             return null;
         }

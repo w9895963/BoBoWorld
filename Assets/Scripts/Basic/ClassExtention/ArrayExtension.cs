@@ -82,7 +82,6 @@ public static class ExtensionArray
 
 
 
-
     public static T FIndOrAdd<T>(this List<T> list, T newMember, System.Predicate<T> match)
     {
         T re = newMember;
@@ -99,6 +98,8 @@ public static class ExtensionArray
 
         return re;
     }
+
+
     public static T FIndType<T>(this IEnumerable source, T defaultOut = default)
     {
         foreach (var item in source)
@@ -203,6 +204,8 @@ public static class ExtensionArray
 
 
 
+
+
     public static List<T> ToList<T>(this T[] source)
     {
         if (source == null)
@@ -244,6 +247,8 @@ public static class ExtensionArray
         });
         return re;
     }
+
+
 
 
 
@@ -330,6 +335,11 @@ public static class ExtensionArray
 
 
 
+
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T> source)
+    {
+        return source.Where((x) => x != null);
+    }
 
 
 

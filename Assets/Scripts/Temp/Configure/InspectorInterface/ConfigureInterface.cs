@@ -52,7 +52,7 @@ namespace Configure
                 if (!IsConst)
                 {
                     eventDataHandler = EventDataF.GetData<T>(DataName, gameObject);
-                    updateEnabler = EventDataF.OnDataCondition(() => action?.Invoke(eventDataHandler.Data), null, eventDataHandler.OnUpdate);
+                    updateEnabler = EventDataF.CreateConditionEnabler(() => action?.Invoke(eventDataHandler.Data), null, eventDataHandler.OnUpdateCondition);
                 }
 
                 enabler.Enable = () =>
@@ -88,9 +88,6 @@ namespace Configure
         [System.Serializable]
         public class DataHolder_NameDropDown<T>
         {
-            // [SerializeField]
-            // [StackableField]
-            // [HorizontalGroup("info2", true, "", 0)]
             [AllowNesting]
             [NaughtyAttributes.Label("")]
             [Dropdown("UpdateDropdownNames")]
@@ -175,7 +172,7 @@ namespace Configure
                 }
                 else
                 {
-                   
+
 
 
                     //
@@ -185,7 +182,6 @@ namespace Configure
                     Type type = types.Where((t) => t.Namespace == "Configure.Interface")
                     .Where((t) => t.GetField("data") != null)
                     .First((t) => t.GetField("data").FieldType == typeof(T));
-                    type.LogSmart();
                     //如果存在则新建
                     if (type != null)
                     {
@@ -193,7 +189,6 @@ namespace Configure
                         DataBase item = System.Activator.CreateInstance(type) as DataBase;
 
 
-                        Debug.Log(item);
                         dataBase = item;
                         dataBase.DataValue = dataPreset;
 

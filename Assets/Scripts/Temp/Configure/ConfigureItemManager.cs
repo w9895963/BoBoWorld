@@ -36,27 +36,57 @@ namespace Configure
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //*在编辑器中运行
+
         //方法:热更新
-        [Button("热更新")]
         public void HotUpdate()
         {
             //如果游戏不在运行则返回且报错
             if (!Application.isPlaying)
             {
-                Debug.LogError("游戏不在运行");
                 return;
             }
             //找到启用且有自身的组件
             var components = FindObjectsOfType<ConfigureBuilderMono>().Where(x => x.enabled & x.configList.Contains(this));
             components.ForEach(x =>
             {
-                x.enabled = false;
-                x.enabled = true;
+                x.UpdateRunners();
+                
             });
 
         }
 
+
+
+        //改动
+        public void OnValidate()
+        {
+            HotUpdate();
+        }
+
     }
+
+
+
+
+
+
+
+
 
 
 

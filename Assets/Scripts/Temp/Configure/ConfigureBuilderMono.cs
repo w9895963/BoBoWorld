@@ -93,15 +93,15 @@ namespace Configure
 
             enablerList.ForEach(x => x.Enable?.Invoke());
         }
-        public void UpdateRunnersAndEnabled()
+        public void UpdateRunners()
         {
-            List<ConfigureBase_> configureBase_s = configList.SelectMany(x => x.配置文件_).ToList();
+            List<ConfigureBase_> configureBase_s = configList.SelectMany(x => x.配置文件_).WhereNotNull().ToList();
 
             foreach (var item in configureBase_s)
             {
                 if (!runnerList.ContainsKey(item))
                 {
-                    var runner = item.CreateRunner(gameObject);
+                    var runner = item.CreateRunner(gameObject, this);
                     runner.Initialize();
                     runnerList.Add(item, runner);
                 }
@@ -145,14 +145,14 @@ namespace Configure
         void OnEnable()
         {
             // enablerList.ForEach(x => x.Enable?.Invoke());
-            UpdateRunnersAndEnabled();
+            UpdateRunners();
 
         }
 
         void OnDisable()
         {
             // enablerList.ForEach(x => x.Disable?.Invoke());
-            UpdateRunnersAndEnabled();
+            UpdateRunners();
         }
 
 
