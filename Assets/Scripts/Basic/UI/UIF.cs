@@ -1,12 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public static class UIF
 {
-
-
     public static float GetChildrenHeight(GameObject parent)
     {
         List<GameObject> children = parent.GetDirectChildren();
@@ -18,8 +16,4 @@ public static class UIF
         });
         return height;
     }
-
-
-
-
 }

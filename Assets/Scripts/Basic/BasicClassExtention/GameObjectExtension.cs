@@ -217,13 +217,7 @@ public static class Extention_GameObject
 
 
 
-    public static bool SetParams(this GameObject gameObject, params System.Object[] paramArray)
-    {
-        IParams iCom = gameObject.GetComponent<IParams>();
-        if (iCom == null) return false;
-        iCom.Parameters = paramArray;
-        return true;
-    }
+  
 
 
 

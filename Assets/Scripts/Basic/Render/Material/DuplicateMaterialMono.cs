@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DuplicateMaterial : MonoBehaviour
+public class DuplicateMaterialMono : MonoBehaviour
 {
     void Start()
     {
