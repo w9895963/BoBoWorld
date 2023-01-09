@@ -25,7 +25,7 @@ public class CameraManager : MonoBehaviour
         if (enabled)
         {
             CameraAction_Follow comp = gameObject.GetComponent<CameraAction_Follow>(true);
-            comp.target = Fc.FindOnlyComponent<CharacterManager>().gameObject;
+            comp.target = Fc.FindOnlyComponent<CharacterManager>()?.gameObject;
             comp.config = conf;
 
 

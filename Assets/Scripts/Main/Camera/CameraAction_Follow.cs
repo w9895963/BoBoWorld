@@ -69,7 +69,7 @@ public class CameraAction_Follow : MonoBehaviour
     private void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime;
-        Vector2 tarP = target.GetPosition2d();
+        Vector2 tarP = target == null ? Vector2.zero : target.GetPosition2d();
         tarP += cf.目标偏移; //*Offset
         inputOffsetNow = InputOffset();
         tarP += inputOffsetNow;

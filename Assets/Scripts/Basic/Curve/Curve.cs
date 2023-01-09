@@ -6,7 +6,7 @@ using UnityEngine;
 public static class Curve
 {
 
-    //* Class Definition
+    //* 界面参数,用来获得曲线
     public class CurveCs
     {
         public float inputMax = 1;
@@ -90,11 +90,16 @@ public static class Curve
         Keyframe k2 = curve.keys[1];
         return new Vector2(k1.outWeight.Map(0, 1, -1, 1), k2.inWeight.Map(0, 1, 1, -1));
     }
-    public static float Evaluate(float index, float inputMin, float inputMax,
-        float outputMin, float outputMax, AnimationCurve curve = null)
-    {
 
-        if (curve != null)
+
+
+
+
+
+    //* 拓展:
+    public static float Evaluate(this AnimationCurve curve, float index, float inputMin, float inputMax, float outputMin = 0, float outputMax = 1)
+    {
+         if (curve != null)
         {
             CurveCs cur = new CurveCs();
             cur.curve = curve;
@@ -109,11 +114,5 @@ public static class Curve
             return (index.Clamp(inputMin, inputMax) - inputMin) / (inputMax - inputMin)
                 * (outputMax - outputMin) + outputMin;
         }
-    }
-
-    public static float Evaluate(this AnimationCurve curve, float index, float inputMin, float inputMax,
-        float outputMin = 0, float outputMax = 1)
-    {
-        return Curve.Evaluate(index, inputMin, inputMax, outputMin, outputMax, curve);
     }
 }
