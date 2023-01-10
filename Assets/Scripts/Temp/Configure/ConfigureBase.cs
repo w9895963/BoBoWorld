@@ -52,6 +52,9 @@ namespace Configure
         private bool interfaceEnabled = true;
 
 
+        public string test;
+
+
 
 
 

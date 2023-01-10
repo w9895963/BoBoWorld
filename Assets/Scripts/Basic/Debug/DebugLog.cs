@@ -55,9 +55,14 @@ public static class DebugF
 
 
 
-    public static void LogSmart<T>(this T content)
+    public static T LogSmart<T>(this T content)
     {
         string v = "";
+        //如果是null
+        if (content == null)
+        {
+            v = "null";
+        }
         //如果为可枚举的类型
         if (content is IEnumerable)
         {
@@ -84,6 +89,8 @@ public static class DebugF
 
 
         Debug.Log(v);
+
+        return content;
     }
 
 

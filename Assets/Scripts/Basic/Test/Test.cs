@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Security;
 using Microsoft.CSharp;
 using NaughtyAttributes;
@@ -29,6 +30,13 @@ public class Test : MonoBehaviour
     {
         Type type = obj.GetType();
         type.Name.LogSmart();
+    }
+
+    public class TestClass
+    {
+        public int a;
+        public int b;
+        public int c;
     }
 
 
@@ -58,9 +66,20 @@ public class Test : MonoBehaviour
     [Button]
     public void 测试方法1()
     {
-        typeof(Configure.Interface.DataBase).Namespace.LogSmart();
+        List<int> list = new List<int>();
+        int[] array = new int[10];
+        var f = array.GetType().GetTypeInfo();
+
+
+        this.GetType().GetTypeInfo().GetField("gameObj").GetValue(this).LogSmart();
+
+
+
+
 
     }
+
+
 
 
 
