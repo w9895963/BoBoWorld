@@ -55,7 +55,7 @@ public static class DebugF
 
 
 
-    public static T LogSmart<T>(this T content)
+    public static T Log<T>(this T content, string label = null, bool color = true)
     {
         string v = "";
         //如果是null
@@ -73,9 +73,12 @@ public static class DebugF
             }
             else
             {
+                //递增循环
+                int i = 0;
                 foreach (var item in content as IEnumerable)
                 {
-                    v += $"{item.ToString()}, ";
+                    v += $"[<color=green>{i}</color>]{item.ToString()}, ";
+                    i++;
                 }
             }
 
@@ -87,11 +90,26 @@ public static class DebugF
             v = content.ToString();
         }
 
+        if (label != null)
+        {
+            v = $"<color=yellow>{label}</color> : {v}";
+        }
 
-        Debug.Log(v);
+        if (color)
+        {
+            Debug.LogFormat(v);
+        }
+        else
+        {
+            Debug.Log(v);
+        }
+
+
 
         return content;
     }
+
+
 
 
 

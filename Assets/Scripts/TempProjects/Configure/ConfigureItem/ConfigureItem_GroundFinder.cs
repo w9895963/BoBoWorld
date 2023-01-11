@@ -55,7 +55,7 @@ namespace Configure
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "站在地面", tooltip = "此刻是否正站在地面上")]
-            public Configure.Interface.DataHolder_NameDropDown<bool> standOnGroundIn = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.站在地面);
+            public Configure.Interface.DataHolder_NameDropDown<bool> standOnGroundIn = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否站在地面);
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面物体", tooltip = "获得脚下的地面物体")]

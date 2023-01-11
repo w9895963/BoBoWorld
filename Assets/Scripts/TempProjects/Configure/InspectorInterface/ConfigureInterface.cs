@@ -106,7 +106,7 @@ namespace Configure
 
             private string[] UpdateDropdownNames()
             {
-                return EventData.DataNameF.GetNamesOnType(typeof(T)).ToArray();
+                return EventData.DataNameF.GetAllNamesOnTypeRegex(typeof(T)).ToArray();
             }
         }
 
@@ -346,7 +346,7 @@ namespace Configure
             public DataImport(System.Type type)
             {
                 this.type = type;
-                updateDropdownNames = DataNameF.GetNamesOnType(type);
+                updateDropdownNames = DataNameF.GetAllNamesOnTypeRegex(type).ToList();
             }
 
 

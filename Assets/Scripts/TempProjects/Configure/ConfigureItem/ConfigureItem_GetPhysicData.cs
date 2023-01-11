@@ -45,7 +45,7 @@ namespace Configure
 
 
                 //获取运动速度
-                EventDataHandler<Vector2> speedD = EventDataF.GetData<Vector2>(DataName.运动速度, gameObject);
+                EventDataHandler<Vector2> speedD = EventDataF.GetData<Vector2>(DataName.运动速度向量, gameObject);
 
 
                 //获取物理组件

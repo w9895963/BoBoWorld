@@ -42,13 +42,13 @@ namespace Configure
 
 
                 //获取数据行走输入
-                EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>(DataName.输入指令_移动);
+                EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>(DataName.全局_输入_移动向量);
                 //获取数据运动速度
-                EventDataHandler<Vector2> moveSpeed = EventDataF.GetData<Vector2>(DataName.运动速度, gameObject);
+                EventDataHandler<Vector2> moveSpeed = EventDataF.GetData<Vector2>(DataName.运动速度向量, gameObject);
                 //获取数据地表法线
                 EventDataHandler<Vector2> groundNormal = EventDataF.GetData<Vector2>(DataName.地表法线, gameObject);
                 //获取数据当前速度
-                EventDataHandler<Vector2> currentVelocity = EventDataF.GetData<Vector2>(DataName.运动速度, gameObject);
+                EventDataHandler<Vector2> currentVelocity = EventDataF.GetData<Vector2>(DataName.运动速度向量, gameObject);
 
                 //获取数据行走施力
                 EventDataHandler<Vector2> moveForce = EventDataF.GetData<Vector2>(DataName.行走施力, gameObject);

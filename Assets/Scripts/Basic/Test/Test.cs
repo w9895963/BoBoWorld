@@ -14,24 +14,33 @@ using static CommonFunction.Static;
 
 public class Test : MonoBehaviour
 {
+    //*Unity界面
     public UnityEngine.Object obj;
     public GameObject gameObj;
-    private SimpleTimer simpleTimer;
 
 
-    [ContextMenu("LogObject")]
-    public void LogObj()
-    {
-        Debug.Log(obj);
+    [SerializeReference, SubclassSelector]
+    public TestClass test = new TestClass3();
 
-    }
+
+
+
+
+
+
+
+
+
+
+
 
     public void TestMethod2(ref Vector2 obj)
     {
         Type type = obj.GetType();
-        type.Name.LogSmart();
+        type.Name.Log();
     }
 
+    [Serializable]
     public class TestClass
     {
         public int a;
@@ -39,6 +48,16 @@ public class Test : MonoBehaviour
         public int c;
     }
 
+    public class TestClass2<T> : TestClass
+    {
+        public T d;
+    }
+
+    [Serializable]
+    public class TestClass3 : TestClass2<string>
+    {
+
+    }
 
 
 
@@ -62,20 +81,26 @@ public class Test : MonoBehaviour
 
 
 
+
+
+
+
+
     //*测试方法1
     [Button]
     public void 测试方法1()
     {
-        List<int> list = new List<int>();
-        int[] array = new int[10];
-        var f = array.GetType().GetTypeInfo();
+        EventData.DataNameF.GetType(EventData.DataName.是否站在地面).Log("类型");
+        /// <summary>
+        /// 测试方法1
+        /// </summary>
 
-
-        this.GetType().GetTypeInfo().GetField("gameObj").GetValue(this).LogSmart();
-
-
-
-
+        test = new TestClass2<int>();
+        test = new TestClass2<int>();
+        test = new TestClass2<int>();
+        // test = new TestClass2<int>();
+        test = new TestClass2<int>();
+        test = new TestClass2<int>();
 
     }
 

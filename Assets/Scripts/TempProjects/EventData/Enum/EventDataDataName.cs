@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace EventData
@@ -7,16 +9,16 @@ namespace EventData
     //枚举 ：数据名
     public enum DataName
     {
-        输入指令_移动,
-        输入指令_跳跃,
-        输入指令_冲刺,
+        全局_输入_移动向量,
+        全局_输入_跳跃值,
+        全局_输入_冲刺值,
 
-        运动速度,
+        运动速度向量,
 
 
         重力向量,
         地表法线,
-        站在地面,
+        是否站在地面,
         地面物体,
 
 
@@ -25,37 +27,22 @@ namespace EventData
         重力施力,
     }
 
-    //数据名对应类型
-    namespace DataNameAddition
+
+
+    //预输入参数
+    public static partial class DataNameD
     {
-        //数据名对应类型
-        public static class DataNameType
-        {
-            //类型字典
-            public static Dictionary<DataName, System.Type> typeDic = new Dictionary<DataName, System.Type>(){
-            {DataName.输入指令_移动, typeof(Vector2)},
-            {DataName.输入指令_跳跃, typeof(bool)},
-            {DataName.输入指令_冲刺, typeof(bool)},
-
-            {DataName.运动速度, typeof(Vector2)},
-
-            {DataName.重力向量, typeof(Vector2)},
-            {DataName.地表法线, typeof(Vector2)},
-            {DataName.站在地面, typeof(bool)},
-            {DataName.地面物体, typeof(GameObject)},
+       
+        //字典:类型判断正则表达
+        public static Dictionary<System.Type, string> TypeRegexDic = new Dictionary<System.Type, string>(){
+            {typeof(Vector2), @"(向量|施力|法线)$"},
+            {typeof(bool), @"^是否"},
+            {typeof(GameObject), @"物体$"},
+            {typeof(float), @"值$"}
+        };
 
 
-            {DataName.行走施力, typeof(Vector2)},
-            {DataName.跳跃施力, typeof(Vector2)},
-            {DataName.重力施力, typeof(Vector2)},
-            };
-
-
-
-
-        }
     }
-
 
 
 
@@ -64,38 +51,95 @@ namespace EventData
     //数据名方法
     public static class DataNameF
     {
-        /// <summary>获取数据名对应类型</summary>
+        ///* <summary>获取所有可能的数据名列表,全名</summary>
+        public static string[] GetDataNamesList()
+        {
+
+            //分割并获取最后一个
+            IEnumerable<string> l1 = System.Enum.GetNames(typeof(DataName));
+
+
+            //合并多个字符串数组
+            string[] arr = l1.ToArray();
+
+            return arr;
+        }
+
+
+
+
+
+        ///* <summary>获得某一类型的所有数据名</summary>
+        public static string[] GetAllNamesOnTypeRegex(System.Type type)
+        {
+            string[] re = default;
+
+
+
+
+            //~创建一个正则表达式⁡
+            string pattern = null;
+            //获得和类型对应的正则表达式
+            bool success = DataNameD.TypeRegexDic.TryGetValue(type, out pattern);
+            if (!success)
+            {
+                Debug.LogError($"类型[{type}]没有预设对应的正则表达式");
+                return re;
+            }
+            //创建一个正则表达式
+            Regex regex = new Regex(pattern);
+
+
+
+            //~多行匹配
+            re = GetDataNamesList().Where(name => regex.IsMatch(name.Split("_").Last())).ToArray();
+
+            return re;
+        }
+
+
+
+
+
+
+
+        ///* <summary>获取数据名对应类型</summary>
         public static System.Type GetType(DataName dataName)
         {
-            Dictionary<DataName, System.Type> typeDic = DataNameAddition.DataNameType.typeDic;
-            if (typeDic.ContainsKey(dataName))
-            {
-                return typeDic[dataName];
-            }
-            else
-            {
-                Debug.LogError($"数据名[{dataName}]没有预设对应的类型");
-                return null;
-            }
-        }
+            //返回值
+            System.Type type = default;
 
-
-        /// <summary>获得某一类型的所有数据名</summary>
-        public static List<string> GetNamesOnType(System.Type type)
-        {
-            List<string> list = new List<string>();
-            foreach (DataName dataName in System.Enum.GetValues(typeof(DataName)))
+            //历遍正则字典TypeRegexDic
+            DataNameD.TypeRegexDic.ForEach((keyValue) =>
             {
-                if (GetType(dataName) == type)
+                //创建一个正则表达式
+                Regex r = new Regex(keyValue.Value);
+                //匹配
+                if (r.IsMatch(dataName.ToString()))
                 {
-                    list.Add(dataName.ToString());
+                    //返回类型
+                    type = keyValue.Key;
                 }
-            }
-            if (list.Count == 0)
-            {
-                list.Add("");
-            }
-            return list;
+            });
+
+
+
+            return type;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
+
+
 }

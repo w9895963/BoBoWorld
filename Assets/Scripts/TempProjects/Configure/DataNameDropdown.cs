@@ -27,7 +27,7 @@ namespace Configure
 
 
 
-        public List<string> UpdateDropdownNames => DataNameF.GetNamesOnType(typeof(T));
+        public List<string> UpdateDropdownNames => DataNameF.GetAllNamesOnTypeRegex(typeof(T)).ToList();
 
 
     }
@@ -51,7 +51,7 @@ namespace Configure
 
 
 
-        public List<string> UpdateDropdownNames => DataNameF.GetNamesOnType(typeof(Vector2));
+        public List<string> UpdateDropdownNames => DataNameF.GetAllNamesOnTypeRegex(typeof(Vector2)).ToList();
 
 
     }
@@ -70,7 +70,7 @@ namespace Configure
 
 
 
-        public List<string> UpdateDropdownNames => DataNameF.GetNamesOnType(typeof(Vector2));
+        public List<string> UpdateDropdownNames => DataNameF.GetAllNamesOnTypeRegex(typeof(Vector2)).ToList();
 
 
     }

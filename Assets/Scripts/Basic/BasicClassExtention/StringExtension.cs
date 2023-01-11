@@ -18,6 +18,10 @@ public static class StringExtension
         string[] vs = str.Split(splitter);
         return new Vector2(float.Parse(vs[0]), float.Parse(vs[1]));
     }
+
+
+
+
     public static float? TryFloat(this string str)
     {
         float? re = null;
@@ -45,6 +49,13 @@ public static class StringExtension
 
         return re;
     }
+
+    public static bool IsMatch(this string str, string regex)
+    {
+        return Regex.IsMatch(str, regex);
+    }
+
+
 
 
     public static string[] SplitWhite(this string str)
@@ -83,5 +94,10 @@ public static class StringExtension
 
         return true;
     }
+
+
+
+
+
 
 }
