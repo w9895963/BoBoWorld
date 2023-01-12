@@ -24,8 +24,8 @@ public class InputKeysMono : MonoBehaviour
 
         List<(string InputActionName, System.Enum CmDataName)> nameMapList = new List<(string InputActionName, System.Enum CmDataName)>
         {
-            ("Jump", DataName.全局_输入_跳跃值),
-            ("Dash", DataName.全局_输入_冲刺值),
+            ("Jump", DataName.全局_输入_跳跃键),
+            ("Dash", DataName.全局_输入_冲刺键),
         };
 
 

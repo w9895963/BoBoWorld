@@ -1,16 +1,7 @@
 using System;
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Security;
-using Microsoft.CSharp;
 using NaughtyAttributes;
-using Timer.Base;
 using UnityEngine;
-using static CommonFunction.Static;
+using UnityEngine.Rendering;
 
 public class Test : MonoBehaviour
 {
@@ -53,7 +44,6 @@ public class Test : MonoBehaviour
         public T d;
     }
 
-    [Serializable]
     public class TestClass3 : TestClass2<string>
     {
 
@@ -90,17 +80,11 @@ public class Test : MonoBehaviour
     [Button]
     public void 测试方法1()
     {
-        EventData.DataNameF.GetType(EventData.DataName.是否站在地面).Log("类型");
-        /// <summary>
-        /// 测试方法1
-        /// </summary>
+        //生成一个随机数然后打印到unix的的控制台。
+        typeof(string).Log();
+        // SpriteShape
 
-        test = new TestClass2<int>();
-        test = new TestClass2<int>();
-        test = new TestClass2<int>();
-        // test = new TestClass2<int>();
-        test = new TestClass2<int>();
-        test = new TestClass2<int>();
+
 
     }
 

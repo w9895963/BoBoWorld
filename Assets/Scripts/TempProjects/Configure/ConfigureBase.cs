@@ -28,7 +28,7 @@ namespace Configure
         }
 
 
-//
+        //
 
 
 
@@ -42,6 +42,7 @@ namespace Configure
     [AddTypeMenu("")]
     public class ConfigureBase_
     {
+        //*Inspector界面元素
         [HelpBox("配置已经启用", "$interfaceEnabled", messageType = 0)]
         [StackableDecorator.Box(4, 4, 4, 4)]
         [StackableDecorator.Label(title = "启用配置")]
@@ -52,7 +53,6 @@ namespace Configure
         private bool interfaceEnabled = true;
 
 
-        public string test;
 
 
 
@@ -71,12 +71,14 @@ namespace Configure
         protected virtual List<System.Type> requiredTypes => new List<System.Type>();
         public virtual List<System.Type> RequiredTypes => requiredTypes;
 
+        protected System.Func<GameObject, ConfigureRunner> createRunner;
+
 
 
 
         public virtual ConfigureRunner CreateRunner(GameObject gameObject, MonoBehaviour monoBehaviour)
         {
-            return null;
+            return createRunner?.Invoke(gameObject);
         }
 
 

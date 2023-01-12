@@ -86,12 +86,6 @@ namespace Configure
 
 
 
-
-
-
-
-
-
             //覆盖方法:创建运行器
             public override ConfigureRunner CreateRunner(GameObject gameObject, MonoBehaviour monoBehaviour)
             {

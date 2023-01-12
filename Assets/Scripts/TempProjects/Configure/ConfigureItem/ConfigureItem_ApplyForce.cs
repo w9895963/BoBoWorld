@@ -5,6 +5,7 @@ using Configure;
 using Configure.Interface;
 using EventData;
 using NaughtyAttributes;
+using StackableDecorator;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,27 +16,25 @@ namespace Configure
 {
     namespace ConfigureItem
     {
-        //配置:計算行走施力
-        [CreateAssetMenu(fileName = "力量施加器", menuName = "动态配置/力量施加器", order = 1)]
-        public partial class ConfigureItem_ApplyForce : ConfigureBase
+
+
+
+
+        [System.Serializable]
+        [AddTypeMenu("物理/力量施加器")]
+        public class ConfigureItem_ApplyForce_ : ConfigureBase_
         {
 
-
-            [NaughtyAttributes.Label("施力数据列表")]
-
-            // [OneLine.HideLabel]
-            public List<DataNameDropdown<Vector2>> forceNameList = new List<DataNameDropdown<Vector2>>(){
-                new DataNameDropdown<Vector2>(EventData.DataName.行走施力),
-                new DataNameDropdown<Vector2>(EventData.DataName.跳跃施力),
-                new DataNameDropdown<Vector2>(EventData.DataName.重力施力),};
-
-            [NaughtyAttributes.Label("施力数据列表")]
-            public List<DataHolder_NameDropDown<Vector2>> forceNameListIn_ = new List<DataHolder_NameDropDown<Vector2>>(){
+            [HorizontalGroup("施力数据列表", true, "", 0)]
+            [StackableField]
+            public List<DataHolder_NameDropDown<Vector2>> 施力数据列表 = new List<DataHolder_NameDropDown<Vector2>>(){
                 new  (EventData.DataName.行走施力),
                 new  (EventData.DataName.跳跃施力),
-                new  (EventData.DataName.重力施力),};
+                new  (EventData.DataName.重力施力),
+            };
 
-            public DataHolder_NameDropDown<Vector2> forceNameListIn2 = new DataHolder_NameDropDown<Vector2>(EventData.DataName.行走施力);
+
+
 
 
 
@@ -46,44 +45,50 @@ namespace Configure
 
 
 
-
-
-            //必要组件
-            protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D) };
-
-
-
-
-
-            //覆盖方法:创建启用器
-            public override (Action Enable, Action Disable) CreateEnabler(GameObject gameObject,MonoBehaviour monoBehaviour)
-           
+            public ConfigureItem_ApplyForce_()
             {
-                //创建启用器
-                (Action Enable, Action Disable) enabler = (null, null);
+                Construct();
+            }
 
+
+
+
+
+
+
+
+
+
+
+            private GameObject gameObject;
+            private Rigidbody2D rigidbody2D;
+            private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
+            private List<EventDataHandler<Vector2>> forceDList;
+            private List<Vector2> forceList = new List<Vector2>() { Vector2.zero };
+
+            private void Construct()
+            {
+                createRunner = (obj) =>
+                {
+                    gameObject = obj;
+                    rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+
+
+                    return new ConfigureRunner(initialize, enable, disable, destroy);
+                };
+            }
+
+
+
+            private void initialize()
+            {
 
                 //获取施力数据列表
-                List<EventDataHandler<Vector2>> forceDList = forceNameList.Select(x => EventDataF.GetData<Vector2>(x.dataName, gameObject)).Where(x => x != null).ToList();
-
-
-                //获取物理组件
-                Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+                forceDList = 施力数据列表.Select(x => EventDataF.GetData<Vector2>(x.dataName, gameObject)).Where(x => x != null).ToList();
 
 
 
 
-
-
-                //启动器表
-                List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>(forceDList.Count);
-
-
-
-
-                //力列表
-                List<Vector2> forceList = new List<Vector2>() { Vector2.zero };
-                // Debug.Log("力列表长度" + forceList.Count);
 
                 //递增历遍施力数据列表
                 for (int i = 0; i < forceDList.Count; i++)
@@ -99,42 +104,30 @@ namespace Configure
                     }, null, forceD.OnUpdateCondition);
 
                     enablerList.Add(value);
-
-                }
-
-
-
-
-
-                enabler.Enable = () =>
-                {
+                    
                     enablerList.ForEach(x => x.Enable());
-                    BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
-                };
-                enabler.Disable = () =>
-                {
-                    enablerList.ForEach(x => x.Disable());
-                    BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);
-                };
-
-
-
-
-                void FixedUpdate()
-                {
-                    Vector2 force = forceList.Aggregate((x, y) => x + y);
-                    //等于0时不计算
-                    if (force.magnitude == 0)
-                    {
-                        return;
-                    }
-                    rigidbody2D.AddForce(force);
                 }
 
 
 
+            }
 
-                return enabler;
+            private void destroy()
+            {
+                enablerList.ForEach(x => x.Disable());
+            }
+
+            private void enable()
+            {
+
+                BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
+
+            }
+
+            private void disable()
+            {
+
+                BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);
             }
 
 
@@ -142,13 +135,17 @@ namespace Configure
 
 
 
-
+            private void FixedUpdate()
+            {
+                Vector2 force = forceList.Aggregate((x, y) => x + y);
+                //等于0时不计算
+                if (force.magnitude == 0)
+                {
+                    return;
+                }
+                rigidbody2D.AddForce(force);
+            }
         }
-
-
-
-
-
 
     }
 

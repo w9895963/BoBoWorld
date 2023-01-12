@@ -84,7 +84,6 @@ namespace Configure
 
 
 
-
         [System.Serializable]
         public class DataHolder_NameDropDown<T>
         {
@@ -93,9 +92,17 @@ namespace Configure
             [Dropdown("UpdateDropdownNames")]
             [StackableField]
             public string dataName;
+
             public DataHolder_NameDropDown(System.Enum dataNamePreset)
             {
                 dataName = dataNamePreset.ToString();
+            }
+
+
+            public DataHolder_NameDropDown(string dataNamePreset)
+            {
+                
+                dataName = dataNamePreset;
             }
 
             public EventDataHandler<T> GetEventDataHandler(GameObject gameObject)
@@ -112,11 +119,14 @@ namespace Configure
 
 
 
+   
 
 
 
 
 
+
+        
 
 
 

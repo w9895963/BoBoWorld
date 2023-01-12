@@ -4,8 +4,8 @@ namespace EventData
     public enum DataName
     {
         全局_输入_移动向量,
-        全局_输入_跳跃值,
-        全局_输入_冲刺值,
+        全局_输入_跳跃键,
+        全局_输入_冲刺键,
 
         运动速度向量,
 
