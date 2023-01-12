@@ -25,13 +25,13 @@ namespace BasicEvent
     {
         public static void Add(GameObject gameObject, Action action)
         {
-            BasicEvent.Method.Add<Component.OnFixedUpdateComponent>(gameObject, action);
+            BasicEvent.Core.Method.Add<Component.OnFixedUpdateComponent>(gameObject, action);
         }
 
 
         public static void Remove(GameObject gameObject, Action action)
         {
-            Method.Remove<Component.OnFixedUpdateComponent>(gameObject, action);
+            Core.Method.Remove<Component.OnFixedUpdateComponent>(gameObject, action);
         }
 
 

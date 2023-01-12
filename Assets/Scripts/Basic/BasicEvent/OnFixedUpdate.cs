@@ -1,7 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 
 namespace BasicEvent
@@ -25,19 +25,24 @@ namespace BasicEvent
     {
         public static void Add(GameObject gameObject, Action action)
         {
-            BasicEvent.Method.Add<Component.OnFixedUpdateComponent>(gameObject, action);
+            BasicEvent.Core.Method.Add<Component.OnFixedUpdateComponent>(gameObject, action);
         }
+
+
+        public static void Remove(GameObject gameObject, Action action)
+        {
+            Core.Method.Remove<Component.OnFixedUpdateComponent>(gameObject, action);
+        }
+
+
+
+        
         public static void Add(GameObject gameObject, Action action, ref Action AddRemoveAction)
         {
             Add(gameObject, action);
             AddRemoveAction += () => Remove(gameObject, action);
         }
 
-        public static void Remove(GameObject gameObject, Action action)
-        {
-            Method.Remove<Component.OnFixedUpdateComponent>(gameObject, action);
-        }
-        
         public static void Turn(GameObject gameObject, Action action, bool state)
         {
             if (state)

@@ -31,11 +31,11 @@ namespace BasicEvent
 
         public static void Add(GameObject gameObject, Action<Collider2D> action)
         {
-            BasicEvent.Method.Add<Component.OnTrigger2D_Enter_Component, Collider2D>(gameObject, action);
+            BasicEvent.Core.Method.Add<Component.OnTrigger2D_Enter_Component, Collider2D>(gameObject, action);
         }
         public static void Remove(GameObject gameObject, Action<Collider2D> action)
         {
-            BasicEvent.Method.Remove<Component.OnTrigger2D_Enter_Component, Collider2D>(gameObject, action);
+            BasicEvent.Core.Method.Remove<Component.OnTrigger2D_Enter_Component, Collider2D>(gameObject, action);
         }
 
     }

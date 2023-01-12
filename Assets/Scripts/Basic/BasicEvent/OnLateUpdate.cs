@@ -26,11 +26,11 @@ namespace BasicEvent
     {
         public static void Add(GameObject gameObject, Action action)
         {
-            BasicEvent.Method.Add<Component.OnLateUpdateComponent>(gameObject, action);
+            BasicEvent.Core.Method.Add<Component.OnLateUpdateComponent>(gameObject, action);
         }
         public static void Remove(GameObject gameObject, Action action)
         {
-            Method.Remove<Component.OnLateUpdateComponent>(gameObject, action);
+            Core.Method.Remove<Component.OnLateUpdateComponent>(gameObject, action);
         }
     }
 

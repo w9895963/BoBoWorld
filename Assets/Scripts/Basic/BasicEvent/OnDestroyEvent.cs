@@ -25,11 +25,11 @@ namespace BasicEvent
 
         public static void Add(GameObject gameObject, Action action)
         {
-            Method.Add<Component.OnDestroyEvent>(gameObject, action);
+            Core.Method.Add<Component.OnDestroyEvent>(gameObject, action);
         }
         public static void Remove(GameObject gameObject, Action action)
         {
-            Method.Remove<Component.OnFixedUpdateComponent>(gameObject, action);
+            Core.Method.Remove<Component.OnFixedUpdateComponent>(gameObject, action);
         }
 
 

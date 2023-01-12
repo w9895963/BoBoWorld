@@ -30,11 +30,11 @@ namespace BasicEvent
 
         public static void Add(GameObject gameObject, Action<Collision2D> action)
         {
-            Method.Add<Component.OnCollision2D_Exit_Component, Collision2D>(gameObject, action);
+            Core.Method.Add<Component.OnCollision2D_Exit_Component, Collision2D>(gameObject, action);
         }
         public static void Remove(GameObject gameObject, Action<Collision2D> action)
         {
-            Method.Remove<Component.OnCollision2D_Exit_Component, Collision2D>(gameObject, action);
+            Core.Method.Remove<Component.OnCollision2D_Exit_Component, Collision2D>(gameObject, action);
         }
 
     }

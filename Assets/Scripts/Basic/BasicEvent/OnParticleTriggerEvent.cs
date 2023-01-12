@@ -29,11 +29,11 @@ namespace BasicEvent
 
         public static void Add(GameObject gameObject, Action action)
         {
-            BasicEvent.Method.Add<Component.OnParticleTriggerEventComponent>(gameObject, action);
+            BasicEvent.Core.Method.Add<Component.OnParticleTriggerEventComponent>(gameObject, action);
         }
         public static void Remove(GameObject gameObject, Action action)
         {
-            Method.Remove<Component.OnParticleTriggerEventComponent>(gameObject, action);
+            Core.Method.Remove<Component.OnParticleTriggerEventComponent>(gameObject, action);
         }
 
 
