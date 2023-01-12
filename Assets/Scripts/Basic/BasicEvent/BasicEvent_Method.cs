@@ -35,7 +35,7 @@ namespace BasicEvent
         }
 
 
-        
+
         public static void Remove<C>(GameObject gameObject, Action action) where C : Component.BasicEventMono
         {
             var cs = gameObject.GetComponents<C>().ToList();
@@ -46,10 +46,9 @@ namespace BasicEvent
             }
 
             c.RemoveAction(action);
-            if (c.IsActionEmpty())
-            {
-                c.Destroy();
-            }
+
+
+
         }
         public static void Remove<C, T>(GameObject gameObject, Action<T> action) where C : Component.BasicEventMono<T>
         {
@@ -60,10 +59,8 @@ namespace BasicEvent
                 return;
             }
             c.RemoveAction(action);
-            if (c.IsActionEmpty())
-            {
-                c.Destroy();
-            }
+
+
         }
 
 
