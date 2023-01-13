@@ -40,7 +40,8 @@ namespace Configure
 
 
             //脚本说明
-            [NaughtyAttributes.Label("说明")]
+            [StackableField]
+            [StackableDecorator.Label(title = "脚本说明")]
             public ShowOnlyText info = new ShowOnlyText("将所选向量数据作为力应用到刚体上");
 
 
@@ -104,7 +105,7 @@ namespace Configure
                     }, null, forceD.OnUpdateCondition);
 
                     enablerList.Add(value);
-                    
+
                     enablerList.ForEach(x => x.Enable());
                 }
 
