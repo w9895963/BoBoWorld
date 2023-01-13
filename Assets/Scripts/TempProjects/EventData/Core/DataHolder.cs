@@ -32,7 +32,26 @@ namespace EventData
 
                 }
             }
-         
+            public static bool ContainsKey(string key, GameObject gameObject = null)
+            {
+                //~判断是否全局数据
+                if (gameObject == null)
+                {
+                    return globalDict.ContainsKey(key);
+                }
+                else
+                {
+                    bool v = localDicts.TryGetValue(gameObject, out Dictionary<string, EventData> localDict);
+                    if (!v)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return localDict.ContainsKey(key);
+                    }
+                }
+            }
 
             ///*<summary>添加数据,覆盖,返回被覆盖的,如果是全局数据则替换所有本地数据</summary>
             public static void Add(string dataName, EventData eventData, GameObject gameObject = null)
@@ -74,6 +93,8 @@ namespace EventData
 
                 return datas;
             }
+
+
         }
 
 

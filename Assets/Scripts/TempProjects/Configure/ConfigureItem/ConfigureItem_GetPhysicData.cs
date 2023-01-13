@@ -14,7 +14,7 @@ namespace Configure
     {
         //配置:計算行走施力
         [CreateAssetMenu(fileName = "获取物理量", menuName = "动态配置/获取物理量", order = 1)]
-        public partial class ConfigureItem_GetPhysicData : ConfigureBase
+        public class ConfigureItem_GetPhysicData : ConfigureBase
         {
             [NaughtyAttributes.InfoBox("无参数", EInfoBoxType.Normal)]
 
@@ -79,6 +79,13 @@ namespace Configure
                 return enabler;
             }
 
+
+        }
+
+
+
+        public class ConfigureItem_GetPhysicData_ : ConfigureBase_
+        {
 
         }
     }

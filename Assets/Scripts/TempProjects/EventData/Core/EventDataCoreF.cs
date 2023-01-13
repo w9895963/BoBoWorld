@@ -19,6 +19,7 @@ namespace EventData
             /// *<summary>获取事件数据,不存在则添加,使用类型参数</summary>
             public static EventData<T> GetEventData<T>(string key, GameObject gameObject = null)
             {
+
                 //~判断数据类型是否符合预设,如果不符合则返回null
                 //判断key是否存在DataName中
                 if (Enum.IsDefined(typeof(DataName), key))
@@ -41,15 +42,9 @@ namespace EventData
                 EventData eventData;
                 bool IsGlobal = DataNameF.IsGlobal(key);
                 //如果是本地数据
-                if (gameObject != null)
+                if (!IsGlobal)
                 {
-                    //获取全局数据
-                    eventData = DataHolder.GetEventData(key);
-                    //如果不存在则获取本地数据
-                    if (eventData == null)
-                    {
-                        eventData = DataHolder.GetEventData(key, gameObject);
-                    }
+                    eventData = DataHolder.GetEventData(key, gameObject);
                 }
                 else
                 {
@@ -65,12 +60,8 @@ namespace EventData
                     //如果类型不同
                     if (eventData.Type != typeof(T))
                     {
-                        Debug.LogError($" 数据 [{key}] 已被声明为类型 [{eventData.Type}], 和希望返回类型 [{typeof(T)}] 相冲突");
+                        Debug.LogError($" 数据 [{key}]存在, 但已被声明为类型 [{eventData.Type}], 和希望返回类型 [{typeof(T)}] 相冲突");
                         return null;
-                    }
-                    else
-                    {
-                        return eventData as EventData<T>;
                     }
                 }
                 else
@@ -78,10 +69,35 @@ namespace EventData
 
                     //新建
                     eventData = new EventData<T>(key, gameObject);
-                    DataHolder.Add(key, eventData, gameObject);
-                    return eventData as EventData<T>;
+                    //根据是否是全局数据添加到对应的数据表中
+                    if (!IsGlobal)
+                    {
+                        DataHolder.Add(key, eventData, gameObject);
+                    }
+                    else
+                    {
+                        DataHolder.Add(key, eventData);
+                    }
 
                 }
+
+                //~根据全局与否将数据添加到对应的本地数据表中
+                if (IsGlobal)
+                {
+                    if (!DataHolder.ContainsKey(key, gameObject))
+                    {
+                        DataHolder.Add(key, eventData, gameObject);
+                    }
+
+                }
+
+
+
+
+
+
+
+                return eventData as EventData<T>;
             }
 
 
@@ -94,7 +110,6 @@ namespace EventData
             /// *<param name="monoBehaviour">当组件是否启用加入条件中</param>
             public static (Action Enable, Action Disable) CreateOnDataConditionCoreEnabler(Action action, Action actionOnFail, (Core.EventData data, Func<bool> check)[] conditionChecks,
             MonoBehaviour monoBehaviour = null)
-
             {
                 //创建条件实例
                 ConditionAction conditionAction = new ConditionAction();
@@ -138,7 +153,7 @@ namespace EventData
 
 
 
-          
+
 
 
 

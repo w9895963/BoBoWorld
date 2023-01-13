@@ -5,16 +5,22 @@ using UnityEngine;
 
 public static class DictionaryExtension
 {
-    public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key, Func<V> defaultValue)
+    public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key, Func<V> defaultValue = null)
     {
-        bool v = dict.ContainsKey(key);
-        if (v == false)
-        {
-            dict.Add(key, defaultValue());
 
+
+        if (!dict.TryGetValue(key, out V re))
+        {
+            if (defaultValue != null)
+            {
+                re = defaultValue();
+            }
+            dict.Add(key, re);
         }
 
-        return dict[key];
+
+
+        return re;
     }
     public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key) where V : new()
     {

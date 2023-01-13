@@ -78,6 +78,11 @@ namespace Configure
 
 
 
+            //构建函数
+            public ConfigureItem_GroundFinder()
+            {
+                createRunner = CreateRunner;
+            }
 
 
 
@@ -87,7 +92,7 @@ namespace Configure
 
 
             //覆盖方法:创建运行器
-            public override ConfigureRunner CreateRunner(GameObject gameObject, MonoBehaviour monoBehaviour)
+            private ConfigureRunner CreateRunner(GameObject gameObject)
             {
 
 
