@@ -13,13 +13,9 @@ namespace EventData
         //类：事件数据
         public class EventData
         {
-            //索引
-            private string stringKey;
             //条件与动作列表
             public List<ConditionAction> conditionActionList = new List<ConditionAction>();
-            //所有本地字典
-            private GameObject gameObject;
-            private System.Type type;
+
 
             public GameObject GameObject { get => gameObject; }
             public System.Type Type { get => type; }
@@ -29,8 +25,8 @@ namespace EventData
             public string Key { get => stringKey; }
 
 
-            protected virtual Func<object> DataGetter { get => null; }
 
+          
 
             public EventData(string stringKey, GameObject gameObject = null, System.Type type = null)
             {
@@ -38,10 +34,6 @@ namespace EventData
                 this.gameObject = gameObject;
                 this.type = type;
             }
-
-
-
-
 
 
             //方法：获得数据
@@ -54,13 +46,6 @@ namespace EventData
 
             public void ForceUpdateData()
             {
-                // // Debug.Log(conditionActionList.Count);//调试
-                // //执行conditionActionList
-                // conditionActionList.ForEach(conditionAction =>
-                // {
-                //     conditionAction.CheckAndRun();
-                // });
-
                 //分离执行
                 conditionActionList.ForEach(conditionAction =>
                {
@@ -72,16 +57,24 @@ namespace EventData
 
 
 
+
+            protected virtual Func<object> DataGetter { get => null; }
+
+            //索引
+            private string stringKey;
+            //所有本地字典
+            private GameObject gameObject;
+            private System.Type type;
         }
         //类：带参数的事件数据
         public class EventData<T> : EventData
         {
             public T data;
-            protected override Func<System.Object> DataGetter => () => { return data; };
 
 
             public EventData(string key, GameObject gameObject = null) : base(key, gameObject, typeof(T))
             {
+
             }
 
 
@@ -117,26 +110,24 @@ namespace EventData
 
 
 
+            protected override Func<System.Object> DataGetter => () => { return data; };
+
+
+
 
 
             private void ModifyData(Func<T, T> modifyFunc)
             {
                 //更新数据
-                // this.data = modifyFunc(this.data);
 
                 SeparatedExecutionQueue.AddDataAction(() =>
                 {
                     this.data = modifyFunc(this.data);
                     //强制更新
-                    ForceUpdateData();
+                    this.ForceUpdateData();
                 });
 
-
             }
-
-
-
-
 
 
 

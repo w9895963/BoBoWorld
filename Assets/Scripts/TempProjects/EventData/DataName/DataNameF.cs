@@ -60,8 +60,8 @@ namespace EventData
 
 
 
-        ///* <summary>获取数据名对应类型</summary>
-        public static System.Type GetType(DataName dataName)
+        ///* <summary>获取数据名对应类型,核心</summary>
+        public static System.Type GetType(string dataName)
         {
             //返回值
             System.Type type = default;
@@ -72,7 +72,7 @@ namespace EventData
                 //创建一个正则表达式
                 Regex r = new Regex(keyValue.Value);
                 //匹配
-                if (r.IsMatch(dataName.ToString()))
+                if (r.IsMatch(dataName))
                 {
                     //返回类型
                     type = keyValue.Key;
@@ -82,6 +82,18 @@ namespace EventData
 
 
             return type;
+        }
+        public static System.Type GetType(DataName dataName)
+        {
+            return GetType(dataName.ToString());
+        }
+
+
+
+        ///* <summary>判断一个数据名是否为全局参数</summary>
+        public static bool IsGlobal(string dataName)
+        {
+            return dataName.StartsWith("全局_");
         }
 
 

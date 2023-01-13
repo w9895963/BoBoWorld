@@ -42,7 +42,7 @@ namespace Configure
 
 
                 //获取数据行走输入
-                EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>(DataName.全局_输入_移动向量);
+                EventDataHandler<Vector2> moveInput = EventDataF.GetData<Vector2>(DataName.全局_输入_移动向量, gameObject);
                 //获取数据运动速度
                 EventDataHandler<Vector2> moveSpeed = EventDataF.GetData<Vector2>(DataName.运动速度向量, gameObject);
                 //获取数据地表法线
@@ -63,7 +63,7 @@ namespace Configure
                     groundNormal.OnUpdateCondition,
                     moveSpeed.OnUpdateCondition
                 };
-                enabler = EventDataF.CreateConditionEnabler(CalculateMoveForce, OnFail, checks,  monoBehaviour);
+                enabler = EventDataF.CreateConditionEnabler(CalculateMoveForce, OnFail, checks, monoBehaviour);
 
 
 

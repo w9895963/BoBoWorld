@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -61,8 +62,18 @@ namespace EventData
                 return globalDict;
             }
 
+            public static EventData[] GetDatas(GameObject gameObject)
+            {
+                //返回值
+                EventData[] datas = new EventData[0];
+                bool v = localDicts.TryGetValue(gameObject, out Dictionary<string, EventData> localDict);
+                if (v)
+                {
+                    datas = localDict.Values.ToArray();
+                }
 
-
+                return datas;
+            }
         }
 
 

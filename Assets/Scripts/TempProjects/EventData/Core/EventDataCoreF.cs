@@ -23,7 +23,7 @@ namespace EventData
                 //判断key是否存在DataName中
                 if (Enum.IsDefined(typeof(DataName), key))
                 {
-                    System.Type type = DataNameF.GetType((DataName)Enum.Parse(typeof(DataName), key));
+                    System.Type type = DataNameF.GetType(key);
                     if (type != typeof(T))
                     {
                         Debug.LogError($"数据名[{key}]对应的类型为[{type}], 但是你使用的类型为[{typeof(T)}]");
@@ -35,8 +35,11 @@ namespace EventData
 
 
 
+
+
                 //~获取数据
                 EventData eventData;
+                bool IsGlobal = DataNameF.IsGlobal(key);
                 //如果是本地数据
                 if (gameObject != null)
                 {
@@ -130,6 +133,12 @@ namespace EventData
                 };
                 return (enable, disable);
             }
+
+
+
+
+
+          
 
 
 
