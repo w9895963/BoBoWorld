@@ -67,7 +67,12 @@ namespace Configure
         //*公共方法:更新配置启用器字典
         public void UpdateEnablers()
         {
-            enablerList = configList.SelectMany(x => x.配置文件).Select(x => x.CreateEnabler(gameObject, this)).ToList();
+            if (configList.Count > 0)
+            {
+                enablerList = configList.WhereNotNull().SelectMany(x => x.配置文件).WhereNotNull().Select(x => x.CreateEnabler(gameObject, this)).ToList();
+            }
+
+
 
             List<ConfigureBase> configures = configList.SelectMany(x => x.配置文件).ToList();
             //~添加新的配置启用器
@@ -140,7 +145,7 @@ namespace Configure
         //苏醒
         void Awake()
         {
-            UpdateEnablers();
+            // UpdateEnablers();
         }
         void OnEnable()
         {

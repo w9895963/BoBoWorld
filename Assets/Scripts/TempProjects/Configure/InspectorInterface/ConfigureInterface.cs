@@ -87,10 +87,10 @@ namespace Configure
         [System.Serializable]
         public class DataHolder_NameDropDown<T>
         {
-            // [NaughtyAttributes.Label("")]
-            // [Dropdown("UpdateDropdownNames")]
-            // [AllowNesting]
-            // [StackableField]
+            [NaughtyAttributes.Label("")]
+            [Dropdown("UpdateDropdownNames")]
+            [AllowNesting]
+            [StackableField]
             public string dataName;
 
             public DataHolder_NameDropDown(System.Enum dataNamePreset)
