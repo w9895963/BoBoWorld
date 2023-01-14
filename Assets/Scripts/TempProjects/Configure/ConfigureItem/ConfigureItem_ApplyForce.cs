@@ -25,8 +25,8 @@ namespace Configure
         public class ConfigureItem_ApplyForce_ : ConfigureBase_
         {
 
-            [HorizontalGroup("施力数据列表", true, "", 0)]
-            [StackableField]
+            // [HorizontalGroup("施力数据列表", true, "", 0)]
+            // [StackableField]
             public List<DataHolder_NameDropDown<Vector2>> 施力数据列表 = new List<DataHolder_NameDropDown<Vector2>>(){
                 new  (EventData.DataName.行走施力),
                 new  (EventData.DataName.跳跃施力),

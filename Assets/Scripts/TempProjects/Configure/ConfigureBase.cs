@@ -72,13 +72,27 @@ namespace Configure
         public virtual List<System.Type> RequiredTypes => requiredTypes;
 
         protected System.Func<GameObject, ConfigureRunner> createRunner;
+        private Func<GameObject, ConfigureBase_, ConfigureRunner> createRunnerAction;
 
-
-
+        public ConfigureBase_()
+        {
+        }
+        public ConfigureBase_(Func<GameObject, ConfigureBase_, ConfigureRunner> createRunnerAction)
+        {
+            this.createRunnerAction = createRunnerAction;
+        }
 
         public virtual ConfigureRunner CreateRunner(GameObject gameObject, MonoBehaviour monoBehaviour)
         {
-            return createRunner?.Invoke(gameObject);
+            if (createRunner != null)
+            {
+                return createRunner.Invoke(gameObject);
+            }
+            if (createRunnerAction != null)
+            {
+                return createRunnerAction.Invoke(gameObject, this);
+            }
+            return null;
         }
 
 

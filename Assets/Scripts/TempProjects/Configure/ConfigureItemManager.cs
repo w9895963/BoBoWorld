@@ -2,10 +2,14 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CSharp;
-using NaughtyAttributes;
-using UnityEngine;
 
+using Microsoft.CSharp;
+
+using NaughtyAttributes;
+
+using StackableDecorator;
+
+using UnityEngine;
 
 //命名空间：配置
 namespace Configure
@@ -20,15 +24,20 @@ namespace Configure
 
         // [NaughtyAttributes.ReorderableList]
         //配置文件列表
-        [Expandable]
+        [NaughtyAttributes.Expandable]
         public List<ConfigureBase> 配置文件 = new List<ConfigureBase>();
+        
+        [InspectorName("配置文件列表2")]
+        [NaughtyAttributes.Label("配置文件列表")]
+        [AllowNesting]
 
-
-
-
-        [SerializeReference]
         [SubclassSelector]
-        [InspectorName("配置文件列表")]
+        [SerializeReference]
+
+
+
+
+
         public List<ConfigureBase_> 配置文件_ = new List<ConfigureBase_>();
 
 
