@@ -16,18 +16,8 @@ public class Test : MonoBehaviour
 
 
 
-    private void Start()
-    {
-        BasicEvent.OnUpdate.Add(gameObject, NewMethod);
-        BasicEvent.OnUpdate.Add(gameObject, NewMethod);
-        BasicEvent.OnUpdate.Remove(gameObject, NewMethod);
-        BasicEvent.OnUpdate.Remove(gameObject, NewMethod);
 
 
-    private void Start()
-    {
-       
-    }
 
 
 
