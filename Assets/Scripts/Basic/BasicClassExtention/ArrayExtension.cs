@@ -125,6 +125,8 @@ public static class ExtensionArray
     }
     public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T, int> action)
     {
+        if (enumeration == null)
+            return;
         int ind = 0;
         foreach (var t in enumeration)
         {

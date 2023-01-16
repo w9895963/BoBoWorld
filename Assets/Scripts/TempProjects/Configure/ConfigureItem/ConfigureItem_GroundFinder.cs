@@ -20,7 +20,6 @@ namespace Configure
 
 
         [System.Serializable]
-        [AddTypeMenu("物理/地面检测器")]
         public partial class ConfigureItem_GroundFinder : ConfigureBase_
         {
             [Header("固定参数")]
@@ -28,7 +27,7 @@ namespace Configure
             public float 地面最大夹角 = 10;
 
             [Tooltip("此标签外的物体不被视为地面")]
-            [NaughtyAttributes.Tag]
+            [StackableDecorator.TagPopup]
             public List<string> 地面标签 = new List<string>() { "地表碰撞体" };
 
 
@@ -68,8 +67,7 @@ namespace Configure
             [Space(10)]
 
             //脚本说明
-            [NaughtyAttributes.AllowNesting, NaughtyAttributes.Label("说明")]
-            public ShowOnlyText 脚本说明_ = new ShowOnlyText("判断主体是否站立在地面物体上, 并输出一系列数据");
+            public ShowOnlyText 说明 = new ShowOnlyText("判断主体是否站立在地面物体上, 并输出一系列数据");
 
             //必要组件
             protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
@@ -82,6 +80,7 @@ namespace Configure
             public ConfigureItem_GroundFinder()
             {
                 createRunner = CreateRunner;
+                displaceTypeName = "物理/地面检测器";
             }
 
 

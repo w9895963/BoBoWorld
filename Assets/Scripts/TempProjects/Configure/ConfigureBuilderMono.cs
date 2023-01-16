@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NaughtyAttributes;
+using EditorToolbox;
+// using NaughtyAttributes;
+using StackableDecorator;
 using UnityEngine;
 
 
@@ -15,8 +17,7 @@ namespace Configure
     public class ConfigureBuilderMono : MonoBehaviour
     {
         //*按钮:检查缺失组件
-        [Button("检查缺失组件")]
-        private void CheckRequiredTypes()
+        public void CheckRequiredTypes()
         {
             //~缺失组件
             List<string> types = new List<string>();
@@ -30,19 +31,20 @@ namespace Configure
             Select(x => x.ToString()).ToList();
             types.AddRange(types_);
 
-            requiredTypes = types.Count == 0 ? "无" : string.Join("\n", types);
+            missComponent = types.Count == 0 ? "无" : string.Join("\n", types);
 
         }
-        [NaughtyAttributes.Label("缺失组件")]
-        [ReadOnly]
-        [ResizableTextArea]
-        public string requiredTypes = "无";
+        [Buttons(titles = "检查缺失组件", actions = "CheckRequiredTypes")]
+        [StackableField]
+        public string missComponent = "无";
+
 
 
 
         //*配置列表
-        [NaughtyAttributes.Label("配置列表")]
-        [NaughtyAttributes.Expandable]
+        // [NaughtyAttributes.Label("配置列表")]
+        // [NaughtyAttributes.Expandable]
+        [InspectorName("配置列表")]
 
         public List<ConfigureItemManager> configList = new List<ConfigureItemManager>();
 
