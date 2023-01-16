@@ -1,12 +1,14 @@
-using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using EditorToolbox;
+
 using Microsoft.CSharp;
+
+using NaughtyAttributes;
+
 using StackableDecorator;
+
 using UnityEngine;
 
 //命名空间：配置
@@ -20,53 +22,29 @@ namespace Configure
 
 
 
-
+        // [NaughtyAttributes.ReorderableList]
+        //配置文件列表
+        [NaughtyAttributes.Expandable]
         public List<ConfigureBase> 配置文件 = new List<ConfigureBase>();
+        
+        [InspectorName("配置文件列表2")]
+        [NaughtyAttributes.Label("配置文件列表")]
+        [AllowNesting]
 
-
-
-
-
-        [EditorToolbox.ReorderableList]
+        [SubclassSelector]
         [SerializeReference]
+
+
+
+
+
         public List<ConfigureBase_> 配置文件_ = new List<ConfigureBase_>();
 
 
 
 
 
-        private void OnListChanged()
-        {
-            //~将列表里所有的null替换为新的实例
-            配置文件_ = 配置文件_.Select((x) => x ?? new ConfigureBase_()).ToList();
 
-
-
-            //~将列表里所有的项目替换成对应的类型
-            Dictionary<string, Type> replaceSelectionInfoDict = ConfigureBase_.ReplaceSelectionInfoDict;
-            //找到类型与选择类型不相同的项目
-            IEnumerable<ConfigureBase_> notSameType = 配置文件_.Where((x) => x.displaceTypeName != x.configTypeSelection);
-            notSameType.ToArray().ForEach((x) =>
-            {
-
-                if (replaceSelectionInfoDict.TryGetValue(x.configTypeSelection, out Type newType))
-                {
-                    if (newType != null)
-                    {
-                        //实例化newType
-                        ConfigureBase_ configureBase_ = (ConfigureBase_)Activator.CreateInstance(newType);
-                        configureBase_.configTypeSelection = x.configTypeSelection;
-                        //替换
-                        配置文件_[配置文件_.IndexOf(x)] = configureBase_;
-
-
-
-                    }
-                }
-
-
-            });
-        }
 
 
 
@@ -109,7 +87,6 @@ namespace Configure
         public void OnValidate()
         {
             HotUpdate();
-            OnListChanged();
         }
 
     }

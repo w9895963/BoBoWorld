@@ -192,8 +192,11 @@ public static class ExtensionMethodBasic
         return isType;
     }
 
+
+
+
     #endregion
-    //  Region   End---------------------------------- 
+
 
 
 
@@ -205,7 +208,7 @@ public static class ExtensionMethodBasic
     }
 
     #endregion
-    //  Region System.Action End---------------------------------- 
+    // * Region System.Action End---------------------------------- 
 
 
 
@@ -235,10 +238,7 @@ public static class ExtensionMethodBasic
 
     }
     #endregion
-    //  Region UnityEvent End---------------------------------- 
-
-
-
+    // * Region UnityEvent End---------------------------------- 
 
     /// <summary>获取枚举的全名,包含类</summary>
     public static string GetFullName(this System.Enum enumName)

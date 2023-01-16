@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using EditorToolbox;
 using EventData;
+using NaughtyAttributes;
 using StackableDecorator;
 using UnityEngine;
 
@@ -87,8 +87,10 @@ namespace Configure
         [System.Serializable]
         public class DataHolder_NameDropDown<T>
         {
-            [Preset(nameof(UpdateDropdownNames))]
-            [HideLabel]
+            [NaughtyAttributes.Label("")]
+            [Dropdown("UpdateDropdownNames")]
+            [AllowNesting]
+            [StackableField]
             public string dataName;
 
             public DataHolder_NameDropDown(System.Enum dataNamePreset)
@@ -99,7 +101,7 @@ namespace Configure
 
             public DataHolder_NameDropDown(string dataNamePreset)
             {
-
+                
                 dataName = dataNamePreset;
             }
 
@@ -117,21 +119,21 @@ namespace Configure
 
 
 
+   
 
 
 
 
 
 
-
-
+        
 
 
 
         [System.Serializable]
         public class DataGetter<T>
         {
-            [EditorToolbox.OnValueChanged("UpdateImport")]
+            [NaughtyAttributes.AllowNesting, NaughtyAttributes.OnValueChanged("UpdateImport")]
             [StackableField]
             [StackableDecorator.Label(-1, title = "引用", tooltip = "是否从外部引用数据")]
             public bool import = false;
@@ -345,8 +347,8 @@ namespace Configure
         [System.Serializable]
         public class DataImport : DataBase
         {
-            // [AllowNesting, Dropdown("UpdateDropdownNames")]
-            // [NaughtyAttributes.Label("")]
+            [AllowNesting, Dropdown("UpdateDropdownNames")]
+            [NaughtyAttributes.Label("")]
             // [StackableField]
             public string dataName;
 

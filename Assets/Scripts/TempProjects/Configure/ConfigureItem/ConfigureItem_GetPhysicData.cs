@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EventData;
-// using NaughtyAttributes;
+using NaughtyAttributes;
 using StackableDecorator;
 using UnityEditor;
 using UnityEngine;
@@ -16,6 +16,7 @@ namespace Configure
 
 
         [System.Serializable]
+        [AddTypeMenu("物理/获取物理量", 0)]
         public class ConfigureItem_GetPhysicData_ : ConfigureBase_
         {
 
@@ -39,7 +40,6 @@ namespace Configure
             {
 
                 Construct();
-                displaceTypeName = "物理/获取物理量";
             }
 
 

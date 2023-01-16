@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EventData.Core;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace EventData
@@ -18,11 +19,13 @@ namespace EventData
         public class EventDataVisualizer : MonoBehaviour
         {
             //
+            [NaughtyAttributes.Label("全局数据")]
 
             //字段：全局数据条目列表
-            public List<DataItem> 全局数据 = new List<DataItem>();
+            public List<DataItem> GlobalData = new List<DataItem>();
             //字段：本地数据条目列表
-            public List<DataItem> 本地数据 = new List<DataItem>();
+            [NaughtyAttributes.Label("本地数据")]
+            public List<DataItem> ObjectData = new List<DataItem>();
 
 
             //开始
@@ -92,6 +95,7 @@ namespace EventData
 
 
 
+            [Button("更新数据")]
             //*方法：更新数据
             public void UpdateData()
             {
@@ -101,23 +105,24 @@ namespace EventData
                 //如果组件存在
 
 
-                AddData(全局数据, eventDataGo);
-                AddData(本地数据, eventDataLo);
+                AddData(GlobalData, eventDataGo);
+                AddData(ObjectData, eventDataLo);
 
-                AddDataAutoUpdateEvent(全局数据);
-                AddDataAutoUpdateEvent(本地数据);
+                AddDataAutoUpdateEvent(GlobalData);
+                AddDataAutoUpdateEvent(ObjectData);
 
             }
 
 
 
 
+            [Button("打印数据")]
             public void DebugLog()
             {
                 //打印内容
                 string log = "";
                 //选择所有打印的数据
-                List<DataItem> dataItemList = 全局数据.Where(dataItem => dataItem.打印).ToList();
+                List<DataItem> dataItemList = GlobalData.Where(dataItem => dataItem.打印).ToList();
                 //如果有
                 if (dataItemList.Count > 0)
                 {
@@ -132,7 +137,7 @@ namespace EventData
                     }
                 }
                 //选择所有打印的本地数据
-                List<DataItem> dataItemList_ObjectData = 本地数据.Where(dataItem => dataItem.打印).ToList();
+                List<DataItem> dataItemList_ObjectData = ObjectData.Where(dataItem => dataItem.打印).ToList();
                 //如果有
                 if (dataItemList_ObjectData.Count > 0)
                 {

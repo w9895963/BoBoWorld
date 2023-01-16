@@ -1,5 +1,5 @@
 using System;
-// using NaughtyAttributes;
+using NaughtyAttributes;
 using UnityEngine;
 
 
@@ -10,9 +10,8 @@ namespace Configure
     [Serializable]
     public class ShowOnlyText
     {
-        // [ReadOnly]
-        // [ResizableTextArea]
-        [Multiline(10)]
+        [ReadOnly]
+        [ResizableTextArea]
         public string 脚本说明;
 
 
