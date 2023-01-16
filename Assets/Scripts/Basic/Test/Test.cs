@@ -24,13 +24,9 @@ public class Test : MonoBehaviour
         BasicEvent.OnUpdate.Remove(gameObject, NewMethod);
 
 
-        static void NewMethod()
-        {
-
-            //log 时间
-            Debug.Log(Time.time);
-
-        }
+    private void Start()
+    {
+       
     }
 
 
