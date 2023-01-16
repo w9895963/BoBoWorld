@@ -1,14 +1,12 @@
 using System;
-using EditorToolbox;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class Test : MonoBehaviour
 {
     //*Unity界面
-
     public UnityEngine.Object obj;
-
     public GameObject gameObj;
 
 
@@ -16,6 +14,10 @@ public class Test : MonoBehaviour
 
 
 
+    private void Start()
+    {
+      
+    }
 
 
 
@@ -23,18 +25,14 @@ public class Test : MonoBehaviour
 
 
 
-
-    [EditorButton(nameof(测试方法1))]
-    [Hide]
-    public int 测试方法1_;
 
 
     //*测试方法1
+    [Button]
     public void 测试方法1()
     {
         //生成一个随机数然后打印到unix的的控制台。
-        string v = nameof(测试方法1);
-        v.Log();
+        typeof(string).Log();
         // SpriteShape
 
 
