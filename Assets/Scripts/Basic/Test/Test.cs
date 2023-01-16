@@ -1,53 +1,18 @@
 using System;
-using NaughtyAttributes;
+using EditorToolbox;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class Test : MonoBehaviour
 {
     //*Unity界面
+
     public UnityEngine.Object obj;
+
     public GameObject gameObj;
 
 
-    [SerializeReference, SubclassSelector]
-    public TestClass test = new TestClass3();
 
-
-
-
-
-
-
-
-
-
-
-
-
-    public void TestMethod2(ref Vector2 obj)
-    {
-        Type type = obj.GetType();
-        type.Name.Log();
-    }
-
-    [Serializable]
-    public class TestClass
-    {
-        public int a;
-        public int b;
-        public int c;
-    }
-
-    public class TestClass2<T> : TestClass
-    {
-        public T d;
-    }
-
-    public class TestClass3 : TestClass2<string>
-    {
-
-    }
 
 
 
@@ -73,15 +38,17 @@ public class Test : MonoBehaviour
 
 
 
-
+    [EditorButton(nameof(测试方法1))]
+    [Hide]
+    public int 测试方法1_;
 
 
     //*测试方法1
-    [Button]
     public void 测试方法1()
     {
         //生成一个随机数然后打印到unix的的控制台。
-        typeof(string).Log();
+        string v = nameof(测试方法1);
+        v.Log();
         // SpriteShape
 
 
