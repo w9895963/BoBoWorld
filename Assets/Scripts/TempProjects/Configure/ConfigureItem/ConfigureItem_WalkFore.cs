@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using EventData;
 
-using NaughtyAttributes;
 
 using UnityEditor;
 
@@ -16,19 +15,15 @@ namespace Configure
 {
     namespace ConfigureItem
     {
-      
+
 
         [System.Serializable]
-        [AddTypeMenu("物理/计算行走施力")]
-        public class ConfigureItem_WalkFore_ : ConfigureBase_
+        public class ConfigureItem_WalkFore : ConfigureBase
         {
             public float 行走速度 = 10;
             public float 最大加速度 = 10;
 
             //脚本说明
-
-            [NaughtyAttributes.Label("说明")]
-            [AllowNesting]
             public ShowOnlyText info_ = new ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力", "输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
 
 
@@ -37,14 +32,14 @@ namespace Configure
             private GameObject gameObject;
             private ConfigureRunner configureRunner;
 
-            public ConfigureItem_WalkFore_() : base(createRunner_)
+            public ConfigureItem_WalkFore() : base(createRunner_)
             {
 
             }
 
-            private static ConfigureRunner createRunner_(GameObject gameObject, ConfigureBase_ configureBase_)
+            private static ConfigureRunner createRunner_(GameObject gameObject, ConfigureBase configureBase_)
             {
-                ConfigureItem_WalkFore_ self = (configureBase_ as ConfigureItem_WalkFore_);
+                ConfigureItem_WalkFore self = (configureBase_ as ConfigureItem_WalkFore);
                 self.gameObject = gameObject;
                 self.configureRunner = new ConfigureRunner(self.initialize, self.enable, self.disable, self.destroy);
                 return self.configureRunner;

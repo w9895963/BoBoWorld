@@ -4,8 +4,6 @@ using System.Linq;
 using Configure;
 using Configure.Interface;
 using EventData;
-using NaughtyAttributes;
-using StackableDecorator;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,12 +19,10 @@ namespace Configure
 
 
         [System.Serializable]
-        [AddTypeMenu("物理/力量施加器")]
-        public class ConfigureItem_ApplyForce_ : ConfigureBase_
+        public class ConfigureItem_ApplyForce : ConfigureBase
         {
 
-            [HorizontalGroup("施力数据列表", true, "", 0)]
-            [StackableField]
+            [Tooltip("将所选向量数据作为力应用到刚体上")]
             public List<DataHolder_NameDropDown<Vector2>> 施力数据列表 = new List<DataHolder_NameDropDown<Vector2>>(){
                 new  (EventData.DataName.行走施力),
                 new  (EventData.DataName.跳跃施力),
@@ -40,13 +36,15 @@ namespace Configure
 
 
             //脚本说明
-            [StackableField]
-            [StackableDecorator.Label(title = "脚本说明")]
-            public ShowOnlyText info = new ShowOnlyText("将所选向量数据作为力应用到刚体上");
+            public ShowOnlyText 说明 = new ShowOnlyText("将所选向量数据作为力应用到刚体上");
 
 
 
-            public ConfigureItem_ApplyForce_()
+
+
+
+
+            public ConfigureItem_ApplyForce()
             {
                 Construct();
             }

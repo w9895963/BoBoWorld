@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using EventData;
-using NaughtyAttributes;
-using StackableDecorator;
 using UnityEngine;
 
 namespace Configure
@@ -14,8 +12,8 @@ namespace Configure
         [System.Serializable]
         public class DataHold_NameOrData<T>
         {
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, 60, -1)]
+            [StackableDecorator.StackableField]
+            [StackableDecorator.HorizontalGroup("info2", true, "", 0, 60, -1)]
             public Configure.Interface.DataGetter<T> data;
 
             public DataHold_NameOrData(System.Enum dataNamePreset)
@@ -87,23 +85,44 @@ namespace Configure
         [System.Serializable]
         public class DataHolder_NameDropDown<T>
         {
-            [NaughtyAttributes.Label("")]
-            [Dropdown("UpdateDropdownNames")]
-            [AllowNesting]
-            [StackableField]
+            [StackableDecorator.DropdownValue("#UpdateDropdownNames")]  
+            [StackableDecorator.StackableField]
             public string dataName;
+
+            public string[] UpdateDropdownNames()
+            {
+                return EventData.DataNameF.GetAllNamesOnTypeRegex(typeof(T)).ToArray();
+            }
+
+
+
+
+
 
             public DataHolder_NameDropDown(System.Enum dataNamePreset)
             {
-                dataName = dataNamePreset.ToString();
+                Construct(dataNamePreset.ToString());
             }
 
 
             public DataHolder_NameDropDown(string dataNamePreset)
             {
-                
+
+                Construct(dataNamePreset);
+            }
+            public void Construct(string dataNamePreset)
+            {
                 dataName = dataNamePreset;
             }
+
+
+
+
+
+
+
+
+
 
             public EventDataHandler<T> GetEventDataHandler(GameObject gameObject)
             {
@@ -111,37 +130,33 @@ namespace Configure
             }
 
 
-            private string[] UpdateDropdownNames()
-            {
-                return EventData.DataNameF.GetAllNamesOnTypeRegex(typeof(T)).ToArray();
-            }
+
         }
 
 
 
-   
 
 
 
 
 
 
-        
+
+
 
 
 
         [System.Serializable]
         public class DataGetter<T>
         {
-            [NaughtyAttributes.AllowNesting, NaughtyAttributes.OnValueChanged("UpdateImport")]
-            [StackableField]
+            [StackableDecorator.StackableField]
             [StackableDecorator.Label(-1, title = "引用", tooltip = "是否从外部引用数据")]
             public bool import = false;
 
 
             [SerializeReference]
-            [HorizontalGroup("info", true, "", 0, prefix = false)]
-            [StackableField]
+            [StackableDecorator.HorizontalGroup("info", true, "", 0, prefix = false)]
+            [StackableDecorator.StackableField]
             public DataBase dataBase;
 
 
@@ -282,7 +297,7 @@ namespace Configure
         [System.Serializable]
         public class DataConstFloat : DataBase
         {
-            [StackableField, StackableDecorator.Label(-1, title = "数值")]
+            [StackableDecorator.StackableField, StackableDecorator.Label(-1, title = "数值")]
             public float data;
 
 
@@ -290,7 +305,7 @@ namespace Configure
         [System.Serializable]
         public class DataConstBool : DataBase
         {
-            [StackableField, StackableDecorator.Label(0)]
+            [StackableDecorator.StackableField, StackableDecorator.Label(0)]
             public bool data;
 
 
@@ -298,8 +313,8 @@ namespace Configure
         [System.Serializable]
         public class DataConstVector : DataBase
         {
-            [HorizontalGroup("info", true, "", 0, 30, -1, prefix = false)]
-            [StackableField]
+            [StackableDecorator.HorizontalGroup("info", true, "", 0, 30, -1, prefix = false)]
+            [StackableDecorator.StackableField]
             [SerializeField]
             private Holder holder = new Holder();
             [HideInInspector]
@@ -311,10 +326,10 @@ namespace Configure
             public class Holder
             {
                 [StackableDecorator.LabelOnly]
-                [StackableField]
+                [StackableDecorator.StackableField]
                 public int 向量 = 0;
                 [StackableDecorator.Label(0)]
-                [StackableField]
+                [StackableDecorator.StackableField]
                 public Vector2 dataInSide;
             }
 
@@ -337,7 +352,7 @@ namespace Configure
         [System.Serializable]
         public class DataConstGameObject : DataBase
         {
-            [StackableField, StackableDecorator.Label(0)]
+            [StackableDecorator.StackableField, StackableDecorator.Label(0)]
             public GameObject data;
 
         }
@@ -347,8 +362,6 @@ namespace Configure
         [System.Serializable]
         public class DataImport : DataBase
         {
-            [AllowNesting, Dropdown("UpdateDropdownNames")]
-            [NaughtyAttributes.Label("")]
             // [StackableField]
             public string dataName;
 

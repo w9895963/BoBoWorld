@@ -51,9 +51,7 @@ public static class DebugF
 
 
 
-
-
-
+    //*拓展方法
 
     public static T Log<T>(this T content, string label = null, bool color = true)
     {
@@ -77,14 +75,17 @@ public static class DebugF
                 int i = 0;
                 foreach (var item in content as IEnumerable)
                 {
-                    v += $"[<color=green>{i}</color>]{item.ToString()}, ";
-                    i++;
+                    if (item != null)
+                    {
+                        v += $"[<color=green>{i}</color>]{item.ToString()}, ";
+                        i++;
+                    }
                 }
             }
 
         }
 
-
+        //如果上面的都不是
         if (v == "")
         {
             v = content.ToString();

@@ -336,6 +336,10 @@ public static class ExtensionArray
 
 
 
+    public static IEnumerable<T> WhereIsNull<T>(this IEnumerable<T> source)
+    {
+        return source.Where((x) => x == null);
+    }
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T> source)
     {
         return source.Where((x) => x != null);

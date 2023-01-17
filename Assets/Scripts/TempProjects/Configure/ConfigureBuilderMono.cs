@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NaughtyAttributes;
 using UnityEngine;
 
 
@@ -15,44 +14,49 @@ namespace Configure
     public class ConfigureBuilderMono : MonoBehaviour
     {
         //*按钮:检查缺失组件
-        [Button("检查缺失组件")]
+
+        [StackableDecorator.StackableField]
+        [StackableDecorator.SideButtons(titles = "检查缺失组件", onLeft = true, actions = nameof(CheckRequiredTypes))]
+        [StackableDecorator.Label(0)]
+        public string 缺失组件 = "无";
         private void CheckRequiredTypes()
         {
             //~缺失组件
             List<string> types = new List<string>();
             List<string> types_;
-            types_ = configList.SelectMany(x => x.配置文件).SelectMany(x => x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null)).
-            Select(x => x.ToString()).ToList();
+
+            types_ = 配置列表.WhereNotNull()
+            .SelectMany(x => x.配置文件)
+            .SelectMany(x => x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null))
+            .Select(x => x.ToString()).ToList();
+
             types.AddRange(types_);
 
 
-            types_ = configList.SelectMany(x => x.配置文件_).SelectMany(x => x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null)).
-            Select(x => x.ToString()).ToList();
+
+
+            types_ = 配置列表.WhereNotNull()
+            .SelectMany(x => x.配置文件列表)
+            .SelectMany(x => x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null))
+            .Select(x => x.ToString()).ToList();
+
             types.AddRange(types_);
 
-            requiredTypes = types.Count == 0 ? "无" : string.Join("\n", types);
+            缺失组件 = types.Count == 0 ? "无" : string.Join("\n", types);
 
         }
-        [NaughtyAttributes.Label("缺失组件")]
-        [ReadOnly]
-        [ResizableTextArea]
-        public string requiredTypes = "无";
-
 
 
         //*配置列表
-        [NaughtyAttributes.Label("配置列表")]
-        [NaughtyAttributes.Expandable]
-
-        public List<ConfigureItemManager> configList = new List<ConfigureItemManager>();
+        public List<ConfigureItemManager> 配置列表 = new List<ConfigureItemManager>();
 
 
 
         //字典:配置启用器字典
-        private Dictionary<ConfigureBase, (Action Enable, Action Disable)> enablers = new Dictionary<ConfigureBase, (Action Enable, Action Disable)>();
+        private Dictionary<ConfigureBase_, (Action Enable, Action Disable)> enablers = new Dictionary<ConfigureBase_, (Action Enable, Action Disable)>();
         //列表:配置启用器列表
         private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
-        private Dictionary<ConfigureBase_, ConfigureRunner> runnerList = new();
+        private Dictionary<ConfigureBase, ConfigureRunner> runnerList = new();
 
 
 
@@ -67,14 +71,14 @@ namespace Configure
         //*公共方法:更新配置启用器字典
         public void UpdateEnablers()
         {
-            if (configList.Count > 0)
+            if (配置列表.Count > 0)
             {
-                enablerList = configList.WhereNotNull().SelectMany(x => x.配置文件).WhereNotNull().Select(x => x.CreateEnabler(gameObject, this)).ToList();
+                enablerList = 配置列表.WhereNotNull().SelectMany(x => x.配置文件).WhereNotNull().Select(x => x.CreateEnabler(gameObject, this)).ToList();
             }
 
 
 
-            List<ConfigureBase> configures = configList.SelectMany(x => x.配置文件).ToList();
+            List<ConfigureBase_> configures = 配置列表.SelectMany(x => x.配置文件).ToList();
             //~添加新的配置启用器
             foreach (var item in configures)
             {
@@ -100,7 +104,7 @@ namespace Configure
         }
         public void UpdateRunners()
         {
-            List<ConfigureBase_> configureBase_s = configList.SelectMany(x => x.配置文件_).WhereNotNull().ToList();
+            List<ConfigureBase> configureBase_s = 配置列表.SelectMany(x => x.配置文件列表).WhereNotNull().ToList();
 
             foreach (var item in configureBase_s)
             {

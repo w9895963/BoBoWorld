@@ -1,15 +1,12 @@
+using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
-using Microsoft.CSharp;
-
-using NaughtyAttributes;
-
-using StackableDecorator;
-
+using Configure.ConfigureItem;
 using UnityEngine;
+using Type = System.Type;
+
 
 //命名空间：配置
 namespace Configure
@@ -20,46 +17,48 @@ namespace Configure
     public class ConfigureItemManager : ScriptableObject
     {
 
-
-
-        // [NaughtyAttributes.ReorderableList]
+        //^编辑器
         //配置文件列表
-        [NaughtyAttributes.Expandable]
-        public List<ConfigureBase> 配置文件 = new List<ConfigureBase>();
-        
-        [InspectorName("配置文件列表2")]
-        [NaughtyAttributes.Label("配置文件列表")]
-        [AllowNesting]
+        public List<ConfigureBase_> 配置文件 = new List<ConfigureBase_>();
 
-        [SubclassSelector]
+
+
+        [StackableDecorator.DropdownValue("#" + nameof(configureTypes))]
+        [StackableDecorator.StackableField]
+        public string addType = addTypeDefault;
+        private const string addTypeDefault = "选择配置类型";
+        public string[] configureTypes => configureTypeDict.Keys.ToArray();
+        public static Dictionary<string, Type> configureTypeDict = new Dictionary<string, Type>() {
+            { "选择配置类型",null},
+            { "物理/力量施加器", typeof(ConfigureItem_ApplyForce)},
+            { "物理/获取物理量",typeof(ConfigureItem_GetPhysicData)},
+            { "物理/地面检测器",typeof(ConfigureItem_GroundFinder)},
+            { "物理/计算行走施力",typeof(ConfigureItem_WalkFore)},
+        };
+        private void OnValueChanged_addType()
+        {
+            if (configureTypeDict.TryGetValue(addType, out Type type))
+            {
+                if (type == null)
+                    return;
+                ConfigureBase item = (ConfigureBase)System.Activator.CreateInstance(type);
+                item.configureType = addType;
+                item.OnCreate();
+                配置文件列表.Add(item);
+                addType = addTypeDefault;
+            }
+        }
+
+
+
+
+        //^配置文件列表
         [SerializeReference]
-
-
-
-
-
-        public List<ConfigureBase_> 配置文件_ = new List<ConfigureBase_>();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //*在编辑器中运行
+        // [ReferencePicker]
+        public List<ConfigureBase> 配置文件列表 = new List<ConfigureBase>();
 
         //方法:热更新
+
         public void HotUpdate()
         {
             //如果游戏不在运行则返回且报错
@@ -72,12 +71,14 @@ namespace Configure
             ActionF.RunActionSafeAndDelay(() =>
             {
                 //找到启用且有自身的组件
-                var components2 = FindObjectsOfType<ConfigureBuilderMono>().Where(x => x.enabled & x.configList.Contains(this));
+                var components2 = FindObjectsOfType<ConfigureBuilderMono>().Where(x => x.enabled & x.配置列表.Contains(this));
                 components2.ForEach(x =>
                 {
                     x.UpdateRunners();
                 });
             });
+
+
 
         }
 
@@ -87,7 +88,18 @@ namespace Configure
         public void OnValidate()
         {
             HotUpdate();
+            OnValueChanged_addType();
         }
+
+
+
+
+
+
+
+
+
+
 
     }
 

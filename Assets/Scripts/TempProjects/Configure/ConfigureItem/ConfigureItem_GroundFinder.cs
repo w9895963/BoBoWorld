@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Configure.Interface;
 using EventData;
-using StackableDecorator;
 using UnityEditor;
 using UnityEngine;
+
 
 
 
@@ -20,23 +20,19 @@ namespace Configure
 
 
         [System.Serializable]
-        [AddTypeMenu("物理/地面检测器")]
-        public partial class ConfigureItem_GroundFinder : ConfigureBase_
+        public partial class ConfigureItem_GroundFinder : ConfigureBase
         {
-            [Header("固定参数")]
+
+
             [Tooltip("地面向量与重力的夹角大于此角度则不视为地面")]
             public float 地面最大夹角 = 10;
 
             [Tooltip("此标签外的物体不被视为地面")]
-            [NaughtyAttributes.Tag]
+            [StackableDecorator.TagPopup]
             public List<string> 地面标签 = new List<string>() { "地表碰撞体" };
 
 
-            [Header("导入参数")]
 
-            [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "重力向量", tooltip = "角色的重力向量")]
             public Configure.Interface.DataHolder_NameDropDown<Vector2> gravityIn = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
 
 
@@ -45,20 +41,15 @@ namespace Configure
 
 
 
-            [Space(10)]
-            [Header("导出参数")]
 
-            [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面法线", tooltip = "获取此刻地面的法线")]
             public Configure.Interface.DataHolder_NameDropDown<Vector2> groundNormalIn = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
-            [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "站在地面", tooltip = "此刻是否正站在地面上")]
+            // [Tooltip("")]
+            // [StackableField]
+            // [HorizontalGroup("info2", true, "", 0, prefix = true, title = "站在地面", tooltip = "此刻是否正站在地面上")]
             public Configure.Interface.DataHolder_NameDropDown<bool> standOnGroundIn = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否站在地面);
-            [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面物体", tooltip = "获得脚下的地面物体")]
+            // [Tooltip("")]
+            // [StackableField]
+            // [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面物体", tooltip = "获得脚下的地面物体")]
             public Configure.Interface.DataHolder_NameDropDown<GameObject> groundObjectIn = new Configure.Interface.DataHolder_NameDropDown<GameObject>(DataName.地面物体);
 
 
@@ -66,10 +57,7 @@ namespace Configure
 
 
             [Space(10)]
-
-            //脚本说明
-            [NaughtyAttributes.AllowNesting, NaughtyAttributes.Label("说明")]
-            public ShowOnlyText 脚本说明_ = new ShowOnlyText("判断主体是否站立在地面物体上, 并输出一系列数据");
+            public ShowOnlyText 说明 = new ShowOnlyText("说明");
 
             //必要组件
             protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };

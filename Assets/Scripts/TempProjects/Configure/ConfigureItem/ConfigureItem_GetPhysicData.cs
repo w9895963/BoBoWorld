@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EventData;
-using NaughtyAttributes;
-using StackableDecorator;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,15 +14,12 @@ namespace Configure
 
 
         [System.Serializable]
-        [AddTypeMenu("物理/获取物理量", 0)]
-        public class ConfigureItem_GetPhysicData_ : ConfigureBase_
+        public class ConfigureItem_GetPhysicData : ConfigureBase
         {
 
 
-            [Header("导出数据")]
-            [Tooltip("获得物体的运动速度2")]
-            [HorizontalGroup("Split", true, "", 0, prefix = true, title = "运动速度", tooltip = "获得物体的运动速度")]
-            [StackableField]
+            // public int;
+
             public Configure.Interface.DataHolder_NameDropDown<Vector2> speedIn = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.运动速度向量);
 
 
@@ -36,7 +31,7 @@ namespace Configure
             protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D) };
 
 
-            public ConfigureItem_GetPhysicData_()
+            public ConfigureItem_GetPhysicData()
             {
 
                 Construct();

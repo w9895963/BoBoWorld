@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using EventData.Core;
-using NaughtyAttributes;
 using UnityEngine;
 
 namespace EventData
@@ -19,12 +18,9 @@ namespace EventData
         public class EventDataVisualizer : MonoBehaviour
         {
             //
-            [NaughtyAttributes.Label("全局数据")]
-
             //字段：全局数据条目列表
             public List<DataItem> GlobalData = new List<DataItem>();
             //字段：本地数据条目列表
-            [NaughtyAttributes.Label("本地数据")]
             public List<DataItem> ObjectData = new List<DataItem>();
 
 
@@ -95,7 +91,7 @@ namespace EventData
 
 
 
-            [Button("更新数据")]
+            public int button;
             //*方法：更新数据
             public void UpdateData()
             {
@@ -116,7 +112,6 @@ namespace EventData
 
 
 
-            [Button("打印数据")]
             public void DebugLog()
             {
                 //打印内容
