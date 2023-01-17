@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Configure.Interface;
+
 using EventData;
+
+using StackableDecorator;
+
 using UnityEditor;
+
 using UnityEngine;
-
-
-
 
 //命名空间：配置
 namespace Configure
@@ -22,42 +25,50 @@ namespace Configure
         [System.Serializable]
         public partial class ConfigureItem_GroundFinder : ConfigureBase
         {
+            [Header("参数")]
 
 
             [Tooltip("地面向量与重力的夹角大于此角度则不视为地面")]
             public float 地面最大夹角 = 10;
 
             [Tooltip("此标签外的物体不被视为地面")]
-            [StackableDecorator.TagPopup]
+            [TagPopup]
+            [Label(0)]
             public List<string> 地面标签 = new List<string>() { "地表碰撞体" };
 
 
-
-            public Configure.Interface.DataHolder_NameDropDown<Vector2> gravityIn = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
-
-
-
-
-
+            [Header("动态参数")]
+            [Tooltip("")]
+            [StackableField]
+            [HorizontalGroup("info1", true, "", 0, prefix = true, title = "重力向量", tooltip = "获得重力向量")]
+            public Configure.Interface.DataHolder_NameDropDown<Vector2> 重力 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
 
 
 
-            public Configure.Interface.DataHolder_NameDropDown<Vector2> groundNormalIn = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
-            // [Tooltip("")]
-            // [StackableField]
-            // [HorizontalGroup("info2", true, "", 0, prefix = true, title = "站在地面", tooltip = "此刻是否正站在地面上")]
-            public Configure.Interface.DataHolder_NameDropDown<bool> standOnGroundIn = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否站在地面);
-            // [Tooltip("")]
-            // [StackableField]
-            // [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面物体", tooltip = "获得脚下的地面物体")]
-            public Configure.Interface.DataHolder_NameDropDown<GameObject> groundObjectIn = new Configure.Interface.DataHolder_NameDropDown<GameObject>(DataName.地面物体);
+
+
+
+
+            [Header("输出参数")]
+            [Tooltip("")]
+            [StackableField]
+            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地表法线", tooltip = "获得脚下的地面法线")]
+            public Configure.Interface.DataHolder_NameDropDown<Vector2> 地表法线 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
+            [Tooltip("")]
+            [StackableField]
+            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "站在地面", tooltip = "此刻是否正站在地面上")]
+            public Configure.Interface.DataHolder_NameDropDown<bool> 是否站在地面 = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否站在地面);
+            [Tooltip("")]
+            [StackableField]
+            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面物体", tooltip = "获得脚下的地面物体")]
+            public Configure.Interface.DataHolder_NameDropDown<GameObject> 地面物体 = new Configure.Interface.DataHolder_NameDropDown<GameObject>(DataName.地面物体);
 
 
 
 
 
             [Space(10)]
-            public ShowOnlyText 说明 = new ShowOnlyText("说明");
+            public ShowOnlyText 说明 = new ShowOnlyText("检测地面");
 
             //必要组件
             protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
@@ -98,19 +109,19 @@ namespace Configure
 
 
                 //重力方向
-                gravityIn.GetEventDataHandler(gameObject).BindDataTo((d) =>
+                重力.GetEventDataHandler(gameObject).BindDataTo((d) =>
                 {
                     if (d == Vector2.zero)
                         return;
                     gravity = d;
                 });
                 //地面法线
-                var groundNormalD = groundNormalIn.GetEventDataHandler(gameObject);
+                var groundNormalD = 地表法线.GetEventDataHandler(gameObject);
                 //站立地面
-                var standGroundD = standOnGroundIn.GetEventDataHandler(gameObject);
+                var standGroundD = 是否站在地面.GetEventDataHandler(gameObject);
 
                 //地面物体
-                var groundObjectD = groundObjectIn.GetEventDataHandler(gameObject);
+                var groundObjectD = 地面物体.GetEventDataHandler(gameObject);
 
 
 

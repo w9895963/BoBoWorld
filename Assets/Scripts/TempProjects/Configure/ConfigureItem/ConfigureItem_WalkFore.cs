@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using EventData;
-
-
+using StackableDecorator;
 using UnityEditor;
 
 using UnityEngine;
@@ -20,11 +19,49 @@ namespace Configure
         [System.Serializable]
         public class ConfigureItem_WalkFore : ConfigureBase
         {
+            [Header("固定参数")]
             public float 行走速度 = 10;
             public float 最大加速度 = 10;
 
+            [Header("动态参数")]
+            //地表法线
+            [Tooltip("")]
+            [StackableField]
+            [HorizontalGroup("info1", true, "", 0, prefix = true, title = "移动指令", tooltip = "获得移动指令")]
+            public Configure.Interface.DataHolder_NameDropDown<Vector2> 移动指令 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.全局_输入_移动向量);
+            [Tooltip("")]
+            [StackableField]
+            [HorizontalGroup("info1", true, "", 0, prefix = true, title = "地表法线", tooltip = "获得脚下的地面法线")]
+            public Configure.Interface.DataHolder_NameDropDown<Vector2> 地表法线 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
+            [Tooltip("")]
+            [StackableField]
+            [HorizontalGroup("info1", true, "", 0, prefix = true, title = "运动速度", tooltip = "获得物体的运动速度")]
+            public Configure.Interface.DataHolder_NameDropDown<Vector2> 运动速度 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.运动速度向量);
+
+
+
+
+
+
+
+
+
+
+
+            [Header("输出参数")]
+            [Tooltip("")]
+            [StackableField]
+            [HorizontalGroup("info1", true, "", 0, prefix = true, title = "移动", tooltip = "根据输入计算出行走施力")]
+            public Configure.Interface.DataHolder_NameDropDown<Vector2> 行走施力 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.行走施力);
+
             //脚本说明
             public ShowOnlyText info_ = new ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力", "输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
+
+
+
+
+
+
 
 
 
@@ -54,7 +91,6 @@ namespace Configure
             //获取数据地表法线
             private EventDataHandler<Vector2> groundNormal;
             //获取数据当前速度
-            private EventDataHandler<Vector2> currentVelocity;
 
             //获取数据行走施力
             private EventDataHandler<Vector2> moveForce;
@@ -86,16 +122,14 @@ namespace Configure
             private void initialize()
             {
                 //获取数据行走输入
-                moveInput = EventDataF.GetData<Vector2>(DataName.全局_输入_移动向量, gameObject);
+                moveInput = EventDataF.GetData<Vector2>(移动指令.dataName, gameObject);
                 //获取数据运动速度
-                moveSpeed = EventDataF.GetData<Vector2>(DataName.运动速度向量, gameObject);
+                moveSpeed = EventDataF.GetData<Vector2>(运动速度.dataName, gameObject);
                 //获取数据地表法线
-                groundNormal = EventDataF.GetData<Vector2>(DataName.地表法线, gameObject);
-                //获取数据当前速度
-                currentVelocity = EventDataF.GetData<Vector2>(DataName.运动速度向量, gameObject);
+                groundNormal = EventDataF.GetData<Vector2>(地表法线.dataName, gameObject);
 
                 //获取数据行走施力
-                moveForce = EventDataF.GetData<Vector2>(DataName.行走施力, gameObject);
+                moveForce = EventDataF.GetData<Vector2>(行走施力.dataName, gameObject);
 
                 //获取刚体
                 rigidbody2D = gameObject.GetComponent<Rigidbody2D>();

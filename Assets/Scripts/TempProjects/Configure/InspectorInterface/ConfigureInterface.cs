@@ -85,8 +85,9 @@ namespace Configure
         [System.Serializable]
         public class DataHolder_NameDropDown<T>
         {
-            [StackableDecorator.DropdownValue("#UpdateDropdownNames")]  
-            [StackableDecorator.StackableField]
+            [NaughtyAttributes.AllowNesting]
+            [NaughtyAttributes.Dropdown(nameof(UpdateDropdownNames))]
+            [NaughtyAttributes.Label("")]
             public string dataName;
 
             public string[] UpdateDropdownNames()

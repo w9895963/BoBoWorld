@@ -25,7 +25,7 @@ namespace Configure
 
         [StackableDecorator.DropdownValue("#" + nameof(configureTypes))]
         [StackableDecorator.StackableField]
-        public string addType = addTypeDefault;
+        public string 添加配置 = addTypeDefault;
         private const string addTypeDefault = "选择配置类型";
         public string[] configureTypes => configureTypeDict.Keys.ToArray();
         public static Dictionary<string, Type> configureTypeDict = new Dictionary<string, Type>() {
@@ -37,15 +37,15 @@ namespace Configure
         };
         private void OnValueChanged_addType()
         {
-            if (configureTypeDict.TryGetValue(addType, out Type type))
+            if (configureTypeDict.TryGetValue(添加配置, out Type type))
             {
                 if (type == null)
                     return;
                 ConfigureBase item = (ConfigureBase)System.Activator.CreateInstance(type);
-                item.configureType = addType;
+                item.configureType = 添加配置;
                 item.OnCreate();
                 配置文件列表.Add(item);
-                addType = addTypeDefault;
+                添加配置 = addTypeDefault;
             }
         }
 

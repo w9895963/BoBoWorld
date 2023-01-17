@@ -9,7 +9,8 @@ namespace Configure
     [Serializable]
     public class ShowOnlyText
     {
-        [Multiline(5)]
+        [NaughtyAttributes.ResizableTextArea]
+        [NaughtyAttributes.ReadOnly]
         public string 脚本说明;
 
 
