@@ -28,7 +28,7 @@ namespace Configure
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info1", true, "", 0, prefix = true, title = "移动指令", tooltip = "获得移动指令")]
-            public Configure.Interface.DataHolder_NameDropDown<Vector2> 移动指令 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.全局_输入_移动向量);
+            public Configure.Interface.DataHolder_NameDropDown<float> 移动指令 = new Configure.Interface.DataHolder_NameDropDown<float>(DataName.全局_输入_移动横向值);
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info1", true, "", 0, prefix = true, title = "地表法线", tooltip = "获得脚下的地面法线")]
@@ -85,7 +85,8 @@ namespace Configure
 
 
             //获取数据行走输入
-            private EventDataHandler<Vector2> moveInput;
+            private EventDataHandler<float> moveInput;
+
             //获取数据运动速度
             private EventDataHandler<Vector2> moveSpeed;
             //获取数据地表法线
@@ -122,7 +123,7 @@ namespace Configure
             private void initialize()
             {
                 //获取数据行走输入
-                moveInput = EventDataF.GetData<Vector2>(移动指令.dataName, gameObject);
+                moveInput = EventDataF.GetData<float>(移动指令.dataName, gameObject);
                 //获取数据运动速度
                 moveSpeed = EventDataF.GetData<Vector2>(运动速度.dataName, gameObject);
                 //获取数据地表法线
@@ -137,7 +138,7 @@ namespace Configure
 
 
                 (EventData.Core.EventData data, Func<bool> check)[] checks = {
-                    moveInput.OnCustomCondition(() => moveInput.Data.x != 0),
+                    moveInput.OnCustomCondition(() => moveInput.Data != 0),
                     groundNormal.OnUpdateCondition,
                     moveSpeed.OnUpdateCondition
                 };
@@ -156,7 +157,7 @@ namespace Configure
                 // Debug.Log("当前速度:" + currentVelocity);
                 float mass = rigidbody2D.mass;
                 Vector2 groundNormalV = groundNormal.Data.magnitude > 0 ? groundNormal.Data.normalized : Vector2.up;
-                float moveInputV = moveInput.Data.x;
+                float moveInputV = moveInput.Data;
 
                 float speed = 行走速度;
                 float maxForce = 最大加速度;

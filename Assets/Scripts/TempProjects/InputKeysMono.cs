@@ -13,10 +13,15 @@ public class InputKeysMono : MonoBehaviour
         InputActionAsset asset = GameObject.FindObjectOfType<PlayerInput>().actions;
 
 
-        EventDataHandler<Vector2> move = EventDataF.GetData<Vector2>(DataName.全局_输入_移动向量);
+        EventDataHandler<Vector2> move = EventDataF.GetData<Vector2>(DataName.全局_输入_移动向量);  
+        EventDataHandler<float> moveX = EventDataF.GetData<float>(DataName.全局_输入_移动横向值);  
+        EventDataHandler<float> moveY = EventDataF.GetData<float>(DataName.全局_输入_移动纵向值);  
         asset.FindAction("Move").performed += (d) =>
         {
-            move.Data = d.ReadValueAsVector2();
+            Vector2 vector2 = d.ReadValueAsVector2();
+            move.Data = vector2;
+            moveX.Data = vector2.x;
+            moveY.Data = vector2.y;
         };
 
 
