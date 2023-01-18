@@ -19,6 +19,7 @@ namespace EventData
 
 
         行走施力,
+        行走向地施力,
         跳跃施力,
         重力施力,
     }
