@@ -61,7 +61,7 @@ namespace Configure.ConfigureItem
         [Tooltip("")]
         [StackableField]
         [HorizontalGroup("info1", true, "", 0, prefix = true, tooltip = "根据输入计算出向地施力，将角色保持压在路面上")]
-        public Configure.Interface.DataHolder_NameDropDown < Vector2 > 获取数据行走向地施力 = new Configure.Interface.DataHolder_NameDropDown < Vector2 > (DataName.行走向低施力);
+        public Configure.Interface.DataHolder_NameDropDown < Vector2 > 行走向地施力 = new Configure.Interface.DataHolder_NameDropDown < Vector2 > (DataName.行走向地施力);
 
 
 

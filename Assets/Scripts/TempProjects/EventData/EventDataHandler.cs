@@ -16,10 +16,12 @@ namespace EventData
         }
 
         //属性：数据
-        public System.Object Data
-        {
-            get => eventData.GetData();
-        }
+        public System.Object Data => eventData.GetData();
+
+        public string DataName => eventData.Key;
+
+
+
 
 
 

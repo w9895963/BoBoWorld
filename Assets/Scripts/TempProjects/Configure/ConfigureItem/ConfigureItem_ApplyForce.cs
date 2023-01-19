@@ -88,24 +88,22 @@ namespace Configure
 
 
 
-
-                //递增历遍施力数据列表
-                for (int i = 0; i < forceDList.Count; i++)
+                forceDList.ForEach((forceD, i) =>
                 {
-                    //获取施力数据
-                    EventDataHandler<Vector2> forceD = forceDList[i];
 
                     (Action Enable, Action Disable) value = EventDataF.CreateConditionEnabler(() =>
                     {
                         // Debug.Log("施力数据更新");
                         //获取施力数据
+
                         forceList.AddToIndex(i, forceD.Data);
                     }, null, forceD.OnUpdateCondition);
 
                     enablerList.Add(value);
 
                     enablerList.ForEach(x => x.Enable());
-                }
+                });
+
 
 
 
