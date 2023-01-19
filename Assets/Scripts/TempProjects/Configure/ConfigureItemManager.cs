@@ -16,12 +16,7 @@ namespace Configure
     //可脚本化对象
     public class ConfigureItemManager : ScriptableObject
     {
-
-        //^编辑器
-        //配置文件列表
-        public List<ConfigureBase_> 配置文件 = new List<ConfigureBase_>();
-
-
+        //^界面:选择类型并添加
 
         [StackableDecorator.DropdownValue("#" + nameof(configureTypes))]
         [StackableDecorator.StackableField]
@@ -52,16 +47,18 @@ namespace Configure
 
 
 
-        //^配置文件列表
+        //^界面:配置文件列表
         [SerializeReference]
-        // [ReferencePicker]
         public List<ConfigureBase> 配置文件列表 = new List<ConfigureBase>();
 
-        //方法:热更新
 
+
+
+
+
+        //方法:热更新
         public void HotUpdate()
         {
-            //如果游戏不在运行则返回且报错
             if (!Application.isPlaying)
             {
                 return;
@@ -77,9 +74,6 @@ namespace Configure
                     x.UpdateRunners();
                 });
             });
-
-
-
         }
 
 

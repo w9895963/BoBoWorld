@@ -17,7 +17,8 @@ namespace EventData
         //*类型： 事件数据可视化
         public class EventDataVisualizer : MonoBehaviour
         {
-            //
+            //^界面:监视对象
+            public List<GameObject> 监视对象 = new List<GameObject>();
             //字段：全局数据条目列表
             public List<DataItem> GlobalData = new List<DataItem>();
             //字段：本地数据条目列表

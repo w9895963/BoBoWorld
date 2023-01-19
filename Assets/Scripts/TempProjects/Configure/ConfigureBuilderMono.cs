@@ -25,14 +25,6 @@ namespace Configure
             List<string> types = new List<string>();
             List<string> types_;
 
-            types_ = 配置列表.WhereNotNull()
-            .SelectMany(x => x.配置文件)
-            .SelectMany(x => x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null))
-            .Select(x => x.ToString()).ToList();
-
-            types.AddRange(types_);
-
-
 
 
             types_ = 配置列表.WhereNotNull()
@@ -52,8 +44,6 @@ namespace Configure
 
 
 
-        //字典:配置启用器字典
-        private Dictionary<ConfigureBase_, (Action Enable, Action Disable)> enablers = new Dictionary<ConfigureBase_, (Action Enable, Action Disable)>();
         //列表:配置启用器列表
         private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
         private Dictionary<ConfigureBase, ConfigureRunner> runnerList = new();
@@ -68,44 +58,12 @@ namespace Configure
 
 
 
-        //*公共方法:更新配置启用器字典
-        public void UpdateEnablers()
-        {
-            if (配置列表.Count > 0)
-            {
-                enablerList = 配置列表.WhereNotNull().SelectMany(x => x.配置文件).WhereNotNull().Select(x => x.CreateEnabler(gameObject, this)).ToList();
-            }
 
-
-
-            List<ConfigureBase_> configures = 配置列表.SelectMany(x => x.配置文件).ToList();
-            //~添加新的配置启用器
-            foreach (var item in configures)
-            {
-                //若配置启用器字典中不包含配置
-                if (!enablers.ContainsKey(item))
-                {
-                    //创建启用器
-                    var en = item.CreateEnabler(gameObject, this);
-                    //配置启用器字典添加配置
-                    enablers.Add(item, en);
-                }
-            }
-            //~删除配置中不包含的启用器
-            foreach (var item in enablers.Keys.ToList())
-            {
-                if (!configures.Contains(item))
-                {
-                    enablers.Remove(item);
-                }
-            }
-
-            enablerList.ForEach(x => x.Enable?.Invoke());
-        }
         public void UpdateRunners()
         {
             List<ConfigureBase> configureBase_s = 配置列表.SelectMany(x => x.配置文件列表).WhereNotNull().ToList();
 
+            //如果执行列表里没有某配置则添加
             foreach (var item in configureBase_s)
             {
                 if (!runnerList.ContainsKey(item))
@@ -115,6 +73,7 @@ namespace Configure
                     runnerList.Add(item, runner);
                 }
             }
+            //如果执行列表里有某配置但配置列表里没有则移除并取消激活
             foreach (var item in runnerList.Keys.ToList())
             {
                 if (!configureBase_s.Contains(item))
@@ -126,7 +85,7 @@ namespace Configure
             }
 
 
-
+            //每一个执行器的激活状态由配置安装器的激活状态以及配置文件的激活状态决定
             foreach (var item in runnerList.Keys)
             {
                 if (this.enabled)
@@ -153,14 +112,12 @@ namespace Configure
         }
         void OnEnable()
         {
-            // enablerList.ForEach(x => x.Enable?.Invoke());
             UpdateRunners();
 
         }
 
         void OnDisable()
         {
-            // enablerList.ForEach(x => x.Disable?.Invoke());
             UpdateRunners();
         }
 

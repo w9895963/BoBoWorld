@@ -10,33 +10,6 @@ using UnityEngine;
 //命名空间：配置
 namespace Configure
 {
-    //类:配置基类
-    public class ConfigureBase_ : ScriptableObject
-    {
-        //字段:启用器
-        protected virtual List<System.Type> requiredTypes => new List<System.Type>();
-
-        public virtual List<System.Type> RequiredTypes => requiredTypes;
-        //必要组件
-
-
-
-
-
-
-        public virtual (Action Enable, Action Disable) CreateEnabler(GameObject gameObject, MonoBehaviour monoBehaviour = null)
-        {
-            return (null, null);
-        }
-
-
-        //
-
-
-
-    }
-
-
 
 
     //类:配置基类
@@ -50,7 +23,7 @@ namespace Configure
 
 
 
-        // //*界面:脚本引用
+        //*界面:脚本引用
         [SerializeField]
         [StackableDecorator.EnableIf(false)]
         [StackableDecorator.StackableField]
