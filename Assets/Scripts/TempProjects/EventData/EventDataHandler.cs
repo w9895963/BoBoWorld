@@ -69,11 +69,14 @@ namespace EventData
 
 
 
-        public void BindDataTo(Action<T> setAction, MonoBehaviour enableWithBehaviour = null)
+       
+        public void OnUpdateDo_AddEnabler(Action<T> setAction, ref (Action ,Action) enabler)
         {
             setAction?.Invoke(eventDataT.GetData());
             (Core.EventData data, Func<bool> check)[] conditions = { (eventDataT, null) };
-            EventDataF.CreateConditionEnabler(() => setAction?.Invoke(eventDataT.GetData()), null, conditions, enableWithBehaviour).Enable();
+            (Action Enable, Action Disable) value = EventDataF.CreateConditionEnabler(() => setAction?.Invoke(eventDataT.GetData()), null, conditions);
+            enabler.Item1 += value.Enable;
+            enabler.Item2 += value.Disable;
         }
 
 
