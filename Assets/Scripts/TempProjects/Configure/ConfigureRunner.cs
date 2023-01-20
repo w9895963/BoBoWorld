@@ -80,7 +80,7 @@ namespace Configure
             {
                 Enabled = false;
 
-                
+
                 destroy?.Invoke();
                 lived = false;
 
@@ -98,6 +98,8 @@ namespace Configure
 
 
     }
+
+  
 
 
 }

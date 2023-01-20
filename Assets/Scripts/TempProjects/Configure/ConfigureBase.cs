@@ -16,6 +16,9 @@ namespace Configure
     [System.Serializable]
     public class ConfigureBase
     {
+        #region //&界面部分
+
+
 
         //*界面:配置类型选择,用来给界面标题显示用
         [HideInInspector]
@@ -62,6 +65,13 @@ namespace Configure
 
 
 
+        #endregion
+        //&Region  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
+
+
+
 
 
 
@@ -76,46 +86,28 @@ namespace Configure
 
 
         //必要组件
-        protected virtual List<System.Type> requiredTypes => new List<System.Type>();
-        public virtual List<System.Type> RequiredTypes => requiredTypes;
-
-        protected System.Func<GameObject, ConfigureRunner> createRunner;
-        private Func<GameObject, ConfigureBase, ConfigureRunner> createRunnerAction;
-
-
-        #region//&构造函数
-        public ConfigureBase()
-        {
-        }
-
-        public ConfigureBase(Func<GameObject, ConfigureBase, ConfigureRunner> createRunnerAction)
-        {
-            this.createRunnerAction = createRunnerAction;
-        }
-
-
-
-        #endregion
-        //&Region  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-
-        public virtual ConfigureRunner CreateRunner(GameObject gameObject, MonoBehaviour monoBehaviour)
+        public List<System.Type> RequiredTypes => requiredTypes;
+        public ConfigureRunner CreateRunner(MonoBehaviour monoBehaviour)
         {
             if (createRunner != null)
             {
-                return createRunner.Invoke(gameObject);
+                return createRunner.Invoke(monoBehaviour.gameObject);
             }
-            if (createRunnerAction != null)
-            {
-                return createRunnerAction.Invoke(gameObject, this);
-            }
+            //都不满足
             return null;
         }
+
+
+        protected List<System.Type> requiredTypes = new List<System.Type>();
+        protected System.Func<GameObject, ConfigureRunner> createRunner;
+
 
 
 
 
     }
+
+
 
 
 

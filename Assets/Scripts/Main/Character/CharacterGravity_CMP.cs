@@ -7,7 +7,6 @@ public class CharacterGravity_CMP : MonoBehaviour
 {
     public Vector2 gravityDirection = new Vector2(0, -1);
     public float gravityForce = 9.8f;
-    [SerializeField] private bool isFall;
 
 
 
@@ -105,7 +104,6 @@ public class CharacterGravity_CMP : MonoBehaviour
 
     private void FallOn()
     {
-        isFall = true;
         CharacterActionF.SetState(gameObject, Conf.CharacterActionName.动画_下落, true);
         GetComponent<CharacterAnimation_Cmp>()?.PlayAnimation(Conf.AnimationName.下落);
         fallState.Enabled = true;
@@ -114,7 +112,6 @@ public class CharacterGravity_CMP : MonoBehaviour
 
     private void FallOff()
     {
-        isFall = false;
         CharacterActionF.SetState(gameObject, Conf.CharacterActionName.动画_下落, false);
 
         fallState.Enabled = false;

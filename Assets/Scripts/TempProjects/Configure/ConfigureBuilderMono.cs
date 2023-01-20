@@ -68,7 +68,9 @@ namespace Configure
             {
                 if (!runnerList.ContainsKey(item))
                 {
-                    var runner = item.CreateRunner(gameObject, this);
+                    var runner = item.CreateRunner(this);
+                    if (runner == null)
+                        continue;
                     runner.Initialize();
                     runnerList.Add(item, runner);
                 }

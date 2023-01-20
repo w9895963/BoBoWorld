@@ -25,6 +25,8 @@ namespace Configure
         [System.Serializable]
         public partial class ConfigureItem_GroundFinder : ConfigureBase
         {
+
+
             #region //&界面部分            
 
             [Header("参数")]
@@ -80,11 +82,6 @@ namespace Configure
 
 
 
-            //必要组件
-            protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
-
-
-
 
 
 
@@ -92,6 +89,7 @@ namespace Configure
             //构建函数
             public ConfigureItem_GroundFinder()
             {
+                requiredTypes = new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
                 createRunner = CreateRunner_;
             }
 
@@ -107,17 +105,19 @@ namespace Configure
             private class GroundFinderMain
             {
 
-                public GameObject gameObject;
+                private GameObject gameObject;
+                private ConfigureItem_GroundFinder ins;
                 private float maxAngle;
                 private Vector2 gravity;
                 private Vector2 groundNormal;
                 private List<string> tags;
-                private (Action enable, Action disable) enabler;
-                private List<(Collider2D, ContactPoint2D[])> groundCollider = new List<(Collider2D, ContactPoint2D[])>();
                 private EventDataHandler<Vector2> groundNormalD;
                 private EventDataHandler<bool> standGroundD;
                 private EventDataHandler<GameObject> groundObjectD;
-                private ConfigureItem_GroundFinder ins;
+                private (Action enable, Action disable) enabler;
+                private List<(Collider2D, ContactPoint2D[])> groundCollider = new List<(Collider2D, ContactPoint2D[])>();
+
+                //界面
 
                 public GroundFinderMain(ConfigureItem_GroundFinder ins, GameObject gameObject)
                 {
@@ -139,7 +139,7 @@ namespace Configure
 
 
                     //当引用改变时自动更新重力方向的值
-                    EventDataF.GetData<Vector2>(ins.重力.dataName).OnUpdateDo_AddEnabler((d) =>
+                    EventDataF.GetData<Vector2>(ins.重力.dataName, gameObject).OnUpdateDo_AddEnabler((d) =>
                     {
                         gravity = d;
                     }, ref enabler);
@@ -324,7 +324,7 @@ namespace Configure
 
 
 
-         
+
 
 
 

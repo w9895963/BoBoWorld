@@ -82,12 +82,9 @@ namespace Configure.ConfigureItem
         {
             createRunner = CreateRunner;
         }
-
-
-
         private ConfigureRunner CreateRunner(GameObject gameObject)
         {
-            Calc calc = new Calc(this, gameObject);
+            Runner calc = new Runner(this, gameObject);
 
 
             return new ConfigureRunner(calc.initialize, calc.enable, calc.disable, calc.destroy);
@@ -98,8 +95,9 @@ namespace Configure.ConfigureItem
 
 
 
+
         //类:计算核心
-        private class Calc
+        private class Runner
         {
             private GameObject gameObject;
             private ConfigureRunner configureRunner;
@@ -128,7 +126,7 @@ namespace Configure.ConfigureItem
             private (Action Enable, Action Disable) enabler;
             private ConfigureItem_WalkFore ins;
 
-            public Calc(ConfigureItem_WalkFore ins, GameObject obj)
+            public Runner(ConfigureItem_WalkFore ins, GameObject obj)
             {
                 this.ins = ins;
                 gameObject = obj;
@@ -228,6 +226,17 @@ namespace Configure.ConfigureItem
 
             }
         }
+
+
+
+
+
+
+
+
+
+
+
     }
 
 

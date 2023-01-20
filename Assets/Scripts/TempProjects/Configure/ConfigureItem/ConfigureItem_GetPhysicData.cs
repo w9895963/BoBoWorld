@@ -31,67 +31,74 @@ namespace Configure
             //脚本说明
             public ShowOnlyText 说明 = new ShowOnlyText("从Unity组件中获得物理数据:", "运动速度");
 
-            //必要组件
-            protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D) };
 
 
             public ConfigureItem_GetPhysicData()
             {
+                requiredTypes = new List<Type>() { typeof(Rigidbody2D) };
 
-                Construct();
+
+                createRunner = CreateRunner;
             }
 
-
-
-
-
-
-
-
-            private GameObject gameObject;
-            private EventDataHandler<Vector2> speedD;
-            private Rigidbody2D rigidbody2D;
-
-            private void Construct()
+            private ConfigureRunner CreateRunner(GameObject obj)
             {
-                //创建运行器
-                ConfigureRunner runner = new ConfigureRunner(initialize, enable, disable, destroy);
 
-                createRunner = (obj) =>
+                var runner = new runner(this, obj);
+                return new ConfigureRunner(runner.initialize, runner.enable, runner.disable, runner.destroy);
+
+            }
+
+            private class runner
+            {
+                private ConfigureItem_GetPhysicData cf;
+                private GameObject gameObject;
+                private Rigidbody2D rigidbody2D;
+
+                public runner(ConfigureItem_GetPhysicData configureItem_GetPhysicData, GameObject gameObject)
                 {
-                    gameObject = obj;
-                    //获取物理组件
+                    cf = configureItem_GetPhysicData;
+                    this.gameObject = gameObject;
                     rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-                    return runner;
-                };
+
+                }
 
 
 
-            }
-            private void initialize()
-            {
-                //获取运动速度
-                speedD = EventDataF.GetData<Vector2>(运动速度.dataName, gameObject);
-            }
-            private void destroy()
-            {
 
-            }
-            private void enable()
-            {
-                BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
-            }
-
-            private void disable()
-            {
-                BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);
-            }
+                private EventDataHandler<Vector2> speedD;
 
 
 
-            private void FixedUpdate()
-            {
-                speedD.Data = rigidbody2D.velocity;
+                public void initialize()
+                {
+                    //获取运动速度
+                    speedD = EventDataF.GetData<Vector2>(cf.运动速度.dataName, gameObject);
+                }
+                public void destroy()
+                {
+
+                }
+                public void enable()
+                {
+                    BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
+                }
+
+                public void disable()
+                {
+                    BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);
+                }
+
+
+
+                private void FixedUpdate()
+                {
+                    speedD.Data = rigidbody2D.velocity;
+                }
+
+
+
+
             }
 
 
