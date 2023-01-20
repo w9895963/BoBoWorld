@@ -10,18 +10,20 @@ using UnityEngine;
 
 
 //命名空间：配置
-namespace Configure.ConfigureItem
+namespace Configure
 {
-
-
-
-
-    [System.Serializable]
-    public class ConfigureItem_ApplyForce : ConfigureBase
+    namespace ConfigureItem
     {
 
-        [Tooltip("将所选向量数据作为力应用到刚体上")]
-        public List<DataHolder_NameDropDown<Vector2>> 施力数据列表 = new List<DataHolder_NameDropDown<Vector2>>(){
+
+
+
+        [System.Serializable]
+        public class ConfigureItem_PositionLocked : ConfigureBase
+        {
+
+            [Tooltip("将所选向量数据作为力应用到刚体上")]
+            public List<DataHolder_NameDropDown<Vector2>> 施力数据列表 = new List<DataHolder_NameDropDown<Vector2>>(){
                 new  (EventData.DataName.行走施力),
                 new  (EventData.DataName.跳跃施力),
                 new  (EventData.DataName.重力施力),
@@ -33,8 +35,8 @@ namespace Configure.ConfigureItem
 
 
 
-        //脚本说明
-        public ShowOnlyText 说明 = new ShowOnlyText("将所选向量数据作为力应用到刚体上");
+            //脚本说明
+            public ShowOnlyText 说明 = new ShowOnlyText("将所选向量数据作为力应用到刚体上");
 
 
 
@@ -42,40 +44,46 @@ namespace Configure.ConfigureItem
 
 
 
-        public ConfigureItem_ApplyForce()
-        {
-            createRunner = GetCreateRunner;
-        }
+            public ConfigureItem_PositionLocked()
+            {
+                Construct();
+            }
 
-        private ConfigureRunner GetCreateRunner(GameObject gameObject)
-        {
-            Runner r = new Runner(gameObject, this);
-            return new ConfigureRunner(r.initialize, r.enable, r.disable, r.destroy);
-        }
+         
 
 
 
-        private class Runner
-        {
+
+
+
+
+
+
             private GameObject gameObject;
             private Rigidbody2D rigidbody2D;
-            private ConfigureItem_ApplyForce cf;
-
-            public Runner(GameObject gameObject, ConfigureItem_ApplyForce cf)
-            {
-                this.gameObject = gameObject;
-                rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-                this.cf = cf;
-            }
             private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
             private List<EventDataHandler<Vector2>> forceDList;
             private List<Vector2> forceList = new List<Vector2>() { Vector2.zero };
 
-            public void initialize()
+            private void Construct()
+            {
+                createRunner = (obj) =>
+                {
+                    gameObject = obj;
+                    rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+
+
+                    return new ConfigureRunner(initialize, enable, disable, destroy);
+                };
+            }
+
+
+
+            private void initialize()
             {
 
                 //获取施力数据列表
-                forceDList = cf.施力数据列表.Select(x => EventDataF.GetData<Vector2>(x.dataName, gameObject)).Where(x => x != null).ToList();
+                forceDList = 施力数据列表.Select(x => EventDataF.GetData<Vector2>(x.dataName, gameObject)).Where(x => x != null).ToList();
 
 
 
@@ -101,23 +109,28 @@ namespace Configure.ConfigureItem
 
             }
 
-            public void destroy()
+            private void destroy()
             {
                 enablerList.ForEach(x => x.Disable());
             }
 
-            public void enable()
+            private void enable()
             {
 
                 BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
 
             }
 
-            public void disable()
+            private void disable()
             {
 
                 BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);
             }
+
+
+
+
+
 
             private void FixedUpdate()
             {
@@ -129,14 +142,9 @@ namespace Configure.ConfigureItem
                 }
                 rigidbody2D.AddForce(force);
             }
-
-
-
         }
 
-
     }
-
 
 
 }
