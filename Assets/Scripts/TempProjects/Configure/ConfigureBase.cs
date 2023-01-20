@@ -88,12 +88,6 @@ namespace Configure
         {
         }
 
-        public ConfigureBase(string configureType)
-        {
-            Debug.Log("配置类型:" + configureType);
-            this.insLabelConfigureType = configureType;
-        }
-
         public ConfigureBase(Func<GameObject, ConfigureBase, ConfigureRunner> createRunnerAction)
         {
             this.createRunnerAction = createRunnerAction;

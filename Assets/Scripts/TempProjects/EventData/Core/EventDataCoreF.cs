@@ -119,7 +119,7 @@ namespace EventData
                 //如果组件存在则添加到条件表中
                 if (monoBehaviour != null)
                 {
-                    conditionAction.conditionList.AddNotNull(() => monoBehaviour.enabled);
+                    conditionAction.conditionList.Add(() => monoBehaviour.enabled);
                 }
 
                 //如果组件存在则添加到conditionList

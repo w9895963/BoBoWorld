@@ -25,6 +25,8 @@ namespace Configure
         [System.Serializable]
         public partial class ConfigureItem_GroundFinder : ConfigureBase
         {
+            #region //&界面部分            
+
             [Header("参数")]
 
 
@@ -70,8 +72,18 @@ namespace Configure
             [Space(10)]
             public ShowOnlyText 说明 = new ShowOnlyText("检测地面");
 
+            #endregion 
+            //&↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
+
+
+
+
             //必要组件
             protected override List<Type> requiredTypes => new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
+
+
 
 
 
@@ -80,98 +92,93 @@ namespace Configure
             //构建函数
             public ConfigureItem_GroundFinder()
             {
-                createRunner = CreateRunner;
+                createRunner = CreateRunner_;
+            }
+
+            private ConfigureRunner CreateRunner_(GameObject gameObject)
+            {
+                GroundFinderMain gr = new GroundFinderMain(this, gameObject);
+                return new ConfigureRunner(gr.initialize, gr.enable, gr.disable, gr.destroy);
             }
 
 
 
 
-
-
-
-
-            //覆盖方法:创建运行器
-            private ConfigureRunner CreateRunner(GameObject gameObject)
+            private class GroundFinderMain
             {
 
+                public GameObject gameObject;
+                private float maxAngle;
+                private Vector2 gravity;
+                private Vector2 groundNormal;
+                private List<string> tags;
+                private (Action enable, Action disable) enabler;
+                private List<(Collider2D, ContactPoint2D[])> groundCollider = new List<(Collider2D, ContactPoint2D[])>();
+                private EventDataHandler<Vector2> groundNormalD;
+                private EventDataHandler<bool> standGroundD;
+                private EventDataHandler<GameObject> groundObjectD;
+                private ConfigureItem_GroundFinder ins;
 
-                List<(Collider2D, ContactPoint2D[])> groundCollider = new();
-
-
-
-                float maxAngle = 地面最大夹角;
-                Vector2 gravity = Vector2.down;
-                Vector2 groundNormal = Vector2.zero;
-                List<string> tags = this.地面标签.Distinct().ToList();
-                bool enabled = false;
-
-
-
-
-                //重力方向
-                重力.GetEventDataHandler(gameObject).BindDataTo((d) =>
+                public GroundFinderMain(ConfigureItem_GroundFinder ins, GameObject gameObject)
                 {
-                    if (d == Vector2.zero)
-                        return;
-                    gravity = d;
-                });
-                //地面法线
-                var groundNormalD = 地表法线.GetEventDataHandler(gameObject);
-                //站立地面
-                var standGroundD = 是否站在地面.GetEventDataHandler(gameObject);
+                    this.ins = ins;
+                    this.gameObject = gameObject;
+                }
 
-                //地面物体
-                var groundObjectD = 地面物体.GetEventDataHandler(gameObject);
-
-
-
-
-
-
-
-
-
-                void initialize()
+                public void initialize()
                 {
+                    groundCollider.Clear();
+                    enabler = default;
+
+                    maxAngle = ins.地面最大夹角;
+                    gravity = Vector2.down;
+                    groundNormal = Vector2.zero;
+                    tags = ins.地面标签.Distinct().ToList();
+
+
+
+
+                    //当引用改变时自动更新重力方向的值
+                    EventDataF.GetData<Vector2>(ins.重力.dataName).OnUpdateDo_AddEnabler((d) =>
+                    {
+                        gravity = d;
+                    }, ref enabler);
+
+
+                    //地面法线
+                    groundNormalD = ins.地表法线.GetEventDataHandler(gameObject);
+                    //站立地面
+                    standGroundD = ins.是否站在地面.GetEventDataHandler(gameObject);
+
+                    //地面物体
+                    groundObjectD = ins.地面物体.GetEventDataHandler(gameObject);
+
+                }
+
+                public void enable()
+                {
+                    enabler.enable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Add(gameObject, OnCollisionEnter2D);
                     BasicEvent.OnCollision2D_Stay.Add(gameObject, OnCollisionStay2D);
                     BasicEvent.OnCollision2D_Exit.Add(gameObject, OnCollisionExit2D);
                 }
 
-                void enable()
+                public void disable()
                 {
-
-                    enabled = true;
-                    groundCollider.Clear();
-
-
-                }
-
-                void disable()
-                {
-                    enabled = false;
-
-
-                    groundObjectD.Data = null;
-                    standGroundD.Data = false;
-                    groundNormalD.Data = Vector2.zero;
-                }
-
-
-                void destroy()
-                {
+                    enabler.disable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
                     BasicEvent.OnCollision2D_Stay.Remove(gameObject, OnCollisionStay2D);
                     BasicEvent.OnCollision2D_Exit.Remove(gameObject, OnCollisionExit2D);
                 }
 
-
-
-
-                void OnCollisionEnter2D(Collision2D obj)
+                public void destroy()
                 {
-                    if (enabled == false)
-                        return;
+                }
+
+
+
+                private void OnCollisionEnter2D(Collision2D obj)
+                {
 
 
                     //如果碰撞体标签不包含碰撞体标签则退出
@@ -187,10 +194,8 @@ namespace Configure
                     SetGroundObject();
 
                 }
-                void OnCollisionStay2D(Collision2D obj)
+                private void OnCollisionStay2D(Collision2D obj)
                 {
-                    if (enabled == false)
-                        return;
                     //如果碰撞体标签不包含碰撞体标签则退出
                     if (!tags.Contains(obj.gameObject.tag))
                         return;
@@ -208,10 +213,8 @@ namespace Configure
                     SetStandGround();
                 }
 
-                void OnCollisionExit2D(Collision2D obj)
+                private void OnCollisionExit2D(Collision2D obj)
                 {
-                    if (enabled == false)
-                        return;
                     //如果碰撞体标签不包含碰撞体标签则退出
                     if (!tags.Contains(obj.gameObject.tag))
                         return;
@@ -233,7 +236,7 @@ namespace Configure
 
 
 
-                Vector2 CalcGroundNormal(ContactPoint2D[] contacts)
+                private Vector2 CalcGroundNormal(ContactPoint2D[] contacts)
                 {
                     var gn = Vector2.zero;
 
@@ -261,7 +264,7 @@ namespace Configure
 
 
 
-                void SetGroundNormal()
+                private void SetGroundNormal()
                 {
                     if (groundNormal != Vector2.zero)
                     {
@@ -275,7 +278,7 @@ namespace Configure
                     }
                 }
 
-                void SetStandGround()
+                private void SetStandGround()
                 {
                     if (groundNormal != Vector2.zero)
                     {
@@ -290,7 +293,7 @@ namespace Configure
                     }
                 }
 
-                void SetGroundObject()
+                private void SetGroundObject()
                 {
                     if (groundNormal != Vector2.zero)
                     {
@@ -312,9 +315,16 @@ namespace Configure
 
 
 
-                ConfigureRunner runner = new ConfigureRunner(initialize, enable, disable, destroy);
-                return runner;
             }
+
+
+
+
+
+
+
+
+         
 
 
 
