@@ -3,7 +3,6 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Configure.ConfigureItem;
 using UnityEngine;
 using Type = System.Type;
 
@@ -23,20 +22,14 @@ namespace Configure
         public string 添加配置 = addTypeDefault;
         private const string addTypeDefault = "选择配置类型";
         public string[] configureTypes => configureTypeDict.Keys.ToArray();
-        public static Dictionary<string, Type> configureTypeDict = new Dictionary<string, Type>() {
-            { "选择配置类型",null},
-            { "物理/力量施加器", typeof(ConfigureItem_ApplyForce)},
-            { "物理/获取物理量",typeof(ConfigureItem_GetPhysicData)},
-            { "物理/地面检测器",typeof(ConfigureItem_GroundFinder)},
-            { "物理/计算行走施力",typeof(ConfigureItem_WalkFore)},
-        };
+        public static Dictionary<string, Type> configureTypeDict = PresetData.ConfigureTypeDict;
         private void OnValueChanged_addType()
         {
             if (configureTypeDict.TryGetValue(添加配置, out Type type))
             {
                 if (type == null)
                     return;
-                ConfigureBase item = (ConfigureBase)System.Activator.CreateInstance(type);
+                ConfigureItemBase item = (ConfigureItemBase)System.Activator.CreateInstance(type);
                 item.insLabelConfigureType = 添加配置;
                 item.OnCreate();
                 配置文件列表.Add(item);
@@ -49,7 +42,7 @@ namespace Configure
 
         //^界面:配置文件列表
         [SerializeReference]
-        public List<ConfigureBase> 配置文件列表 = new List<ConfigureBase>();
+        public List<ConfigureItemBase> 配置文件列表 = new List<ConfigureItemBase>();
 
 
 

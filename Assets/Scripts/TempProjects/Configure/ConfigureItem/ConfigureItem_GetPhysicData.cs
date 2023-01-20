@@ -15,7 +15,7 @@ namespace Configure
 
 
         [System.Serializable]
-        public class ConfigureItem_GetPhysicData : ConfigureBase
+        public class ConfigureItem_GetPhysicData : ConfigureItemBase
         {
 
 
@@ -29,7 +29,7 @@ namespace Configure
 
             [Space]
             //脚本说明
-            public ShowOnlyText 说明 = new ShowOnlyText("从Unity组件中获得物理数据:", "运动速度");
+            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("从Unity组件中获得物理数据:", "运动速度");
 
 
 

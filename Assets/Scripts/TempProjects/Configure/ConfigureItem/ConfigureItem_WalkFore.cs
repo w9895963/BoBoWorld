@@ -17,7 +17,7 @@ namespace Configure.ConfigureItem
 
 
     [System.Serializable]
-    public class ConfigureItem_WalkFore : ConfigureBase
+    public class ConfigureItem_WalkFore : ConfigureItemBase
     {
         #region //&界面部分
 
@@ -69,7 +69,7 @@ namespace Configure.ConfigureItem
 
 
         //脚本说明
-        public ShowOnlyText info_ = new ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力", "输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
+        public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力", "输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
 
 
 

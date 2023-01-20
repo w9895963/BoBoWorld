@@ -17,7 +17,7 @@ namespace Configure.ConfigureItem
 
 
     [System.Serializable]
-    public class ConfigureItem_ApplyForce : ConfigureBase
+    public class ConfigureItem_ApplyForce : ConfigureItemBase
     {
 
         [Tooltip("将所选向量数据作为力应用到刚体上")]
@@ -34,7 +34,7 @@ namespace Configure.ConfigureItem
 
 
         //脚本说明
-        public ShowOnlyText 说明 = new ShowOnlyText("将所选向量数据作为力应用到刚体上");
+        public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("将所选向量数据作为力应用到刚体上");
 
 
 

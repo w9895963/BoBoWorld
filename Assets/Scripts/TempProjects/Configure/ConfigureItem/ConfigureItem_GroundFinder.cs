@@ -23,7 +23,7 @@ namespace Configure
 
 
         [System.Serializable]
-        public partial class ConfigureItem_GroundFinder : ConfigureBase
+        public partial class ConfigureItem_GroundFinder : ConfigureItemBase
         {
 
 
@@ -72,7 +72,7 @@ namespace Configure
 
 
             [Space(10)]
-            public ShowOnlyText 说明 = new ShowOnlyText("检测地面");
+            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("检测地面");
 
             #endregion 
             //&↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑

@@ -14,7 +14,7 @@ namespace Configure
 
     //类:配置基类
     [System.Serializable]
-    public class ConfigureBase
+    public class ConfigureItemBase
     {
         #region //&界面部分
 

@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 
 
-//命名空间：配置
-namespace Configure
+
+namespace Configure.Interface
 {
 
     [Serializable]

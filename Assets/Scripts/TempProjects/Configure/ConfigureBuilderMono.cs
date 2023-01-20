@@ -46,7 +46,7 @@ namespace Configure
 
         //列表:配置启用器列表
         private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
-        private Dictionary<ConfigureBase, ConfigureRunner> runnerList = new();
+        private Dictionary<ConfigureItemBase, ConfigureRunner> runnerList = new();
 
 
 
@@ -61,7 +61,7 @@ namespace Configure
 
         public void UpdateRunners()
         {
-            List<ConfigureBase> configureBase_s = 配置列表.SelectMany(x => x.配置文件列表).WhereNotNull().ToList();
+            List<ConfigureItemBase> configureBase_s = 配置列表.SelectMany(x => x.配置文件列表).WhereNotNull().ToList();
 
             //如果执行列表里没有某配置则添加
             foreach (var item in configureBase_s)
