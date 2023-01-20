@@ -46,102 +46,97 @@ namespace Configure
 
             public ConfigureItem_ApplyForce()
             {
-                Construct();
+                createRunner = GetCreateRunner;
             }
 
-         
-
-
-
-
-
-
-
-
-
-            private GameObject gameObject;
-            private Rigidbody2D rigidbody2D;
-            private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
-            private List<EventDataHandler<Vector2>> forceDList;
-            private List<Vector2> forceList = new List<Vector2>() { Vector2.zero };
-
-            private void Construct()
+            private ConfigureRunner GetCreateRunner(GameObject gameObject)
             {
-                createRunner = (obj) =>
+                Runner r = new Runner(gameObject, this);
+                return new ConfigureRunner(r.initialize, r.enable, r.disable, r.destroy);
+            }
+
+
+
+            private class Runner
+            {
+                private GameObject gameObject;
+                private Rigidbody2D rigidbody2D;
+                private ConfigureItem_ApplyForce cf;
+
+                public Runner(GameObject gameObject, ConfigureItem_ApplyForce cf)
                 {
-                    gameObject = obj;
+                    this.gameObject = gameObject;
                     rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-
-
-                    return new ConfigureRunner(initialize, enable, disable, destroy);
-                };
-            }
-
-
-
-            private void initialize()
-            {
-
-                //获取施力数据列表
-                forceDList = 施力数据列表.Select(x => EventDataF.GetData<Vector2>(x.dataName, gameObject)).Where(x => x != null).ToList();
-
-
-
-
-                forceDList.ForEach((forceD, i) =>
-                {
-
-                    (Action Enable, Action Disable) value = EventDataF.CreateConditionEnabler(() =>
-                    {
-                        // Debug.Log("施力数据更新");
-                        //获取施力数据
-
-                        forceList.AddToIndex(i, forceD.Data);
-                    }, null, forceD.OnUpdateCondition);
-
-                    enablerList.Add(value);
-
-                    enablerList.ForEach(x => x.Enable());
-                });
-
-
-
-
-            }
-
-            private void destroy()
-            {
-                enablerList.ForEach(x => x.Disable());
-            }
-
-            private void enable()
-            {
-
-                BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
-
-            }
-
-            private void disable()
-            {
-
-                BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);
-            }
-
-
-
-
-
-
-            private void FixedUpdate()
-            {
-                Vector2 force = forceList.Aggregate((x, y) => x + y);
-                //等于0时不计算
-                if (force.magnitude == 0)
-                {
-                    return;
+                    this.cf = cf;
                 }
-                rigidbody2D.AddForce(force);
+                private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
+                private List<EventDataHandler<Vector2>> forceDList;
+                private List<Vector2> forceList = new List<Vector2>() { Vector2.zero };
+
+                public void initialize()
+                {
+
+                    //获取施力数据列表
+                    forceDList = cf.施力数据列表.Select(x => EventDataF.GetData<Vector2>(x.dataName, gameObject)).Where(x => x != null).ToList();
+
+
+
+
+                    forceDList.ForEach((forceD, i) =>
+                    {
+
+                        (Action Enable, Action Disable) value = EventDataF.CreateConditionEnabler(() =>
+                        {
+                            // Debug.Log("施力数据更新");
+                            //获取施力数据
+
+                            forceList.AddToIndex(i, forceD.Data);
+                        }, null, forceD.OnUpdateCondition);
+
+                        enablerList.Add(value);
+
+                        enablerList.ForEach(x => x.Enable());
+                    });
+
+
+
+
+                }
+
+                public void destroy()
+                {
+                    enablerList.ForEach(x => x.Disable());
+                }
+
+                public void enable()
+                {
+
+                    BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
+
+                }
+
+                public void disable()
+                {
+
+                    BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);
+                }
+
+                private void FixedUpdate()
+                {
+                    Vector2 force = forceList.Aggregate((x, y) => x + y);
+                    //等于0时不计算
+                    if (force.magnitude == 0)
+                    {
+                        return;
+                    }
+                    rigidbody2D.AddForce(force);
+                }
+
+
+
             }
+
+
         }
 
     }
