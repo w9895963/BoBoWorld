@@ -37,7 +37,7 @@ namespace Configure
                 if (type == null)
                     return;
                 ConfigureBase item = (ConfigureBase)System.Activator.CreateInstance(type);
-                item.configureType = 添加配置;
+                item.insLabelConfigureType = 添加配置;
                 item.OnCreate();
                 配置文件列表.Add(item);
                 添加配置 = addTypeDefault;

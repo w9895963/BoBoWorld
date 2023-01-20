@@ -17,9 +17,9 @@ namespace Configure
     public class ConfigureBase
     {
 
-        //*界面:配置类型选择
+        //*界面:配置类型选择,用来给界面标题显示用
         [HideInInspector]
-        public string configureType = "未选择配置类型";
+        public string insLabelConfigureType = "未选择配置类型";
 
 
 
@@ -28,7 +28,8 @@ namespace Configure
         [StackableDecorator.EnableIf(false)]
         [StackableDecorator.StackableField]
         private UnityEditor.MonoScript scriptRefer;
-        public void OnCreate()
+        //私有方法:设置脚本引用
+        private void SetScriptRefer()
         {
             Type type = this.GetType();
             //在unity资源管理器里找到这个脚本文件
@@ -39,6 +40,7 @@ namespace Configure
             UnityEditor.MonoScript script = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEditor.MonoScript>(path);
             scriptRefer = script;
         }
+
 
 
 
@@ -63,17 +65,10 @@ namespace Configure
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+        public void OnCreate()
+        {
+            SetScriptRefer();
+        }
 
 
 
@@ -87,20 +82,28 @@ namespace Configure
         protected System.Func<GameObject, ConfigureRunner> createRunner;
         private Func<GameObject, ConfigureBase, ConfigureRunner> createRunnerAction;
 
+
+        #region//&构造函数
         public ConfigureBase()
         {
-            Construct();
         }
+
+        public ConfigureBase(string configureType)
+        {
+            Debug.Log("配置类型:" + configureType);
+            this.insLabelConfigureType = configureType;
+        }
+
         public ConfigureBase(Func<GameObject, ConfigureBase, ConfigureRunner> createRunnerAction)
         {
-            Construct(createRunnerAction);
-        }
-        private void Construct(Func<GameObject, ConfigureBase, ConfigureRunner> createRunnerAction = null)
-        {
             this.createRunnerAction = createRunnerAction;
-
-
         }
+
+
+
+        #endregion
+        //&Region  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
 
         public virtual ConfigureRunner CreateRunner(GameObject gameObject, MonoBehaviour monoBehaviour)
         {
@@ -114,9 +117,6 @@ namespace Configure
             }
             return null;
         }
-
-
-
 
 
 
