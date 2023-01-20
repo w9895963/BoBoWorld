@@ -9,13 +9,8 @@ public class Test : MonoBehaviour
     public UnityEngine.Object obj;
     public UnityEditor.MonoScript monoScript;
     public GameObject gameObj;
-    public string EditorButton2;
     public void 打印到控制台()
     {
-        obj.GetType().Log();
-        Debug.Log("obj = " + obj);
-        obj.Log("obj");
-        gameObj.Log("gameObj");
     }
 
 
@@ -33,15 +28,20 @@ public class Test : MonoBehaviour
 
 
 
-    //*测试方法1
-    public string EditorButton;
+    //测试方法1
+    [NaughtyAttributes.Button]
     public void 测试方法1()
     {
-        //生成一个随机数然后打印到unix的的控制台。
-        typeof(string).Log();
-        // SpriteShape
+        (int one, int two) test = (1, 2);
 
 
+        Action<(int, int)> action = (d) =>
+        {
+            Debug.Log(d.Item1);
+            Debug.Log(d.Item2);
+        };
+
+        action(test);
 
     }
 
