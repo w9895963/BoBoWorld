@@ -70,7 +70,7 @@ public static class ExtensionArray
         }
 
     }
-
+    /// <summary>添加到列表前, 要添加的元素进行一个Null检测, 为Null则不添加</summary>
     public static void AddNotNull<T>(this List<T> source, T newMember)
     {
         if (newMember != null)
