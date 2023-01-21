@@ -58,7 +58,7 @@ namespace Configure
 
 
 
-
+        ///<summary> 根据变动更新实际运行的配置, 并执行对应启用等操作 </summary>
         public void UpdateRunners()
         {
             List<ConfigureItemBase> configureBase_s = 配置列表.SelectMany(x => x.配置文件列表).WhereNotNull().ToList();
@@ -71,7 +71,7 @@ namespace Configure
                     var runner = item.CreateRunner(this);
                     if (runner == null)
                         continue;
-                    runner.Initialize();
+                    runner.Init();
                     runnerList.Add(item, runner);
                 }
             }
@@ -110,7 +110,6 @@ namespace Configure
         //苏醒
         void Awake()
         {
-            // UpdateEnablers();
         }
         void OnEnable()
         {

@@ -15,27 +15,51 @@ namespace Configure
 
 
 
-        private Action initialize;
-        private Action enable;
-        private Action disable;
-        private Action destroy;
+        protected Action init;
+        protected Action enable;
+        protected Action disable;
+        protected Action destroy;
+
+
+
+
+        #region //&构造函数
+
+        public ConfigureRunner()
+        {
+            Construct();
+        }
 
         public ConfigureRunner(Action initialize, Action enable, Action disable, Action destroy)
         {
-            this.initialize = initialize;
-            this.enable = enable;
-            this.disable = disable;
-            this.destroy = destroy;
+            Construct(initialize, enable, disable, destroy);
+        }
+        private void Construct(Action initialize = null, Action enable = null, Action disable = null, Action destroy = null)
+        {
+            if (initialize != null) this.init += initialize;
+            if (enable != null) this.enable += enable;
+            if (disable != null) this.disable += disable;
+            if (destroy != null) this.destroy += destroy;
+            if (this is IConfigureRunner configureRunner)
+            {
+                this.init += configureRunner.Init;
+                this.enable += configureRunner.Enable;
+                this.disable += configureRunner.Disable;
+                this.destroy += configureRunner.Destroy;
+            }
         }
 
-        public void Initialize()
+        #endregion
+        //&Region  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
+
+        public void Init()
         {
             if (lived == false)
             {
-                initialize?.Invoke();
+                init?.Invoke();
                 lived = true;
-
-                Enabled = true;
             }
             else
             {
@@ -58,8 +82,8 @@ namespace Configure
 
 
                 if (enabled == value) return;
-                enabled = value;
-                if (enabled)
+
+                if (value)
                 {
                     enable?.Invoke();
                 }
@@ -68,7 +92,7 @@ namespace Configure
                     disable?.Invoke();
                 }
 
-
+                enabled = value;
             }
             get => enabled;
         }
@@ -99,7 +123,7 @@ namespace Configure
 
     }
 
-  
+
 
 
 }

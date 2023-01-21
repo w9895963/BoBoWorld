@@ -75,6 +75,9 @@ namespace Configure
 
 
 
+
+
+
         public void OnCreate()
         {
             SetScriptRefer();
@@ -83,6 +86,8 @@ namespace Configure
 
 
         public bool Enabled => interfaceEnabled;
+
+
 
 
         //必要组件
@@ -102,6 +107,18 @@ namespace Configure
         protected List<System.Type> requiredTypes = new List<System.Type>();
         protected static string showName;
         protected System.Func<GameObject, ConfigureRunner> createRunner;
+
+
+        protected void CreateRunnerFunc<R, C>(R runner, C configure) where R : ConfigureRunnerT<C>, new()  where C : ConfigureItemBase, new()
+        {
+            createRunner = (gameObject) =>
+            {
+                // Runner<C> runner = new R();
+                runner.gameObject = gameObject;
+                runner.config = configure;
+                return runner;
+            };
+        }
 
 
 

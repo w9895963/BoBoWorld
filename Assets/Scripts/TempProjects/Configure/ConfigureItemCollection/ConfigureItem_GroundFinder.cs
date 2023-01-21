@@ -86,27 +86,31 @@ namespace Configure
 
 
 
+
+
+
+
+
+
+
+
+
+
             //构建函数
             public ConfigureItem_GroundFinder()
             {
                 requiredTypes = new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
-                createRunner = CreateRunner_;
-            }
+                CreateRunnerFunc(new Runner(), this);
 
-            private ConfigureRunner CreateRunner_(GameObject gameObject)
-            {
-                GroundFinderMain gr = new GroundFinderMain(this, gameObject);
-                return new ConfigureRunner(gr.initialize, gr.enable, gr.disable, gr.destroy);
             }
 
 
 
 
-            private class GroundFinderMain
+
+            private class Runner : ConfigureRunnerT<ConfigureItem_GroundFinder>, IConfigureRunner
             {
 
-                private GameObject gameObject;
-                private ConfigureItem_GroundFinder ins;
                 private float maxAngle;
                 private Vector2 gravity;
                 private Vector2 groundNormal;
@@ -117,53 +121,55 @@ namespace Configure
                 private (Action enable, Action disable) enabler;
                 private List<(Collider2D, ContactPoint2D[])> groundCollider = new List<(Collider2D, ContactPoint2D[])>();
 
+
+               
+
                 //界面
 
-                public GroundFinderMain(ConfigureItem_GroundFinder ins, GameObject gameObject)
-                {
-                    this.ins = ins;
-                    this.gameObject = gameObject;
-                }
 
-                public void initialize()
+              
+
+
+
+                void IConfigureRunner.Init()
                 {
+                    Debug.Log("初始化地面检测");
                     groundCollider.Clear();
                     enabler = default;
 
-                    maxAngle = ins.地面最大夹角;
+                    maxAngle = config.地面最大夹角;
                     gravity = Vector2.down;
                     groundNormal = Vector2.zero;
-                    tags = ins.地面标签.Distinct().ToList();
+                    tags = config.地面标签.Distinct().ToList();
 
 
 
 
                     //当引用改变时自动更新重力方向的值
-                    EventDataF.GetData<Vector2>(ins.重力.dataName, gameObject).OnUpdateDo_AddEnabler((d) =>
+                    EventDataF.GetData<Vector2>(config.重力.dataName, gameObject).OnUpdateDo_AddEnabler((d) =>
                     {
                         gravity = d;
                     }, ref enabler);
 
 
                     //地面法线
-                    groundNormalD = ins.地表法线.GetEventDataHandler(gameObject);
+                    groundNormalD = config.地表法线.GetEventDataHandler(gameObject);
                     //站立地面
-                    standGroundD = ins.是否站在地面.GetEventDataHandler(gameObject);
+                    standGroundD = config.是否站在地面.GetEventDataHandler(gameObject);
 
                     //地面物体
-                    groundObjectD = ins.地面物体.GetEventDataHandler(gameObject);
-
+                    groundObjectD = config.地面物体.GetEventDataHandler(gameObject);
                 }
-
-                public void enable()
+                void IConfigureRunner.Enable()
                 {
+                    Debug.Log("启用地面检测");
                     enabler.enable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Add(gameObject, OnCollisionEnter2D);
                     BasicEvent.OnCollision2D_Stay.Add(gameObject, OnCollisionStay2D);
                     BasicEvent.OnCollision2D_Exit.Add(gameObject, OnCollisionExit2D);
                 }
 
-                public void disable()
+                void IConfigureRunner.Disable()
                 {
                     enabler.disable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
@@ -171,8 +177,10 @@ namespace Configure
                     BasicEvent.OnCollision2D_Exit.Remove(gameObject, OnCollisionExit2D);
                 }
 
-                public void destroy()
+
+                void IConfigureRunner.Destroy()
                 {
+
                 }
 
 
@@ -315,7 +323,14 @@ namespace Configure
 
 
 
+
+
             }
+
+
+
+
+
 
 
 
