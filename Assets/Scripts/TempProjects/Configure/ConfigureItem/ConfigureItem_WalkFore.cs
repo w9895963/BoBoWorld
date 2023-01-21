@@ -17,7 +17,7 @@ namespace Configure.ConfigureItem
 
 
     [System.Serializable]
-    public class ConfigureItem_WalkFore : ConfigureItemBase
+    public class ConfigureItem_WalkFore : ConfigureItemBase 
     {
         #region //&界面部分
 
@@ -82,6 +82,8 @@ namespace Configure.ConfigureItem
         {
             createRunner = CreateRunner;
         }
+
+
         private ConfigureRunner CreateRunner(GameObject gameObject)
         {
             Runner calc = new Runner(this, gameObject);

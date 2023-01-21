@@ -20,10 +20,11 @@ namespace Configure.ConfigureItem
     public class ConfigureItem_PositionLocked : ConfigureItemBase
     {
 
+
         [SerializeField]
-        [StackableDecorator.HorizontalGroup("info1", true, "", 0, prefix = true, title = "锁定目标", tooltip = "将自身位置锁定到目标位置")]
-        private DataHolder_NameDropDown<Vector2> 锁定目标;
-        public string lockTargetDataName => 锁定目标.dataName;
+        [StackableDecorator.TagPopup]
+        [StackableDecorator.Label(title = "锁定对象的标签")]
+        public string lockObjectTag = "玩家角色碰撞体";
 
 
 
@@ -59,27 +60,37 @@ namespace Configure.ConfigureItem
             private GameObject gameObject;
             private ConfigureItem_PositionLocked cf;
             private EventDataHandler<Vector2> lockTargetD;
+            private GameObject lockTarget;
 
             public Runner(GameObject gameObject, ConfigureItem_PositionLocked cf)
             {
                 this.gameObject = gameObject;
                 this.cf = cf;
-                lockTargetD = EventDataF.GetData<Vector2>(cf.lockTargetDataName, gameObject);
             }
 
 
 
             public void Initialize()
             {
+                lockTarget = GameObject.FindGameObjectWithTag(cf.lockObjectTag);
+
             }
             public void Enable()
             {
+                BasicEvent.OnUpdate.Add(gameObject, updateAction);
             }
             public void Disable()
             {
+                BasicEvent.OnUpdate.Remove(gameObject, updateAction);
             }
             public void Destroy()
             {
+            }
+
+
+            private void updateAction()
+            {
+                gameObject.SetPosition(lockTarget.GetPosition2d());
             }
         }
 
@@ -87,8 +98,5 @@ namespace Configure.ConfigureItem
 
 
     }
-
-
-
 }
 

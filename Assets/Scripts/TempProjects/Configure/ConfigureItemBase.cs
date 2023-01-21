@@ -87,6 +87,7 @@ namespace Configure
 
         //必要组件
         public List<System.Type> RequiredTypes => requiredTypes;
+        //创建运行器
         public ConfigureRunner CreateRunner(MonoBehaviour monoBehaviour)
         {
             if (createRunner != null)
@@ -99,6 +100,7 @@ namespace Configure
 
 
         protected List<System.Type> requiredTypes = new List<System.Type>();
+        protected static string showName;
         protected System.Func<GameObject, ConfigureRunner> createRunner;
 
 
