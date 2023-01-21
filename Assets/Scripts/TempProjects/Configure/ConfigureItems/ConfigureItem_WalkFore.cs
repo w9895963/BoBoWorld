@@ -17,8 +17,12 @@ namespace Configure.ConfigureItem
 
 
     [System.Serializable]
-    public class ConfigureItem_WalkFore : ConfigureItemBase 
+    public class ConfigureItem_WalkFore : ConfigureItemBase
     {
+
+
+
+
         #region //&界面部分
 
 
@@ -27,7 +31,7 @@ namespace Configure.ConfigureItem
         [Tooltip("计算出的行走力大小依据这个加速度计算")]
         public float 最大加速度 = 10;
         [Tooltip("生成一个和地面法线相反的里，将物体固定在地上")]
-        public float 向地施力大小 = 10;
+        public float 向地施力大小 = 50;
 
         [Header("动态参数")]
 
@@ -61,10 +65,6 @@ namespace Configure.ConfigureItem
         [HorizontalGroup("info1", true, "", 0, prefix = true, tooltip = "根据输入计算出行走施力")]
         public Configure.Interface.DataHolder_NameDropDown<Vector2> 行走施力 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.行走施力);
 
-        [Tooltip("")]
-        [StackableField]
-        [HorizontalGroup("info1", true, "", 0, prefix = true, tooltip = "根据输入计算出向地施力，将角色保持压在路面上")]
-        public Configure.Interface.DataHolder_NameDropDown<Vector2> 行走向地施力 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.行走向地施力);
 
 
 
@@ -120,8 +120,6 @@ namespace Configure.ConfigureItem
 
             //获取数据行走施力
             private EventDataHandler<Vector2> moveForce;
-            //获取数据行走向地施力
-            private EventDataHandler<Vector2> groundDownForce;
 
             //获取刚体
             private Rigidbody2D rigidbody2D;
@@ -138,20 +136,6 @@ namespace Configure.ConfigureItem
 
 
 
-
-
-            public void destroy() { }
-
-            public void disable()
-            {
-                enabler.Disable?.Invoke();
-            }
-
-            public void enable()
-            {
-                enabler.Enable?.Invoke();
-            }
-
             public void initialize()
             {
                 //获取数据行走输入
@@ -163,8 +147,6 @@ namespace Configure.ConfigureItem
 
                 //获取数据行走施力
                 moveForce = EventDataF.GetData<Vector2>(ins.行走施力.dataName, gameObject);
-                //获取数据行走向地施力
-                groundDownForce = EventDataF.GetData<Vector2>(ins.行走向地施力.dataName, gameObject);
 
                 //获取刚体
                 rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
@@ -178,6 +160,20 @@ namespace Configure.ConfigureItem
 
                 enabler = EventDataF.CreateConditionEnabler(CalculateMoveForce, OnFail, checks);
             }
+
+            public void destroy() { }
+
+
+
+            public void enable()
+            {
+                enabler.Enable?.Invoke();
+            }
+            public void disable()
+            {
+                enabler.Disable?.Invoke();
+            }
+
 
 
 
@@ -216,7 +212,6 @@ namespace Configure.ConfigureItem
                 //施力赋值
                 Vector2 vector2 = PhysicMathF.CalcForceByVel(currentVelocity, targetVelocity(), maxForce, projectVector, mass);
                 moveForce.Data = vector2;
-                groundDownForce.Data = ins.向地施力大小 * groundNormalV * -1;
 
             }
 
@@ -224,7 +219,6 @@ namespace Configure.ConfigureItem
             {
                 // Debug.Log("计算移动施力失败");
                 moveForce.Data = Vector2.zero;
-                groundDownForce.Data = Vector2.zero;
 
             }
         }

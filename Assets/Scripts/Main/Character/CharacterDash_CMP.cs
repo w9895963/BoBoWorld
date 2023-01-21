@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Timer.Base;
+using SimpleTimer.Base;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -25,10 +25,10 @@ public class CharacterDash_CMP : MonoBehaviour
     public float faceDirection;
 
 
-    private SimpleTimer dashTimer;
+    private SimpleTimer.Base.SimpleTimer dashTimer;
     private Rigidbody2D rb;
     private Vector2 positionStart;
-    private SimpleTimer inputTimer;
+    private SimpleTimer.Base.SimpleTimer inputTimer;
 
     private void Reset()
     {

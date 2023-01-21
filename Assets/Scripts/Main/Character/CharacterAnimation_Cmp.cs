@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Timer.Base;
+using SimpleTimer.Base;
 using UnityEngine;
 using UnityEngine.Events;
 

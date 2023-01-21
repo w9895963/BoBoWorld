@@ -60,8 +60,8 @@ namespace Configure
             public Configure.Interface.DataHolder_NameDropDown<Vector2> 地表法线 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
             [Tooltip("")]
             [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "站在地面", tooltip = "此刻是否正站在地面上")]
-            public Configure.Interface.DataHolder_NameDropDown<bool> 是否站在地面 = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否站在地面);
+            [HorizontalGroup("info2", true, "", 0, prefix = true, tooltip = "此刻是否与地面物体物理接触")]
+            public Configure.Interface.DataHolder_NameDropDown<bool> 是否与地面物体物理接触 = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否与地面物体物理接触);
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面物体", tooltip = "获得脚下的地面物体")]
@@ -154,7 +154,7 @@ namespace Configure
                     //地面法线
                     groundNormalD = config.地表法线.GetEventDataHandler(gameObject);
                     //站立地面
-                    standGroundD = config.是否站在地面.GetEventDataHandler(gameObject);
+                    standGroundD = config.是否与地面物体物理接触.GetEventDataHandler(gameObject);
 
                     //地面物体
                     groundObjectD = config.地面物体.GetEventDataHandler(gameObject);
@@ -196,7 +196,7 @@ namespace Configure
 
                     CalcGroundNormal(obj.contacts);
                     SetGroundNormal();
-                    SetStandGround();
+                    SetContactGround();
                     SetGroundObject();
 
                 }
@@ -216,7 +216,7 @@ namespace Configure
 
                     CalcGroundNormal(obj.contacts);
                     SetGroundNormal();
-                    SetStandGround();
+                    SetContactGround();
                 }
 
                 private void OnCollisionExit2D(Collision2D obj)
@@ -233,7 +233,7 @@ namespace Configure
 
                     CalcGroundNormal(contactPoint2Ds);
                     SetGroundNormal();
-                    SetStandGround();
+                    SetContactGround();
                     SetGroundObject();
 
                 }
@@ -284,7 +284,7 @@ namespace Configure
                     }
                 }
 
-                private void SetStandGround()
+                private void SetContactGround()
                 {
                     if (groundNormal != Vector2.zero)
                     {

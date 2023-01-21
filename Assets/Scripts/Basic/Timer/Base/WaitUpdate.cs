@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Timer
+namespace SimpleTimer
 {
     namespace Base
     {

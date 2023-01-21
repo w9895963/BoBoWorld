@@ -11,15 +11,15 @@ public static class TimerF
     //计时器物体名
 
 
-    public static Timer.Base.SimpleTimer Wait(float time, Action action = null)
+    public static SimpleTimer.Base.SimpleTimer Wait(float time, Action action = null)
     {
-        Timer.Base.SimpleTimer simpleTimer = TimerHolder.AddComponent<Timer.Base.SimpleTimer>();
+        SimpleTimer.Base.SimpleTimer simpleTimer = TimerHolder.AddComponent<SimpleTimer.Base.SimpleTimer>();
         simpleTimer.Wait(time, action);
         return simpleTimer;
     }
-    public static Timer.Base.WaitUpdate WaitUpdate(Action action)
+    public static SimpleTimer.Base.WaitUpdate WaitUpdate(Action action)
     {
-        var timer = TimerHolder.AddComponent<Timer.Base.WaitUpdate>();
+        var timer = TimerHolder.AddComponent<SimpleTimer.Base.WaitUpdate>();
         timer.Setup(action);
         return timer;
     }

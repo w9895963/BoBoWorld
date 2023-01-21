@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Timer.Base;
+using SimpleTimer.Base;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static CommonFunction.Static;
@@ -14,7 +14,7 @@ public class CharacterBallState_Cmp : MonoBehaviour
     [SerializeField] private bool state;
     private Action disableAction;
     private float startTime;
-    private SimpleTimer jumpTimer;
+    private SimpleTimer.Base.SimpleTimer jumpTimer;
     private Action fixedUpdateAction;
     private Character character;
     //刚体

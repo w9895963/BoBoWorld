@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Timer.Base;
+using SimpleTimer.Base;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -29,7 +29,7 @@ public class CharacterJump_CMP : MonoBehaviour
 
 
     private Rigidbody2D rb;
-    private SimpleTimer[] timers = new SimpleTimer[2];
+    private SimpleTimer.Base.SimpleTimer[] timers = new SimpleTimer.Base.SimpleTimer[2];
     private Action disableAction;
 
     private OtState jumpState;

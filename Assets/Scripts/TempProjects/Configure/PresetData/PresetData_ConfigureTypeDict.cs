@@ -14,6 +14,7 @@ namespace Configure
             { "物理/力量施加器", typeof(ConfigureItem_ApplyForce)},
             { "物理/获取物理量",typeof(ConfigureItem_GetPhysicData)},
             { "物理/地面检测器",typeof(ConfigureItem_GroundFinder)},
+            { "物理/站立检测器",typeof(ConfigureItem_StandDetect)},
             { "物理/计算行走施力",typeof(ConfigureItem_WalkFore)},
             { "摄像机/位置同步",typeof(ConfigureItem_PositionLocked)},
         };
