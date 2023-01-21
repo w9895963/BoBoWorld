@@ -72,7 +72,7 @@ namespace Configure
 
 
             [Space(10)]
-            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("检测地面");
+            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("检测地面, 并获得一系列地面信息");
 
             #endregion 
             //&↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑

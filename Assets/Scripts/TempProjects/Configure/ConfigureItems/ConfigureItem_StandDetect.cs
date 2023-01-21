@@ -68,7 +68,7 @@ namespace Configure
 
 
             [Space(10)]
-            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("当物理脱离地面超过此时间则视为不再站立在地面上", "为了避免一些极短时间的物理脱离地面导致的误判，此处设置了一个延迟判断时间，当物理脱离地面超过此时间则视为不再站立在地面上");
+            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("当物理脱离地面超过此时间则视为不再站立在地面上", "为了避免一些极短时间的物理脱离地面导致的误判，此处设置了一个延迟判断时间");
 
             #endregion 
             //&↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
