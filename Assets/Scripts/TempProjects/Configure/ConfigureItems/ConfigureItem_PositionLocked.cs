@@ -43,7 +43,7 @@ namespace Configure.ConfigureItem
 
         public ConfigureItem_PositionLocked()
         {
-            createRunner = CreateRunner;
+            createRunnerFunc = CreateRunner;
         }
 
 

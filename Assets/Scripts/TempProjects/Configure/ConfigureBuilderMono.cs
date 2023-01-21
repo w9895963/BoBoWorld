@@ -40,6 +40,7 @@ namespace Configure
 
 
         //*配置列表
+        // [StackableDecorator.List(expandable = false)]
         public List<ConfigureItemManager> 配置列表 = new List<ConfigureItemManager>();
 
 

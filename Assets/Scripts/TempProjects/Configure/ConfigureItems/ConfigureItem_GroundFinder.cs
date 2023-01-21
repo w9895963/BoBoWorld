@@ -100,7 +100,7 @@ namespace Configure
             public ConfigureItem_GroundFinder()
             {
                 requiredTypes = new List<Type>() { typeof(Rigidbody2D), typeof(Collider2D) };
-                CreateRunnerFunc(new Runner(), this);
+                CreateRunnerFunc<Runner, ConfigureItem_GroundFinder>();
 
             }
 
@@ -108,7 +108,7 @@ namespace Configure
 
 
 
-            private class Runner : ConfigureRunnerT<ConfigureItem_GroundFinder>, IConfigureRunner
+            private class Runner : ConfigureRunnerT<ConfigureItem_GroundFinder>, IConfigureRunnerBuilder
             {
 
                 private float maxAngle;
@@ -122,18 +122,17 @@ namespace Configure
                 private List<(Collider2D, ContactPoint2D[])> groundCollider = new List<(Collider2D, ContactPoint2D[])>();
 
 
-               
+
 
                 //界面
 
 
-              
 
 
 
-                void IConfigureRunner.Init()
+
+                void IConfigureRunnerBuilder.Init()
                 {
-                    Debug.Log("初始化地面检测");
                     groundCollider.Clear();
                     enabler = default;
 
@@ -160,16 +159,15 @@ namespace Configure
                     //地面物体
                     groundObjectD = config.地面物体.GetEventDataHandler(gameObject);
                 }
-                void IConfigureRunner.Enable()
+                void IConfigureRunnerBuilder.Enable()
                 {
-                    Debug.Log("启用地面检测");
                     enabler.enable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Add(gameObject, OnCollisionEnter2D);
                     BasicEvent.OnCollision2D_Stay.Add(gameObject, OnCollisionStay2D);
                     BasicEvent.OnCollision2D_Exit.Add(gameObject, OnCollisionExit2D);
                 }
 
-                void IConfigureRunner.Disable()
+                void IConfigureRunnerBuilder.Disable()
                 {
                     enabler.disable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
@@ -178,7 +176,7 @@ namespace Configure
                 }
 
 
-                void IConfigureRunner.Destroy()
+                void IConfigureRunnerBuilder.Destroy()
                 {
 
                 }

@@ -40,7 +40,7 @@ namespace Configure
             if (enable != null) this.enable += enable;
             if (disable != null) this.disable += disable;
             if (destroy != null) this.destroy += destroy;
-            if (this is IConfigureRunner configureRunner)
+            if (this is IConfigureRunnerBuilder configureRunner)
             {
                 this.init += configureRunner.Init;
                 this.enable += configureRunner.Enable;

@@ -38,7 +38,7 @@ namespace Configure
                 requiredTypes = new List<Type>() { typeof(Rigidbody2D) };
 
 
-                createRunner = CreateRunner;
+                createRunnerFunc = CreateRunner;
             }
 
             private ConfigureRunner CreateRunner(GameObject obj)

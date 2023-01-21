@@ -2,7 +2,7 @@
 namespace Configure
 {
     //接口:配置运行器接口
-    public interface IConfigureRunner
+    public interface IConfigureRunnerBuilder
     {
         void Init();
         void Enable();

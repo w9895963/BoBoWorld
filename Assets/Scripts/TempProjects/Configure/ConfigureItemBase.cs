@@ -29,6 +29,7 @@ namespace Configure
         //*界面:脚本引用
         [SerializeField]
         [StackableDecorator.EnableIf(false)]
+        [StackableDecorator.Label(title = "Script")]
         [StackableDecorator.StackableField]
         private UnityEditor.MonoScript scriptRefer;
         //私有方法:设置脚本引用
@@ -95,9 +96,9 @@ namespace Configure
         //创建运行器
         public ConfigureRunner CreateRunner(MonoBehaviour monoBehaviour)
         {
-            if (createRunner != null)
+            if (createRunnerFunc != null)
             {
-                return createRunner.Invoke(monoBehaviour.gameObject);
+                return createRunnerFunc.Invoke(monoBehaviour.gameObject);
             }
             //都不满足
             return null;
@@ -106,16 +107,16 @@ namespace Configure
 
         protected List<System.Type> requiredTypes = new List<System.Type>();
         protected static string showName;
-        protected System.Func<GameObject, ConfigureRunner> createRunner;
+        protected System.Func<GameObject, ConfigureRunner> createRunnerFunc;
 
 
-        protected void CreateRunnerFunc<R, C>(R runner, C configure) where R : ConfigureRunnerT<C>, new()  where C : ConfigureItemBase, new()
+        protected void CreateRunnerFunc<R, C>() where R : ConfigureRunnerT<C>, new() where C : ConfigureItemBase, new()
         {
-            createRunner = (gameObject) =>
+            createRunnerFunc = (gameObject) =>
             {
-                // Runner<C> runner = new R();
+                R runner = new R();
                 runner.gameObject = gameObject;
-                runner.config = configure;
+                runner.config = this as C;
                 return runner;
             };
         }

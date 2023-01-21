@@ -80,7 +80,7 @@ namespace Configure.ConfigureItem
         //构造函数
         public ConfigureItem_WalkFore()
         {
-            createRunner = CreateRunner;
+            createRunnerFunc = CreateRunner;
         }
 
 

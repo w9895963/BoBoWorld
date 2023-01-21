@@ -44,7 +44,7 @@ namespace Configure.ConfigureItem
 
         public ConfigureItem_ApplyForce()
         {
-            createRunner = GetCreateRunner;
+            createRunnerFunc = GetCreateRunner;
         }
 
         private ConfigureRunner GetCreateRunner(GameObject gameObject)
