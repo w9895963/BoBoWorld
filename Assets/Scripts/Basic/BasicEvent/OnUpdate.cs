@@ -35,6 +35,12 @@ namespace BasicEvent
         }
 
 
+        public static bool Exist(GameObject gameObject, Action action)
+        {
+            return Core.Method.Exist<Component.OnFixedUpdateComponent>(gameObject, action);
+        }
+
+
     }
 
 

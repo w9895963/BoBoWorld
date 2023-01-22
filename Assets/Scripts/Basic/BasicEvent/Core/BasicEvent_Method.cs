@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace BasicEvent
 {
-    
+
 
 
 
@@ -39,6 +39,14 @@ namespace BasicEvent
                 }
                 if (preventMultiple) c.RemoveAction(action);
                 c.AddAction(action);
+            }
+
+            public static bool Exist<C>(GameObject gameObject, Delegate action) where C : Component.BasicEventMono
+            {
+                var cs = gameObject.GetComponents<C>().ToList();
+                C c = cs.Find((com) => com.IsDestroyed() == false);
+
+                return c.HasAction(action); ;
             }
 
 

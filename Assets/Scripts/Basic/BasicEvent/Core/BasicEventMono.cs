@@ -12,6 +12,7 @@ namespace BasicEvent
         {
             private bool destroyed = false;
             private Action action = null;
+            protected List<Delegate> actions = new List<Delegate>();
 
             //方法：运行action
             public void RunAction()
@@ -20,13 +21,19 @@ namespace BasicEvent
             }
             public void AddAction(Action action)
             {
+                actions.Add(action);
                 this.action += action;
-
             }
             //方法：移除action
             public void RemoveAction(Action action)
             {
+                actions.Remove(action);
                 this.action -= action;
+            }
+            //方法：存在action
+            public bool HasAction(Delegate action)
+            {
+                return actions.Contains(action);
             }
             //方法：操作为空
             public bool IsActionEmpty()
@@ -58,16 +65,16 @@ namespace BasicEvent
             {
                 action?.Invoke(date);
             }
-
-
             //方法：添加action
             public void AddAction(Action<T> action)
             {
+                actions.Add(action);
                 this.action += action;
             }
             //方法：移除action
             public void RemoveAction(Action<T> action)
             {
+                actions.Remove(action);
                 this.action -= action;
             }
             //方法：操作为空
