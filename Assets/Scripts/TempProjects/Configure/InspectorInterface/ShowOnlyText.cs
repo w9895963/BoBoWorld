@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 
-namespace Configure.Interface
+namespace Configure.InspectorInterface
 {
 
     [Serializable]

@@ -34,11 +34,11 @@ namespace Configure.ConfigureItem
         [Tooltip("")]
         [StackableField]
         [HorizontalGroup("info1", true, "", 0, prefix = true, title = "重力向量", tooltip = "获得重力向量")]
-        public Configure.Interface.DataHolder_NameDropDown<Vector2> p重力向量 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
+        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> p重力向量 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
         [Tooltip("")]
         [StackableField]
         [HorizontalGroup("info1", true, "", 0, prefix = true, title = "地表法线", tooltip = "获得地表法线")]
-        public Configure.Interface.DataHolder_NameDropDown<Vector2> p地表法线 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
+        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> p地表法线 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
 
 
 
@@ -53,13 +53,13 @@ namespace Configure.ConfigureItem
         [Tooltip("")]
         [StackableField]
         [HorizontalGroup("info1", true, "", 0, prefix = true, title = "重力施力", tooltip = "根据输入计算出重力施力")]
-        public Configure.Interface.DataHolder_NameDropDown<Vector2> p重力施力 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.重力施力);
+        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> p重力施力 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.重力施力);
 
 
 
 
         //脚本说明
-        public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("计算重力");
+        public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("计算重力");
 
 
 

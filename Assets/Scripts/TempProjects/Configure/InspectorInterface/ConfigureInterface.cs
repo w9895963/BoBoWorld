@@ -5,14 +5,14 @@ using System.Linq;
 using EventData;
 using UnityEngine;
 
-namespace Configure.Interface
+namespace Configure.InspectorInterface
 {
     [System.Serializable]
     public class DataHold_NameOrData<T>
     {
         [StackableDecorator.StackableField]
         [StackableDecorator.HorizontalGroup("info2", true, "", 0, 60, -1)]
-        public Configure.Interface.DataGetter<T> data;
+        public Configure.InspectorInterface.DataGetter<T> data;
 
         public DataHold_NameOrData(System.Enum dataNamePreset)
         {

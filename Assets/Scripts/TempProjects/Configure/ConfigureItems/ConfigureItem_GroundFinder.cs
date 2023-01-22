@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Configure.Interface;
+using Configure.InspectorInterface;
 
 using EventData;
 
@@ -45,7 +45,7 @@ namespace Configure
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info1", true, "", 0, prefix = true, title = "重力向量", tooltip = "获得重力向量")]
-            public Configure.Interface.DataHolder_NameDropDown<Vector2> 重力 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
+            public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 重力 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
 
 
 
@@ -57,22 +57,22 @@ namespace Configure
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地表法线", tooltip = "获得脚下的地面法线")]
-            public Configure.Interface.DataHolder_NameDropDown<Vector2> 地表法线 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
+            public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 地表法线 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, tooltip = "此刻是否与地面物体物理接触")]
-            public Configure.Interface.DataHolder_NameDropDown<bool> 是否与地面物体物理接触 = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否与地面物体物理接触);
+            public Configure.InspectorInterface.DataHolder_NameDropDown<bool> 是否与地面物体物理接触 = new Configure.InspectorInterface.DataHolder_NameDropDown<bool>(DataName.是否与地面物体物理接触);
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面物体", tooltip = "获得脚下的地面物体")]
-            public Configure.Interface.DataHolder_NameDropDown<GameObject> 地面物体 = new Configure.Interface.DataHolder_NameDropDown<GameObject>(DataName.地面物体);
+            public Configure.InspectorInterface.DataHolder_NameDropDown<GameObject> 地面物体 = new Configure.InspectorInterface.DataHolder_NameDropDown<GameObject>(DataName.地面物体);
 
 
 
 
 
             [Space(10)]
-            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("检测地面, 并获得一系列地面信息");
+            public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("检测地面, 并获得一系列地面信息");
 
             #endregion 
             //&↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑

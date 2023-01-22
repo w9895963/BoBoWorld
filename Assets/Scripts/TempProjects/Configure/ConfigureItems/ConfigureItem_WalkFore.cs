@@ -38,15 +38,15 @@ namespace Configure.ConfigureItem
         [Tooltip("")]
         [StackableField]
         [HorizontalGroup("info1", true, "", 0, prefix = true, title = "移动指令", tooltip = "获得移动指令")]
-        public Configure.Interface.DataHolder_NameDropDown<float> 移动指令 = new Configure.Interface.DataHolder_NameDropDown<float>(DataName.全局_输入_移动横向值);
+        public Configure.InspectorInterface.DataHolder_NameDropDown<float> 移动指令 = new Configure.InspectorInterface.DataHolder_NameDropDown<float>(DataName.全局_输入_移动横向值);
         [Tooltip("")]
         [StackableField]
         [HorizontalGroup("info1", true, "", 0, prefix = true, title = "地表法线", tooltip = "获得脚下的地面法线")]
-        public Configure.Interface.DataHolder_NameDropDown<Vector2> 地表法线 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
+        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 地表法线 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
         [Tooltip("")]
         [StackableField]
         [HorizontalGroup("info1", true, "", 0, prefix = true, title = "运动速度", tooltip = "获得物体的运动速度")]
-        public Configure.Interface.DataHolder_NameDropDown<Vector2> 运动速度 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.运动速度向量);
+        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 运动速度 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.运动速度向量);
 
 
 
@@ -63,13 +63,13 @@ namespace Configure.ConfigureItem
         [Tooltip("")]
         [StackableField]
         [HorizontalGroup("info1", true, "", 0, prefix = true, tooltip = "根据输入计算出行走施力")]
-        public Configure.Interface.DataHolder_NameDropDown<Vector2> 行走施力 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.行走施力);
+        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 行走施力 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.行走施力);
 
 
 
 
         //脚本说明
-        public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力", "输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
+        public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("根据一系列参数计算出施加于物体上的用于行走的力", "输入: 输入指令_移动, 地表法线, 运动速度", "输出: 行走施力");
 
 
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Configure;
-using Configure.Interface;
+using Configure.InspectorInterface;
 using EventData;
 using UnityEditor;
 using UnityEngine;
@@ -33,7 +33,7 @@ namespace Configure.ConfigureItem
 
 
         //脚本说明
-        public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("将自身位置锁定到目标位置");
+        public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("将自身位置锁定到目标位置");
 
 
 

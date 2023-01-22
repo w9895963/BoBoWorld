@@ -24,12 +24,12 @@ namespace Configure
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "运动速度", tooltip = "获得物体的运动速度")]
-            public Configure.Interface.DataHolder_NameDropDown<Vector2> 运动速度 = new Configure.Interface.DataHolder_NameDropDown<Vector2>(DataName.运动速度向量);
+            public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 运动速度 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.运动速度向量);
 
 
             [Space]
             //脚本说明
-            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("从Unity组件中获得物理数据:", "运动速度");
+            public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("从Unity组件中获得物理数据:", "运动速度");
 
 
 

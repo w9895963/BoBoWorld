@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Configure.Interface;
+using Configure.InspectorInterface;
 
 using EventData;
 
@@ -48,7 +48,7 @@ namespace Configure
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "是否与地面物体物理接触", tooltip = "此刻是否与地面物体物理接触")]
-            public Configure.Interface.DataHolder_NameDropDown<bool> p是否与地面物体物理接触 = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否与地面物体物理接触);
+            public Configure.InspectorInterface.DataHolder_NameDropDown<bool> p是否与地面物体物理接触 = new Configure.InspectorInterface.DataHolder_NameDropDown<bool>(DataName.是否与地面物体物理接触);
 
 
 
@@ -61,14 +61,14 @@ namespace Configure
             [Tooltip("")]
             [StackableField]
             [HorizontalGroup("info2", true, "", 0, prefix = true, title = "是否站立在地面", tooltip = "判断是否站立在地面")]
-            public Configure.Interface.DataHolder_NameDropDown<bool> p是否站立在地面 = new Configure.Interface.DataHolder_NameDropDown<bool>(DataName.是否站在地面);
+            public Configure.InspectorInterface.DataHolder_NameDropDown<bool> p是否站立在地面 = new Configure.InspectorInterface.DataHolder_NameDropDown<bool>(DataName.是否站在地面);
 
 
 
 
 
             [Space(10)]
-            public Interface.ShowOnlyText 说明 = new Interface.ShowOnlyText("当物理脱离地面超过此时间则视为不再站立在地面上", "为了避免一些极短时间的物理脱离地面导致的误判，此处设置了一个延迟判断时间");
+            public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("当物理脱离地面超过此时间则视为不再站立在地面上", "为了避免一些极短时间的物理脱离地面导致的误判，此处设置了一个延迟判断时间");
 
             #endregion 
             //&↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
