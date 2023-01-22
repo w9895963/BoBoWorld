@@ -99,6 +99,126 @@ namespace EventData
 
                 return eventData as EventData<T>;
             }
+            /// *<summary>获取事件数据,不存在则添加,不使用类型参数</summary>
+            public static EventData GetEventData(string key, GameObject gameObject = null)
+            {
+                //~获取数据
+                EventData eventData = null;
+                bool IsGlobal = DataNameF.IsGlobal(key);
+                //如果是本地数据
+                if (!IsGlobal)
+                {
+                    //获取本地数据
+                    eventData = DataHolder.GetEventData(key, gameObject);
+                }
+                else
+                {
+                    //获取全局数据
+                    eventData = DataHolder.GetEventData(key);
+                }
+
+
+                //~存在则返回,不存在则新建
+                //如果存在
+                if (eventData == null)
+                {
+                    //获得类型,没有则报错
+                    System.Type type = DataNameF.GetType(key);
+                    if (type != null)
+                    {
+                        //新建
+                        var classType = typeof(EventData<>).MakeGenericType(type);
+                        eventData = Activator.CreateInstance(classType, key, gameObject) as EventData;
+                        //根据是否是全局数据添加到对应的数据表中
+                        if (eventData != null)
+                        {
+                            if (!IsGlobal)
+                            {
+                                DataHolder.Add(key, eventData, gameObject);
+                            }
+                            else
+                            {
+                                DataHolder.Add(key, eventData);
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogError($"数据名[{key}]对应的类型[{type}]无法创建");
+                        }
+
+                    }
+                    else
+                    {
+                        Debug.LogError($"数据名[{key}]不存在");
+                    }
+
+                }
+
+
+                //~根据全局与否将数据添加到对应的本地数据表中
+                if (IsGlobal)
+                {
+                    if (!DataHolder.ContainsKey(key, gameObject))
+                    {
+                        DataHolder.Add(key, eventData, gameObject);
+                    }
+
+                }
+                return eventData;
+            }
+
+            // /// *<summary>尝试根据数据名设置数据值</summary>
+            // public static bool TrySetData(string key, object value, GameObject gameObject = null)
+            // {
+            //     bool re = false;
+            //     //~获取数据
+            //     EventData eventData;
+            //     bool IsGlobal = DataNameF.IsGlobal(key);
+            //     //如果是本地数据
+            //     if (!IsGlobal)
+            //     {
+            //         eventData = DataHolder.GetEventData(key, gameObject);
+            //     }
+            //     else
+            //     {
+            //         //获取全局数据
+            //         eventData = DataHolder.GetEventData(key);
+            //     }
+
+
+
+            //     //~存在则返回,不存在则新建
+            //     //如果存在
+            //     if (eventData != null)
+            //     {
+            //         //如果类型不同
+            //         if (eventData.Type != typeof(T))
+            //         {
+            //             Debug.LogError($" 数据 [{key}]存在, 但已被声明为类型 [{eventData.Type}], 和希望返回类型 [{typeof(T)}] 相冲突");
+            //             return null;
+            //         }
+            //     }
+            //     else
+            //     {
+
+            //         //新建
+            //         eventData = new EventData<T>(key, gameObject);
+            //         //根据是否是全局数据添加到对应的数据表中
+            //         if (!IsGlobal)
+            //         {
+            //             DataHolder.Add(key, eventData, gameObject);
+            //         }
+            //         else
+            //         {
+            //             DataHolder.Add(key, eventData);
+            //         }
+
+            //     }
+
+
+
+            //     return re;
+            // }
 
 
 

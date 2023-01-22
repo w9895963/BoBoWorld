@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EventData.Core;
 using UnityEngine;
+using Object = System.Object;
 
 namespace EventData
 {
@@ -26,7 +27,7 @@ namespace EventData
 
 
 
-          
+
 
             public EventData(string stringKey, GameObject gameObject = null, System.Type type = null)
             {
@@ -41,6 +42,16 @@ namespace EventData
             {
                 return DataGetter();
             }
+            //方法：修改数据
+            public void SetIfNotEqual(Object data)
+            {
+                //如果不相同则修改
+                if (!System.Object.Equals(GetData(), data))
+                {
+                    ModifyData_((Object) => { return data; });
+                }
+            }
+
 
 
 
@@ -59,6 +70,8 @@ namespace EventData
 
 
             protected virtual Func<object> DataGetter { get => null; }
+            protected virtual void ModifyData_(Func<Object, Object> modifyFunc) { }
+
 
             //索引
             private string stringKey;
@@ -111,7 +124,16 @@ namespace EventData
 
 
             protected override Func<System.Object> DataGetter => () => { return data; };
-
+            protected override void ModifyData_(Func<Object, Object> modifyFunc)
+            {
+                //更新数据
+                SeparatedExecutionQueue.AddDataAction(() =>
+                {
+                    this.data = (T)modifyFunc(this.data);
+                    //强制更新
+                    this.ForceUpdateData();
+                });
+            }
 
 
 
@@ -119,7 +141,6 @@ namespace EventData
             private void ModifyData(Func<T, T> modifyFunc)
             {
                 //更新数据
-
                 SeparatedExecutionQueue.AddDataAction(() =>
                 {
                     this.data = modifyFunc(this.data);
@@ -128,6 +149,9 @@ namespace EventData
                 });
 
             }
+
+
+
 
 
 

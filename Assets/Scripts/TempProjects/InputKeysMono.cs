@@ -13,9 +13,9 @@ public class InputKeysMono : MonoBehaviour
         InputActionAsset asset = GameObject.FindObjectOfType<PlayerInput>().actions;
 
 
-        EventDataHandler<Vector2> move = EventDataF.GetData<Vector2>(DataName.全局_输入_移动向量);  
-        EventDataHandler<float> moveX = EventDataF.GetData<float>(DataName.全局_输入_移动横向值);  
-        EventDataHandler<float> moveY = EventDataF.GetData<float>(DataName.全局_输入_移动纵向值);  
+        EventDataHandler<Vector2> move = EventDataF.GetDataGlobal<Vector2>(DataName.全局_输入_移动向量);
+        EventDataHandler<float> moveX = EventDataF.GetDataGlobal<float>(DataName.全局_输入_移动横向值);
+        EventDataHandler<float> moveY = EventDataF.GetDataGlobal<float>(DataName.全局_输入_移动纵向值);
         asset.FindAction("Move").performed += (d) =>
         {
             Vector2 vector2 = d.ReadValueAsVector2();
@@ -34,7 +34,7 @@ public class InputKeysMono : MonoBehaviour
         };
 
 
-        List<EventDataHandler<bool>> list = nameMapList.Select((name) => EventDataF.GetData<bool>(name.CmDataName)).ToList();
+        List<EventDataHandler<bool>> list = nameMapList.Select((name) => EventDataF.GetDataGlobal<bool>(name.CmDataName)).ToList();
 
         nameMapList.ForEach((names, i) =>
         {

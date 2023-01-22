@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityTimer;
 
 
 
@@ -17,12 +18,36 @@ public static class TimerF
         simpleTimer.Wait(time, action);
         return simpleTimer;
     }
-    public static SimpleTimer.Base.WaitUpdate WaitUpdate(Action action)
+  
+
+
+    /// <summary> 等待下一帧更新世执行操作, 返回一个停止计时器的操作</summary>
+    public static Action WaitNextFrameUpdate(Action action)
     {
-        var timer = TimerHolder.AddComponent<SimpleTimer.Base.WaitUpdate>();
-        timer.Setup(action);
-        return timer;
+        int beginFrame = Time.frameCount;
+
+        Action re = () =>
+        {
+            BasicEvent.OnUpdate.Remove(TimerHolder, OnUpdate);
+        };
+
+
+        BasicEvent.OnUpdate.Add(TimerHolder, OnUpdate);
+
+        void OnUpdate()
+        {
+            //如果已经是下一帧了
+            if (Time.frameCount != beginFrame)
+            {
+                BasicEvent.OnUpdate.Remove(TimerHolder, OnUpdate);
+                action?.Invoke();
+            }
+        }
+
+
+        return re;
     }
+
 
 }
 

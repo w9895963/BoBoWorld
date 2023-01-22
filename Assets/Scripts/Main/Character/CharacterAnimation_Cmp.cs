@@ -12,7 +12,7 @@ public class CharacterAnimation_Cmp : MonoBehaviour
     public AnimatePrefabHolder animatePrefabHolder;
 
     [SerializeField] private string currentAnimationName;
-    private WaitUpdate updateTimer;
+    private Action updateTimerDestroyAction;
     private string nextAnimation;
 
 
@@ -20,6 +20,7 @@ public class CharacterAnimation_Cmp : MonoBehaviour
 
     private void _更新动画()
     {
+        updateTimerDestroyAction = null;
         if (currentAnimationName != nextAnimation)
         {
             currentAnimationName = nextAnimation;
@@ -51,9 +52,9 @@ public class CharacterAnimation_Cmp : MonoBehaviour
     public void PlayAnimation(String clipName)
     {
         nextAnimation = clipName;
-        if (updateTimer == null)
+        if (updateTimerDestroyAction == null)
         {
-            updateTimer = TimerF.WaitUpdate(_更新动画);
+            updateTimerDestroyAction = TimerF.WaitNextFrameUpdate(_更新动画);
         }
     }
     public void PlayAnimation(Conf.AnimationName clipName)

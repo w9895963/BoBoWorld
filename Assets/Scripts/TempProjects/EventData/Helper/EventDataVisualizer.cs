@@ -26,7 +26,7 @@ namespace EventData
             //开始
             private void Awake()
             {
-                TimerF.WaitUpdate(UpdateData);
+                TimerF.WaitNextFrameUpdate(UpdateData);
             }
 
 
@@ -90,18 +90,18 @@ namespace EventData
 
 
 
-            public int button;
-
-            public EventDataVisualizer()
-            {
-            }
+          
 
             //*方法：更新数据
+            [NaughtyAttributes.Button("刷新数据")]
             public void UpdateData()
             {
+                GlobalData.Clear();
+                ObjectData.Clear();
+
                 //获得事件数据存储字典
                 List<KeyValuePair<string, Core.EventData>> eventDataGo = Core.DataHolder.GetGlobalDict().ToList();
-                List<KeyValuePair<string, Core.EventData>> eventDataLo = Core.DataHolder.GetLocalDict(gameObject).ToList();
+                List<KeyValuePair<string, Core.EventData>> eventDataLo = Core.DataHolder.GetLocalDict(gameObject)?.ToList();
                 //如果组件存在
 
 

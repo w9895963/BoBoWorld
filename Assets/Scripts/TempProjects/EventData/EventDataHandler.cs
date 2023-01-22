@@ -10,13 +10,24 @@ namespace EventData
 
         private Core.EventData eventData;
 
+        //构造函数
         public EventDataHandler(Core.EventData eventData)
         {
             this.eventData = eventData;
         }
 
-        //属性：数据
-        public System.Object Data => eventData.GetData();
+        //^公用属性
+        public System.Object Data
+        {
+            get
+            {
+                return eventData.GetData();
+            }
+            set
+            {
+                eventData.SetIfNotEqual(value);
+            }
+        }
 
         public string DataName => eventData.Key;
 
@@ -69,8 +80,8 @@ namespace EventData
 
 
 
-       
-        public void OnUpdateDo_AddEnabler(Action<T> setAction, ref (Action ,Action) enabler)
+
+        public void OnUpdateDo_AddEnabler(Action<T> setAction, ref (Action, Action) enabler)
         {
             setAction?.Invoke(eventDataT.GetData());
             (Core.EventData data, Func<bool> check)[] conditions = { (eventDataT, null) };
