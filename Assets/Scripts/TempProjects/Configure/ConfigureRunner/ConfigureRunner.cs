@@ -34,12 +34,22 @@ namespace Configure
         {
             Construct(initialize, enable, disable, destroy);
         }
+
+        public ConfigureRunner(GameObject gameObject, Action<GameObject> initialize, Action<GameObject> enable, Action<GameObject> disable, Action<GameObject> destroy)
+        {
+            Construct(() => initialize(gameObject), () => enable(gameObject), () => disable(gameObject), () => destroy(gameObject));
+        }
+       
         private void Construct(Action initialize = null, Action enable = null, Action disable = null, Action destroy = null)
         {
+            //如果构造函数有参数, 则添加参数里对应的启动方法
             if (initialize != null) this.init += initialize;
             if (enable != null) this.enable += enable;
             if (disable != null) this.disable += disable;
             if (destroy != null) this.destroy += destroy;
+
+
+            //如果自身有 IConfigureRunnerBuilder 接口 则添加接口里对应的启动方法
             if (this is IConfigureRunnerBuilder configureRunner)
             {
                 this.init += configureRunner.Init;

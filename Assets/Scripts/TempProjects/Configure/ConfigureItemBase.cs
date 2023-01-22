@@ -81,6 +81,7 @@ namespace Configure
 
         public void OnCreate()
         {
+            //设置脚本引用
             SetScriptRefer();
         }
 
@@ -96,10 +97,25 @@ namespace Configure
         //创建运行器
         public ConfigureRunner CreateRunner(MonoBehaviour monoBehaviour)
         {
+            //~从下列几种方法中选择一个创建运行器
+            //如果自身有接口 配置项目启动接口
+            if (this is IConfigureItemEnabler cf)
+            {
+                return new ConfigureRunner(monoBehaviour.gameObject, cf.Init, cf.Enable, cf.Disable, cf.Destroy);
+            }
+
+
+
+
             if (createRunnerFunc != null)
             {
                 return createRunnerFunc.Invoke(monoBehaviour.gameObject);
             }
+
+
+
+
+
             //都不满足
             return null;
         }
@@ -126,12 +142,5 @@ namespace Configure
 
 
     }
-
-
-
-
-
-
-
 }
 
