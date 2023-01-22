@@ -12,7 +12,7 @@ namespace EventData
         public class DataItem
         {
             [HideInInspector]
-            public string name;
+            public string labelName;
 
             public string 全名;
             public string 数据;
@@ -36,7 +36,7 @@ namespace EventData
                 //名字=名字用"."分割的最后一个
                 shortName = GetShortName(eventData.Key);
                 //字符串插值将名字与值加起来
-                name = $"{shortName}:{数据}";
+                labelName = $"{shortName}:{数据}";
             }
             //方法：抽取数据
             private string ExtractData()
@@ -111,7 +111,7 @@ namespace EventData
                 {
                     //添加名字和数据
                     string data = v.ToString();
-                    
+
                     message = GetShortName(eventData.Key) + " : " + $"<color=red>{data}</color>";
                 }
 

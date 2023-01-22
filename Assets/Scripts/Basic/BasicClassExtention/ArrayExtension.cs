@@ -199,6 +199,11 @@ public static class ExtensionArray
         var indexDic = source.ToDictionary((x, i) => (x, i));
         source.Sort((x, y) => i[indexDic[x]].CompareTo(i[indexDic[y]]));
     }
+    public static void SortBy<T>(this List<T> source, Func<T, int> index)
+    {
+        source.Sort((x, y) => index(x).CompareTo(index(y)));
+    }
+
 
 
 

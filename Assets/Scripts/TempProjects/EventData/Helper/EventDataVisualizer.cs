@@ -23,74 +23,14 @@ namespace EventData
             public List<DataItem> ObjectData = new List<DataItem>();
 
 
-            //开始
-            private void Awake()
-            {
-                TimerF.WaitNextFrameUpdate(UpdateData);
-            }
 
 
 
 
 
 
-            //方法：往数据列表中添加数据
-            private void AddData(List<DataItem> ObjectData, List<KeyValuePair<string, Core.EventData>> eventDataDict)
-            {
-                //空则退出
-                if (eventDataDict == null || eventDataDict.Count == 0)
-                {
-                    return;
-                }
-                //将所有值和索引转换成列表
-                List<KeyValuePair<string, Core.EventData>> eventDataList = eventDataDict;
-                //排序
-                eventDataList.Sort((a, b) => { return a.Key.GetType().FullName.CompareTo(b.Key.GetType().FullName); });
-                //转化成DataItem列表
-                List<DataItem> ObjectDataListAll = eventDataList.Select(eventData => new DataItem(eventData.Value)).ToList();
 
 
-                //*往ObjectData中添加不重复的数据
-                // 获得ObjectData中所有eventData的列表
-                List<Core.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
-                ObjectData.AddRange(ObjectDataListAll.Where(dataItem => !eventDataList_ObjectData.Contains(dataItem.eventData)));
-            }
-
-            //方法：添加自动更新事件
-            private void AddDataAutoUpdateEvent(List<DataItem> ObjectData)
-            {
-                //历遍
-                foreach (DataItem dataItem in ObjectData)
-                {
-                    //如果已经添加事件则跳过
-                    if (dataItem.isAddedEvent)
-                    {
-                        continue;
-                    }
-                    //标记已经添加事件
-                    dataItem.isAddedEvent = true;
-
-
-                    //添加事件
-                    (Core.EventData data, System.Func<bool> check)[] checks = { (dataItem.eventData, null) };
-                    System.Action action = () =>
-                    {
-                        dataItem.数据 = dataItem.eventData.GetData()?.ToString();
-                        dataItem.name = $"{dataItem.shortName}:{dataItem.数据}";
-                    };
-                    EventDataCoreF.CreateOnDataConditionCoreEnabler(action, null, checks, this).Enable();
-
-
-                }
-
-            }
-
-
-
-
-
-
-          
 
             //*方法：更新数据
             [NaughtyAttributes.Button("刷新数据")]
@@ -110,6 +50,12 @@ namespace EventData
 
                 AddDataAutoUpdateEvent(GlobalData);
                 AddDataAutoUpdateEvent(ObjectData);
+                
+
+                //~排序
+                var list = DataNameF.GetDataNamesList().ToList();
+                ObjectData.SortBy((a) => list.IndexOf(a.eventData.Key));
+                GlobalData.SortBy((a) => list.IndexOf(a.eventData.Key));
 
             }
 
@@ -170,6 +116,69 @@ namespace EventData
             }
 
 
+
+
+            //开始
+            private void Awake()
+            {
+                TimerF.WaitNextFrameUpdate(UpdateData);
+            }
+
+
+
+
+
+
+            //方法：往数据列表中添加数据
+            private void AddData(List<DataItem> ObjectData, List<KeyValuePair<string, Core.EventData>> eventDataDict)
+            {
+                //空则退出
+                if (eventDataDict == null || eventDataDict.Count == 0)
+                {
+                    return;
+                }
+                //将所有值和索引转换成列表
+                List<KeyValuePair<string, Core.EventData>> eventDataList = eventDataDict;
+                //排序
+                eventDataList.Sort((a, b) => { return a.Key.GetType().FullName.CompareTo(b.Key.GetType().FullName); });
+                //转化成DataItem列表
+                List<DataItem> ObjectDataListAll = eventDataList.Select(eventData => new DataItem(eventData.Value)).ToList();
+
+
+                //*往ObjectData中添加不重复的数据
+                // 获得ObjectData中所有eventData的列表
+                List<Core.EventData> eventDataList_ObjectData = ObjectData.Select(dataItem => dataItem.eventData).ToList();
+                ObjectData.AddRange(ObjectDataListAll.Where(dataItem => !eventDataList_ObjectData.Contains(dataItem.eventData)));
+            }
+
+            //方法：添加自动更新事件
+            private void AddDataAutoUpdateEvent(List<DataItem> ObjectData)
+            {
+                //历遍
+                foreach (DataItem dataItem in ObjectData)
+                {
+                    //如果已经添加事件则跳过
+                    if (dataItem.isAddedEvent)
+                    {
+                        continue;
+                    }
+                    //标记已经添加事件
+                    dataItem.isAddedEvent = true;
+
+
+                    //添加事件
+                    (Core.EventData data, System.Func<bool> check)[] checks = { (dataItem.eventData, null) };
+                    System.Action action = () =>
+                    {
+                        dataItem.数据 = dataItem.eventData.GetData()?.ToString();
+                        dataItem.labelName = $"{dataItem.shortName}:{dataItem.数据}";
+                    };
+                    EventDataCoreF.CreateOnDataConditionCoreEnabler(action, null, checks, this).Enable();
+
+
+                }
+
+            }
         }
 
     }
