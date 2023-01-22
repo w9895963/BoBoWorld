@@ -149,7 +149,7 @@ public static class ExtensionArray
 
 
 
-
+    /// <summary>为Null或空</summary>
     public static bool IsEmpty<T>(this T source) where T : System.Collections.IEnumerable
     {
         if (source != null)
