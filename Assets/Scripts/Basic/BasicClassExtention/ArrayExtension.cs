@@ -174,6 +174,11 @@ public static class ExtensionArray
 
         return true;
     }
+    ///<summary>不为Null且不空</summary>
+    public static bool IsNotEmpty<T>(this T source) where T : System.Collections.IEnumerable
+    {
+        return !IsEmpty(source);
+    }
 
     ///<summary>移除所有相同单位</summary>
     public static void RemoveAll<T>(this List<T> source, T items)
