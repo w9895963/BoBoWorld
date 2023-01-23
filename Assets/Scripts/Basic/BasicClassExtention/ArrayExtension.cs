@@ -81,7 +81,7 @@ public static class ExtensionArray
         }
     }
 
-    /// <summary> 添加一系列元素到列表, 要添加的元素进行一个Null检测, 为Null则不添加</summary>
+    /// <summary> 同 AddRange ,添加一系列元素到列表, 对参数本身以及其每个元素进行 null 检测并排除</summary>
     public static void AddRangeNotNull<T>(this List<T> source, IEnumerable<T> newMembers)
     {
         if (newMembers == null)
