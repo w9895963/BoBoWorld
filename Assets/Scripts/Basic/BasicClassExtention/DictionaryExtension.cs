@@ -53,7 +53,7 @@ public static class DictionaryExtension
 
     }
 
-    /// *<summary>添加并返回被覆盖的,返回是否替换成功</summary>
+    ///<summary>添加并返回被覆盖的,返回是否替换成功</summary>
     public static bool AddAndReplace<K, V>(this Dictionary<K, V> dict, K key, V value, out V oldValue)
     {
         bool isExist = dict.ContainsKey(key);
@@ -73,5 +73,7 @@ public static class DictionaryExtension
         return false;
 
     }
+
+    ///<summary>添加并返回被覆盖的,返回是否替换成功</summary>
 
 }

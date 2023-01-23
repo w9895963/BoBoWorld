@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "人物动画表", menuName = "配置/人物动画表", order = 0)]
+[CreateAssetMenu(fileName = "人物动画表", menuName = "配置(旧版本)/人物动画表", order = 0)]
 public class AnimatePrefabHolder : ScriptableObject
 {
     public List<AnimatePrefab> animatePrefabs = new List<AnimatePrefab>();

@@ -90,7 +90,7 @@ namespace Configure.InspectorInterface
 
         public string[] UpdateDropdownNames()
         {
-            return EventData.DataNameF.GetAllNamesOnTypeRegex(typeof(T)).ToArray();
+            return EventData.DataNameF.GetAllNamesOnType(typeof(T)).ToArray();
         }
 
 
@@ -368,7 +368,7 @@ namespace Configure.InspectorInterface
         public DataImport(System.Type type)
         {
             this.type = type;
-            updateDropdownNames = DataNameF.GetAllNamesOnTypeRegex(type).ToList();
+            updateDropdownNames = DataNameF.GetAllNamesOnType(type).ToList();
         }
 
 

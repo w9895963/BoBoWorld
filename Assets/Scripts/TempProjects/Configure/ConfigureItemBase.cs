@@ -21,7 +21,9 @@ namespace Configure
 
 
         //*界面:配置类型选择,用来给界面标题显示用
-        [HideInInspector]
+        // [HideInInspector]
+        [NaughtyAttributes.AllowNesting]
+        [NaughtyAttributes.Label("标题")]
         public string insLabelConfigureType = "未选择配置类型";
 
 
@@ -72,12 +74,36 @@ namespace Configure
 
 
 
+        public ConfigureRunner CreateRunner(MonoBehaviour monoBehaviour)
+        {
+            //~从下列几种方法中选择一个创建运行器
+            //如果自身有接口 配置项目启动接口
+            if (this is IConfigureItemEnabler cf)
+            {
+                return new ConfigureRunner(monoBehaviour.gameObject, cf.Init, cf.Enable, cf.Disable, cf.Destroy);
+            }
 
+
+
+
+            if (createRunnerFunc != null)
+            {
+                return createRunnerFunc.Invoke(monoBehaviour.gameObject);
+            }
+
+
+
+
+
+            //都不满足
+            return null;
+        }
 
         public void OnAfterCreate()
         {
             //设置脚本引用
             SetScriptRefer();
+            onAfterCreate?.Invoke();
         }
 
 
@@ -104,34 +130,11 @@ namespace Configure
         }
 
         //创建运行器
-        public ConfigureRunner CreateRunner(MonoBehaviour monoBehaviour)
-        {
-            //~从下列几种方法中选择一个创建运行器
-            //如果自身有接口 配置项目启动接口
-            if (this is IConfigureItemEnabler cf)
-            {
-                return new ConfigureRunner(monoBehaviour.gameObject, cf.Init, cf.Enable, cf.Disable, cf.Destroy);
-            }
 
-
-
-
-            if (createRunnerFunc != null)
-            {
-                return createRunnerFunc.Invoke(monoBehaviour.gameObject);
-            }
-
-
-
-
-
-            //都不满足
-            return null;
-        }
 
 
         protected List<System.Type> requiredTypes = new List<System.Type>();
-        protected static string showName;
+        protected Action onAfterCreate;
         protected System.Func<GameObject, ConfigureRunner> createRunnerFunc;
 
 
@@ -151,15 +154,16 @@ namespace Configure
     }
 
     [System.Serializable]
-    public abstract class ConfigureItemBaseEnabler : ConfigureItemBase,IConfigureItemEnabler
+    public abstract class ConfigureItemBaseEnabler : ConfigureItemBase, IConfigureItemEnabler
     {
         public abstract string MenuName { get; }
         public abstract Type[] RequireComponents { get; }
-
-        public abstract void Destroy(GameObject gameObject);
-        public abstract void Disable(GameObject gameObject);
-        public abstract void Enable(GameObject gameObject);
         public abstract void Init(GameObject gameObject);
+        public abstract void Destroy(GameObject gameObject);
+        public abstract void Enable(GameObject gameObject);
+        public abstract void Disable(GameObject gameObject);
+
+
     }
 }
 

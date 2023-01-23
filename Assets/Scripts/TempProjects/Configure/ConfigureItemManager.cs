@@ -11,7 +11,7 @@ using Type = System.Type;
 namespace Configure
 {
     //类：配置管理器
-    [CreateAssetMenu(fileName = "配置管理器", menuName = "动态配置/配置管理器", order = 0)]
+    [CreateAssetMenu(fileName = "配置管理器", menuName = "配置/配置管理器", order = 0)]
     //可脚本化对象
     public class ConfigureItemManager : ScriptableObject
     {

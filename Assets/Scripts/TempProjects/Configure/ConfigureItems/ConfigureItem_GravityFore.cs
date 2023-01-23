@@ -14,12 +14,11 @@ namespace Configure.ConfigureItem
 {
 
 
-
-
-    public static partial class ConfigureItemHolder
+    public static partial class ConfigureItemBaseEnablerGroup
     {
+
         [System.Serializable]
-        public class ConfigureItem_GravityFore : ConfigureItemBaseEnabler, IConfigureItemEnabler
+        public class ConfigureItem_GravityFore : ConfigureItemBaseEnabler
         {
 
 

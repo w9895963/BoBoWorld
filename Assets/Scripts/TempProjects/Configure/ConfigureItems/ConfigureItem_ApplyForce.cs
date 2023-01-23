@@ -21,11 +21,18 @@ namespace Configure.ConfigureItem
     {
 
         [Tooltip("将所选向量数据作为力应用到刚体上")]
-        public List<DataHolder_NameDropDown<Vector2>> 施力数据列表 = new List<DataHolder_NameDropDown<Vector2>>(){
-                new  (EventData.DataName.行走施力),
-                new  (EventData.DataName.跳跃施力),
-                new  (EventData.DataName.重力施力),
-            };
+        public List<DataHolder_NameDropDown<Vector2>> 施力数据列表;
+        public List<string> forceNameList
+        {
+            get
+            {
+                return 施力数据列表.Select(x => x.dataName).ToList();
+            }
+            set
+            {
+                施力数据列表 = value.Select(x => new DataHolder_NameDropDown<Vector2>(x)).ToList();
+            }
+        }
 
 
 
@@ -38,13 +45,17 @@ namespace Configure.ConfigureItem
 
 
 
-
+        public void PresetDataContentOnCreate()
+        {
+            forceNameList = DataNameF.GetAllNamesOnType(typeof(Vector2)).Where(x => x.Contains("施力")).ToList();
+        }
 
 
 
         public ConfigureItem_ApplyForce()
         {
             createRunnerFunc = GetCreateRunner;
+            onAfterCreate += PresetDataContentOnCreate;
         }
 
         private ConfigureRunner GetCreateRunner(GameObject gameObject)
@@ -75,7 +86,7 @@ namespace Configure.ConfigureItem
             {
 
                 //获取施力数据列表
-                forceDList = cf.施力数据列表.Select(x => EventDataF.GetData<Vector2>(x.dataName, gameObject)).Where(x => x != null).ToList();
+                forceDList = cf.forceNameList.Select(x => EventDataF.GetData<Vector2>(x, gameObject)).Where(x => x != null).ToList();
 
 
 
