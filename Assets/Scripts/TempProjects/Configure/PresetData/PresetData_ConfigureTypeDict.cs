@@ -6,10 +6,31 @@ using Configure.ConfigureItem;
 namespace Configure
 {
     //预设数据
-    public static partial class PresetData
+    public static partial class Data
     {
         //配置类型与文字字典
-        public static Dictionary<string, Type> ConfigureTypeDict = new Dictionary<string, Type>() {
+        public static Dictionary<string, Type> ConfigureTypeDict
+        {
+            get
+            {
+                string v = nameof(Data.ConfigureTypeDict).Log();
+                //获得所有 ConfigureItemHolder 内部的类
+                typeof(ConfigureItemHolder).GetNestedTypes().ForEach(t =>
+                {
+                    if (t.IsSubclassOf(typeof(ConfigureItemBaseEnabler)))
+                    {
+                        ConfigureItemBaseEnabler ins = Activator.CreateInstance(t) as ConfigureItemBaseEnabler;
+                        configureTypeDict.TryAdd(ins.MenuName, t);
+
+                    }
+                });
+
+
+                return configureTypeDict;
+            }
+        }
+        //写在外部的配置类型字典
+        private static Dictionary<string, Type> configureTypeDict = new Dictionary<string, Type>() {
             { "选择配置类型",null},
 
             { "数据操作/共享数据", typeof(ConfigureItem_SetDatas)},
@@ -19,10 +40,10 @@ namespace Configure
             { "物理/地面检测器",typeof(ConfigureItem_GroundFinder)},
             { "物理/站立检测器",typeof(ConfigureItem_StandDetect)},
             { "物理/计算行走施力",typeof(ConfigureItem_WalkFore)},
-            {"物理/重力施加器",typeof(ConfigureItem_GravityFore)},
 
             { "摄像机/位置同步",typeof(ConfigureItem_PositionLocked)},
         };
+
     }
 
 

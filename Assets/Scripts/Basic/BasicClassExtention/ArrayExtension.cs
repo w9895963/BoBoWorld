@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 
-/// <summary>数组扩展 ArrayExtension</summary>
+///<summary>数组扩展 ArrayExtension</summary>
 public static class ExtensionArray
 {
 
@@ -22,7 +22,7 @@ public static class ExtensionArray
     }
 
 
-    /// <summary>添加到列表中的特定位置,如果列表长度不够则填补</summary>
+    ///<summary>添加到列表中的特定位置,如果列表长度不够则填补</summary>
     public static void AddToIndex<T>(this List<T> source, int index, T addMember, T defaultMember = default)
     {
         if (source.Count <= index)
@@ -34,7 +34,7 @@ public static class ExtensionArray
         }
         source[index] = addMember;
     }
-    /// <summary>填充列表直到特定长度</summary>
+    ///<summary>填充列表直到特定长度</summary>
     public static void AddTillLength<T>(this List<T> source, int length, T addMember)
     {
         while (source.Count < length)
@@ -72,7 +72,7 @@ public static class ExtensionArray
         }
 
     }
-    /// <summary>添加到列表前, 要添加的元素进行一个Null检测, 为Null则不添加</summary>
+    ///<summary>添加到列表前, 要添加的元素进行一个Null检测, 为Null则不添加</summary>
     public static void AddNotNull<T>(this List<T> source, T newMember)
     {
         if (newMember != null)
@@ -81,7 +81,7 @@ public static class ExtensionArray
         }
     }
 
-    /// <summary> 同 AddRange ,添加一系列元素到列表, 对参数本身以及其每个元素进行 null 检测并排除</summary>
+    ///<summary> 同 AddRange ,添加一系列元素到列表, 对参数本身以及其每个元素进行 null 检测并排除</summary>
     public static void AddRangeNotNull<T>(this List<T> source, IEnumerable<T> newMembers)
     {
         if (newMembers == null)
@@ -161,7 +161,7 @@ public static class ExtensionArray
 
 
 
-    /// <summary>为Null或空</summary>
+    ///<summary>为Null或空</summary>
     public static bool IsEmpty<T>(this T source) where T : System.Collections.IEnumerable
     {
         if (source != null)
@@ -175,7 +175,7 @@ public static class ExtensionArray
         return true;
     }
 
-    /// <summary>移除所有相同单位</summary>
+    ///<summary>移除所有相同单位</summary>
     public static void RemoveAll<T>(this List<T> source, T items)
     {
         source.RemoveAll((x) => x.Equals(items));

@@ -14,7 +14,7 @@ namespace Configure
 
     //类:配置基类
     [System.Serializable]
-    public class ConfigureItemBase
+    public abstract class ConfigureItemBase
     {
         #region //&界面部分
 
@@ -35,6 +35,7 @@ namespace Configure
         //私有方法:设置脚本引用
         private void SetScriptRefer()
         {
+
             Type type = this.GetType();
             //在unity资源管理器里找到这个脚本文件
             string guid = UnityEditor.AssetDatabase.FindAssets($"t:MonoScript {type.Name}").FirstOrDefault();
@@ -73,13 +74,7 @@ namespace Configure
 
 
 
-
-
-
-
-
-
-        public void OnCreate()
+        public void OnAfterCreate()
         {
             //设置脚本引用
             SetScriptRefer();
@@ -89,11 +84,25 @@ namespace Configure
 
         public bool Enabled => interfaceEnabled;
 
+        ///<summary> 必要组件, 无重复 </summary>
+        public List<System.Type> RequiredTypes
+        {
+            get
+            {
+                //如果是 ConfigureItemBaseAddition 的子类
+                if (this is ConfigureItemBaseEnabler addition)
+                {
 
+                    //添加必要组件
+                    requiredTypes.AddRangeNotNull(addition.RequireComponents);
+                    //除重
+                    requiredTypes = requiredTypes.Distinct().ToList();
+                }
 
+                return requiredTypes;
+            }
+        }
 
-        //必要组件
-        public List<System.Type> RequiredTypes => requiredTypes;
         //创建运行器
         public ConfigureRunner CreateRunner(MonoBehaviour monoBehaviour)
         {
@@ -126,6 +135,7 @@ namespace Configure
         protected System.Func<GameObject, ConfigureRunner> createRunnerFunc;
 
 
+
         protected void CreateRunnerFunc<R, C>() where R : ConfigureRunnerT<C>, new() where C : ConfigureItemBase, new()
         {
             createRunnerFunc = (gameObject) =>
@@ -138,9 +148,18 @@ namespace Configure
         }
 
 
+    }
 
+    [System.Serializable]
+    public abstract class ConfigureItemBaseEnabler : ConfigureItemBase,IConfigureItemEnabler
+    {
+        public abstract string MenuName { get; }
+        public abstract Type[] RequireComponents { get; }
 
-
+        public abstract void Destroy(GameObject gameObject);
+        public abstract void Disable(GameObject gameObject);
+        public abstract void Enable(GameObject gameObject);
+        public abstract void Init(GameObject gameObject);
     }
 }
 

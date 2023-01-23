@@ -21,7 +21,7 @@ public static class TimerF
   
 
 
-    /// <summary> 等待下一帧更新世执行操作, 返回一个停止计时器的操作</summary>
+    ///<summary> 等待下一帧更新世执行操作, 返回一个停止计时器的操作</summary>
     public static Action WaitNextFrameUpdate(Action action)
     {
         int beginFrame = Time.frameCount;

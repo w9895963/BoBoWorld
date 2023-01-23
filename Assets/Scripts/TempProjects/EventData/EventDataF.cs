@@ -20,21 +20,21 @@ namespace EventData
             EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventData);
             return dataOperator;
         }
-        /// <summary>获得数据，根据输入判断全局与否，枚举版本</summary>
+        ///<summary>获得数据，根据输入判断全局与否，枚举版本</summary>
         public static EventDataHandler<T> GetData<T>(System.Enum dataName, GameObject gameObject)
         {
             EventData<T> eventData = EventDataCoreF.GetEventData<T>(dataName.ToString(), gameObject);
             EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventData);
             return dataOperator;
         }
-        /// <summary>获得数据，根据输入判断全局与否，枚举版本</summary>
+        ///<summary>获得数据，根据输入判断全局与否，枚举版本</summary>
         public static EventDataHandler<T> GetDataGlobal<T>(System.Enum dataName)
         {
             EventData<T> eventData = EventDataCoreF.GetEventData<T>(dataName.ToString());
             EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventData);
             return dataOperator;
         }
-        /// <summary>获得数据，根据输入判断全局与否，无类型参数</summary>
+        ///<summary>获得数据，根据输入判断全局与否，无类型参数</summary>
         public static EventDataHandler GetData(string dataName, GameObject gameObject)
         {
             EventData.Core.EventData eventData = EventDataCoreF.GetEventData(dataName, gameObject);

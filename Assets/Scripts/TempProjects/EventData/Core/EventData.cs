@@ -94,7 +94,7 @@ namespace EventData
 
 
 
-            /// <summary>设置数据, 如果不相同则唤起数据事件</summary>
+            ///<summary>设置数据, 如果不相同则唤起数据事件</summary>
             public void SetIfNotEqual(T data)
             {
                 //如果不相同则修改
@@ -104,12 +104,12 @@ namespace EventData
                 }
 
             }
-            /// <summary>设置数据, 唤起数据事件</summary>
+            ///<summary>设置数据, 唤起数据事件</summary>
             public void Set(T data)
             {
                 ModifyData((T) => { return data; });
             }
-            /// <summary>修改数据, 唤起数据事件</summary>
+            ///<summary>修改数据, 唤起数据事件</summary>
             public void Modify(Func<T, T> modifyFunc)
             {
                 ModifyData(modifyFunc);
