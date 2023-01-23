@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
+/// <summary>数组扩展 ArrayExtension</summary>
 public static class ExtensionArray
 {
 
