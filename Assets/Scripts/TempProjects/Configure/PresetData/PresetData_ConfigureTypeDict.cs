@@ -42,8 +42,7 @@ namespace Configure
                 list.Sort((a, b) => a.Key.CompareTo(b.Key));
 
                 //将第一个移动到最前
-                // list.Move(0, list.FindIndex(a => a.Key == "选择配置类型"));
-                // list.AddNotHas
+                list.Move(list.FindIndex(a => a.Value == null), 0);
 
                 //转换成字典
                 configureTypeDict_all = new Dictionary<string, Type>();

@@ -180,6 +180,20 @@ public static class ExtensionArray
         return !IsEmpty(source);
     }
 
+   ///<summary>移动列表的某个元素</summary>
+    public static void Move<T>(this List<T> source, int from, int to)
+    {
+        if (from == to)
+        {
+            return;
+        }
+        T temp = source[from];
+        source.RemoveAt(from);
+        source.Insert(to, temp);
+    }
+
+
+
     ///<summary>移除所有相同单位</summary>
     public static void RemoveAll<T>(this List<T> source, T items)
     {
