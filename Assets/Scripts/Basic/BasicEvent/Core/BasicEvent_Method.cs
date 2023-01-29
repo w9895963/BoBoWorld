@@ -18,43 +18,32 @@ namespace BasicEvent
 
 
 
-            public static void Add<C>(GameObject gameObject, Action action, bool preventMultiple = false) where C : Component.BasicEventMono
+            public static void Add<C>(GameObject gameObject, Action action, int index = 0) where C : Component.BasicEventMono
             {
-                var cs = gameObject.GetComponents<C>().ToList();
-                C c = cs.Find((com) => com.IsDestroyed() == false);
+                C c = gameObject.GetComponent<C>();
                 if (c == null)
                 {
                     c = gameObject.AddComponent<C>();
                 }
-                if (preventMultiple) c.RemoveAction(action);
-                c.AddAction(action);
+                c.AddActionAndSort(action, index);
             }
-            public static void Add<C, T>(GameObject gameObject, Action<T> action, bool preventMultiple = false) where C : Component.BasicEventMono<T>
+            public static void Add<C, T>(GameObject gameObject, Action<T> action, int index = 0) where C : Component.BasicEventMono<T>
             {
-                var cs = gameObject.GetComponents<C>().ToList();
-                C c = cs.Find((com) => com.IsDestroyed() == false);
+                C c = gameObject.GetComponent<C>();
                 if (c == null)
                 {
                     c = gameObject.AddComponent<C>();
                 }
-                if (preventMultiple) c.RemoveAction(action);
-                c.AddAction(action);
+                c.AddActionAndSort(action, index);
             }
 
-            public static bool Exist<C>(GameObject gameObject, Delegate action) where C : Component.BasicEventMono
-            {
-                var cs = gameObject.GetComponents<C>().ToList();
-                C c = cs.Find((com) => com.IsDestroyed() == false);
 
-                return c.HasAction(action); ;
-            }
 
 
 
             public static void Remove<C>(GameObject gameObject, Action action) where C : Component.BasicEventMono
             {
-                var cs = gameObject.GetComponents<C>().ToList();
-                C c = cs.Find((com) => com.IsDestroyed() == false);
+                C c = gameObject.GetComponent<C>();
                 if (c == null)
                 {
                     return;
@@ -67,8 +56,7 @@ namespace BasicEvent
             }
             public static void Remove<C, T>(GameObject gameObject, Action<T> action) where C : Component.BasicEventMono<T>
             {
-                var cs = gameObject.GetComponents<C>().ToList();
-                C c = cs.Find((com) => com.IsDestroyed() == false);
+                C c = gameObject.GetComponent<C>();
                 if (c == null)
                 {
                     return;
@@ -79,7 +67,12 @@ namespace BasicEvent
             }
 
 
+            public static bool Exist<C>(GameObject gameObject, Delegate action) where C : Component.BasicEventMono
+            {
+                C c = gameObject.GetComponent<C>();
 
+                return c.HasAction(action); ;
+            }
         }
     }
 }

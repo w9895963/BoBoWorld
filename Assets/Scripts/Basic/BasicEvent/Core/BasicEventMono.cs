@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -10,36 +11,78 @@ namespace BasicEvent
     {
         public class BasicEventMono : MonoBehaviour
         {
-            private bool destroyed = false;
+
             private Action action = null;
+            private Action runAction;
             protected List<Delegate> actions = new List<Delegate>();
+            protected List<(int index, Delegate action)> actionsWithIndex = new List<(int index, Delegate action)>();
+
+
+            public BasicEventMono()
+            {
+                runAction = runAction_default;
+            }
+
+
+            //方法：默认的运行方法
+            private void runAction_default()
+            {
+                action?.Invoke();
+            }
+            //方法：修改后的运行方法
+            private void runAction_changed()
+            {
+                //~重新生成排序后的action
+                action = null;
+                //遍历
+                foreach (var item in actionsWithIndex)
+                {
+                    action += item.action as Action;
+                }
+                //运行
+                action?.Invoke();
+
+                runAction = runAction_default;
+            }
 
             //方法：运行action
             public void RunAction()
             {
-                action?.Invoke();
+                runAction.Invoke();
             }
-            public void AddAction(Action action)
+            ///<summary> 添加方法,根据index添加到队列中的合适位置 </summary>
+            public void AddActionAndSort(Delegate action, int index = 0)
             {
-                actions.Add(action);
-                this.action += action;
+                //找到队列中第一个index大于当前index的位置
+                int i = actionsWithIndex.FindIndex((item) => item.index > index);
+                //如果没有找到
+                if (i == -1)
+                {
+                    //添加到队列末尾
+                    actionsWithIndex.Add((index, action));
+                }
+                else
+                {
+                    //插入到队列中
+                    actionsWithIndex.Insert(i, (index, action));
+                }
+                runAction = runAction_changed;
             }
-            //方法：移除action
-            public void RemoveAction(Action action)
+            ///<summary> 移除方法 </summary>
+            public void RemoveAction(Delegate action)
             {
-                actions.Remove(action);
-                this.action -= action;
+                actionsWithIndex.RemoveAll((item) => item.action == action);
+                runAction = runAction_changed;
             }
             //方法：存在action
             public bool HasAction(Delegate action)
             {
-                return actions.Contains(action);
+                return actionsWithIndex.Exists((item) => item.action == action);
             }
-            //方法：操作为空
-            public bool IsActionEmpty()
-            {
-                return action == null;
-            }
+
+
+
+            private bool destroyed = false;
             //方法：删除
             public void Destroy()
             {
@@ -60,28 +103,40 @@ namespace BasicEvent
         public class BasicEventMono<T> : BasicEventMono
         {
             private Action<T> action = null;
-            //方法：运行action,覆盖RunAction
-            public void RunAction(T date)
+            private Action<T> runAction;
+
+            public BasicEventMono()
+            {
+                runAction = runAction_default;
+            }
+
+            //方法：默认的运行方法
+            private void runAction_default(T date)
             {
                 action?.Invoke(date);
             }
-            //方法：添加action
-            public void AddAction(Action<T> action)
+            //方法：修改后的运行方法
+            private void runAction_changed(T date)
             {
-                actions.Add(action);
-                this.action += action;
+                //~重新生成排序后的action
+                action = null;
+                //遍历
+                foreach (var item in actionsWithIndex)
+                {
+                    action += item.action as Action<T>;
+                }
+                //运行
+                action?.Invoke(date);
+
+                runAction = runAction_default;
             }
-            //方法：移除action
-            public void RemoveAction(Action<T> action)
+
+            //方法：运行action,覆盖RunAction
+            public void RunAction(T date)
             {
-                actions.Remove(action);
-                this.action -= action;
+                runAction?.Invoke(date);
             }
-            //方法：操作为空
-            public new bool IsActionEmpty()
-            {
-                return action == null;
-            }
+
         }
     }
 

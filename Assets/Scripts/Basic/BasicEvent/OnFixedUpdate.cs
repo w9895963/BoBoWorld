@@ -23,9 +23,9 @@ namespace BasicEvent
 
     public class OnFixedUpdate
     {
-        public static void Add(GameObject gameObject, Action action)
+        public static void Add(GameObject gameObject, Action action, int index = 0)
         {
-            BasicEvent.Core.Method.Add<Component.OnFixedUpdateComponent>(gameObject, action);
+            BasicEvent.Core.Method.Add<Component.OnFixedUpdateComponent>(gameObject, action, index);
         }
 
 
@@ -36,7 +36,7 @@ namespace BasicEvent
 
 
 
-        
+
         public static void Add(GameObject gameObject, Action action, ref Action AddRemoveAction)
         {
             Add(gameObject, action);
