@@ -18,12 +18,12 @@ namespace Configure
 
 
 
-    namespace ConfigureItem
+    namespace ConfigureItems
     {
 
 
         [System.Serializable]
-        public partial class ConfigureItem_GroundFinder : ConfigureItemBase
+        public partial class ConfigureItem_GroundFinder : ConfigureItem
         {
 
 
@@ -108,7 +108,7 @@ namespace Configure
 
 
 
-            private class Runner : ConfigureRunnerT<ConfigureItem_GroundFinder>, IConfigureRunnerBuilder
+            private class Runner : ConfigureRunnerT<ConfigureItem_GroundFinder>, IConfigureItemRunner
             {
 
                 private float maxAngle;
@@ -131,7 +131,7 @@ namespace Configure
 
 
 
-                void IConfigureRunnerBuilder.Init()
+                void IConfigureItemRunner.Init()
                 {
                     groundCollider.Clear();
                     enabler = default;
@@ -159,7 +159,7 @@ namespace Configure
                     //地面物体
                     groundObjectD = config.地面物体.GetEventDataHandler(gameObject);
                 }
-                void IConfigureRunnerBuilder.Enable()
+                void IConfigureItemRunner.Enable()
                 {
                     enabler.enable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Add(gameObject, OnCollisionEnter2D);
@@ -167,7 +167,7 @@ namespace Configure
                     BasicEvent.OnCollision2D_Exit.Add(gameObject, OnCollisionExit2D);
                 }
 
-                void IConfigureRunnerBuilder.Disable()
+                void IConfigureItemRunner.Disable()
                 {
                     enabler.disable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
@@ -176,7 +176,7 @@ namespace Configure
                 }
 
 
-                void IConfigureRunnerBuilder.Destroy()
+                void IConfigureItemRunner.Destroy()
                 {
 
                 }

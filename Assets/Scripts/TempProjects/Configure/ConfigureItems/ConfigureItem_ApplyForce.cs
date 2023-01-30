@@ -9,15 +9,15 @@ using UnityEngine;
 
 
 
-//命名空间：配置
-namespace Configure.ConfigureItem
+//命名空间：用来存放所有具体定义的配置项
+namespace Configure.ConfigureItems
 {
 
 
 
 
     [System.Serializable]
-    public class ConfigureItem_ApplyForce : ConfigureItemBase
+    public class ConfigureItem_ApplyForce : ConfigureItem
     {
 
         [Tooltip("将所选向量数据作为力应用到刚体上")]

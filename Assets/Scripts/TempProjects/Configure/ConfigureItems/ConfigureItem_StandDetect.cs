@@ -20,12 +20,12 @@ namespace Configure
 
 
 
-    namespace ConfigureItem
+    namespace ConfigureItems
     {
 
 
         [System.Serializable]
-        public partial class ConfigureItem_StandDetect : ConfigureItemBase
+        public partial class ConfigureItem_StandDetect : ConfigureItem
         {
 
 
@@ -103,7 +103,7 @@ namespace Configure
 
 
 
-            private class Runner : ConfigureRunnerT<ConfigureItem_StandDetect>, IConfigureRunnerBuilder
+            private class Runner : ConfigureRunnerT<ConfigureItem_StandDetect>, IConfigureItemRunner
             {
 
                 private float time;
@@ -121,7 +121,7 @@ namespace Configure
 
 
 
-                void IConfigureRunnerBuilder.Init()
+                void IConfigureItemRunner.Init()
                 {
                     contactGround = EventDataF.GetData<bool>(config.p是否与地面物体物理接触.dataName, gameObject);
                     time = config.p延迟判断时间;
@@ -129,19 +129,19 @@ namespace Configure
                     contactGround.OnUpdateDo_AddEnabler(OnContactGroundUpdate, ref enabler);
 
                 }
-                void IConfigureRunnerBuilder.Enable()
+                void IConfigureItemRunner.Enable()
                 {
                     enabler.Enable?.Invoke();
                 }
 
-                void IConfigureRunnerBuilder.Disable()
+                void IConfigureItemRunner.Disable()
                 {
                     enabler.Disable?.Invoke();
                     timer.Cancel();
                 }
 
 
-                void IConfigureRunnerBuilder.Destroy()
+                void IConfigureItemRunner.Destroy()
                 {
 
                 }

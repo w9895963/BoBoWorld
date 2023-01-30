@@ -50,7 +50,7 @@ namespace Configure
 
 
             //如果自身有 IConfigureRunnerBuilder 接口 则添加接口里对应的启动方法
-            if (this is IConfigureRunnerBuilder configureRunner)
+            if (this is IConfigureItemRunner configureRunner)
             {
                 this.init += configureRunner.Init;
                 this.enable += configureRunner.Enable;

@@ -10,12 +10,12 @@ using UnityEngine;
 //命名空间：配置
 namespace Configure
 {
-    namespace ConfigureItem
+    namespace ConfigureItems
     {
 
 
         [System.Serializable]
-        public class ConfigureItem_GetPhysicData : ConfigureItemBase
+        public class ConfigureItem_GetPhysicData : ConfigureItem
         {
 
 

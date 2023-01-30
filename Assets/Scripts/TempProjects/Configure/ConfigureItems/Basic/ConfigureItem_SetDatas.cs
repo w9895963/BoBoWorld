@@ -18,12 +18,12 @@ namespace Configure
 
 
 
-    namespace ConfigureItem
+    namespace ConfigureItems
     {
 
 
         [System.Serializable]
-        public partial class ConfigureItem_SetDatas : ConfigureItemBase
+        public partial class ConfigureItem_SetDatas : ConfigureItem
         {
 
 
@@ -81,7 +81,7 @@ namespace Configure
 
 
 
-            private class Runner : ConfigureRunnerT<ConfigureItem_SetDatas>, IConfigureRunnerBuilder
+            private class Runner : ConfigureRunnerT<ConfigureItem_SetDatas>, IConfigureItemRunner
             {
 
                 private (Action enable, Action disable) enabler;
@@ -97,7 +97,7 @@ namespace Configure
 
 
 
-                void IConfigureRunnerBuilder.Init()
+                void IConfigureItemRunner.Init()
                 {
                     dataList.ForEach(x =>
                     {
@@ -110,18 +110,18 @@ namespace Configure
 
                     });
                 }
-                void IConfigureRunnerBuilder.Enable()
+                void IConfigureItemRunner.Enable()
                 {
                     enabler.enable?.Invoke();
                 }
 
-                void IConfigureRunnerBuilder.Disable()
+                void IConfigureItemRunner.Disable()
                 {
                     enabler.disable?.Invoke();
                 }
 
 
-                void IConfigureRunnerBuilder.Destroy()
+                void IConfigureItemRunner.Destroy()
                 {
 
                 }

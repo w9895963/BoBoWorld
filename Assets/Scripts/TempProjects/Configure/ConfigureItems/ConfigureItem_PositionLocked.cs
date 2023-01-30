@@ -10,14 +10,14 @@ using UnityEngine;
 
 
 //命名空间：配置
-namespace Configure.ConfigureItem
+namespace Configure.ConfigureItems
 {
 
 
 
 
     [System.Serializable]
-    public class ConfigureItem_PositionLocked : ConfigureItemBase
+    public class ConfigureItem_PositionLocked : ConfigureItem
     {
 
 

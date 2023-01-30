@@ -22,14 +22,14 @@ namespace Configure
         public string 添加配置 = addTypeDefault;
         private const string addTypeDefault = "选择配置类型";
         public string[] configureTypes => configureTypeDict.Keys.ToArray();
-        public static Dictionary<string, Type> configureTypeDict = Data.ConfigureTypeDict;
+        public static Dictionary<string, Type> configureTypeDict = ConfigureCoreF.ConfigureTypeDict;
         private void OnValueChanged_addType()
         {
             if (configureTypeDict.TryGetValue(添加配置, out Type type))
             {
                 if (type == null)
                     return;
-                ConfigureItemBase item = (ConfigureItemBase)System.Activator.CreateInstance(type);
+                ConfigureItem item = (ConfigureItem)System.Activator.CreateInstance(type);
                 item.insLabelConfigureType = 添加配置;
                 item.OnAfterCreate();
                 配置文件列表.Add(item);
@@ -40,9 +40,9 @@ namespace Configure
 
 
 
-        //^界面:配置文件列表
+        //^界面:配置项目列表
         [SerializeReference]
-        public List<ConfigureItemBase> 配置文件列表 = new List<ConfigureItemBase>();
+        public List<ConfigureItem> 配置文件列表 = new List<ConfigureItem>();
 
 
 
