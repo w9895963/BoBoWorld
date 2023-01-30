@@ -7,13 +7,10 @@ using UnityEngine.Rendering;
 
 public class Test : MonoBehaviour
 {
-    //*Unity界面
-    public UnityEngine.Object obj;
-    public UnityEditor.MonoScript monoScript;
-    public GameObject gameObj;
-    public void 打印到控制台()
-    {
-    }
+
+
+
+
 
 
 
