@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class DictionaryExtension
+public static class Extension_Dictionary
 {
     public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key, Func<V> defaultValue = null)
     {
