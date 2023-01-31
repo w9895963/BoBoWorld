@@ -51,8 +51,7 @@ public static class DebugF
 
 
 
-    //*拓展方法
-
+    ///<summary> 拓展方法, 自动根据类型处理 </summary>
     public static T Log<T>(this T content, string label = null, bool color = true)
     {
         string v = "";
@@ -75,9 +74,19 @@ public static class DebugF
                 int i = 0;
                 foreach (var item in content as IEnumerable)
                 {
-                    if (item != null)
+                    if (item == null)
                     {
-                        v += $"[<color=green>{i}</color>]{item.ToString()}, ";
+                        v += $"[<color=green>{i}</color>]<color=red>null</color> ;  ";
+                        i++;
+                    }
+                    else if (item.GetType().IsClass)
+                    {
+                        v += $"[<color=green>{i}</color>]{GetClassFieldsLog(item)}, \n";
+                        i++;
+                    }
+                    else
+                    {
+                        v += $"[<color=green>{i}</color>]{item.ToString()} ;  ";
                         i++;
                     }
                 }
@@ -98,6 +107,8 @@ public static class DebugF
             v = $"<color=yellow>{label}</color> : {v}";
         }
 
+        v = v.TrimEnd(' ', ';', '\n');
+
         if (color)
         {
             Debug.LogFormat(v);
@@ -108,12 +119,42 @@ public static class DebugF
         }
 
 
-
         return content;
     }
 
 
+    ///<summary> 将一个类型实例的字段打印出来 </summary>
+    public static string GetClassFieldsLog<T>(T content, bool color = true) where T : class
+    {
+        string re = "";
 
+        if (content == null)
+        {
+            re = "null";
+            if (color)
+            {
+                re = $"<color=red>{re}</color>";
+            }
+        }
+        else
+        {
+            var fields = content.GetType().GetFields();
+            foreach (var item in fields)
+            {
+                var value = item.GetValue(content);
+                if (value != null)
+                {
+                    re += $"{item.Name}: <color=yellow>{value.ToString()}</color> ;   ";
+                }
+                else
+                {
+                    re += $"{item.Name}: <color=red>null</color> ;   ";
+                }
+            }
+        }
+        re = re.TrimEnd(' ', ';');
+        return re;
+    }
 
 
 
