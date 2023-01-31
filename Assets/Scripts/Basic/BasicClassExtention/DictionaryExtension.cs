@@ -37,6 +37,18 @@ public static class DictionaryExtension
 
         return dict[key];
     }
+    public static bool TryRemove<K, V>(this Dictionary<K, V> dict, K key, out (K key, V value) item)
+    {
+        if (dict.ContainsKey(key) == false)
+        {
+            item = (default, default);
+            return false;
+        }
+        item = (key, dict[key]);
+        dict.Remove(key);
+        return true;
+    }
+
 
 
     public static bool Exist<K, V>(this Dictionary<K, V> dict, K key, V value)
