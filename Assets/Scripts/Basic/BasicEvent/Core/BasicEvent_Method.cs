@@ -25,7 +25,7 @@ namespace BasicEvent
                 {
                     c = gameObject.AddComponent<C>();
                 }
-                c.AddActionAndSort(action, index);
+                c.AddActionIfNotExist(action, index);
             }
             public static void Add<C, T>(GameObject gameObject, Action<T> action, int index = 0) where C : Component.BasicEventMono<T>
             {
@@ -34,7 +34,7 @@ namespace BasicEvent
                 {
                     c = gameObject.AddComponent<C>();
                 }
-                c.AddActionAndSort(action, index);
+                c.AddActionIfNotExist(action, index);
             }
 
 
@@ -67,12 +67,6 @@ namespace BasicEvent
             }
 
 
-            public static bool Exist<C>(GameObject gameObject, Delegate action) where C : Component.BasicEventMono
-            {
-                C c = gameObject.GetComponent<C>();
-
-                return c.HasAction(action); ;
-            }
         }
     }
 }

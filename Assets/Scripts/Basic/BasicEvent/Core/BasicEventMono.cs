@@ -12,88 +12,88 @@ namespace BasicEvent
         public class BasicEventMono : MonoBehaviour
         {
 
-            private Action action = null;
-            private Action runAction;
-            protected List<Delegate> actions = new List<Delegate>();
-            protected List<(int index, Delegate action)> actionsWithIndex = new List<(int index, Delegate action)>();
+            private List<(int index, Action action)> actions = new List<(int index, Action action)>();
+            private Dictionary<Action, int> actionsDict = new Dictionary<Action, int>();
+            protected bool isOnRunAction = false;
+            protected Action delayAddOrRemoveAction = null;
 
 
-            public BasicEventMono()
-            {
-                runAction = runAction_default;
-            }
 
 
-            //方法：默认的运行方法
-            private void runAction_default()
-            {
-                action?.Invoke();
-            }
-            //方法：修改后的运行方法
-            private void runAction_changed()
-            {
-                //~重新生成排序后的action
-                action = null;
-                //遍历
-                foreach (var item in actionsWithIndex)
-                {
-                    action += item.action as Action;
-                }
-                //运行
-                action?.Invoke();
-
-                runAction = runAction_default;
-            }
 
             //方法：运行action
             public void RunAction()
             {
-                runAction.Invoke();
+                isOnRunAction = true;
+                foreach (var item in actions)
+                {
+                    item.action?.Invoke();
+                }
+                isOnRunAction = false;
+                delayAddOrRemoveAction?.Invoke();
+                delayAddOrRemoveAction = null;
             }
             ///<summary> 添加方法,根据index添加到队列中的合适位置 </summary>
-            public void AddActionAndSort(Delegate action, int index = 0)
+            public void AddActionIfNotExist(Action action, int index = 0)
             {
-                //找到队列中第一个index大于当前index的位置
-                int i = actionsWithIndex.FindIndex((item) => item.index > index);
-                //如果没有找到
-                if (i == -1)
+                if (isOnRunAction)
                 {
-                    //添加到队列末尾
-                    actionsWithIndex.Add((index, action));
+                    delayAddOrRemoveAction += MainAction;
+                    return;
                 }
                 else
                 {
-                    //插入到队列中
-                    actionsWithIndex.Insert(i, (index, action));
+                    MainAction();
                 }
-                runAction = runAction_changed;
+
+                void MainAction()
+                {
+                    //找到队列中的序号,没有则新建
+                    List<(int index, Action action)> acs = actions;
+                    int i = acs.FindIndex((item) => item.index == index);
+                    if (i == -1)
+                    {
+                        acs.Add((index, null));
+                        acs.SortBy((item) => item.index);
+                        i = acs.FindIndex((item) => item.index == index);
+                    }
+
+                    //存在则不作为,不存在则添加
+                    if (!actionsDict.ContainsKey(action))
+                    {
+                        actionsDict.Add(action, i);
+                        acs[i] = (index, acs[i].action + action);
+                    }
+                }
+
             }
             ///<summary> 移除方法 </summary>
-            public void RemoveAction(Delegate action)
+            public void RemoveAction(Action action)
             {
-                actionsWithIndex.RemoveAll((item) => item.action == action);
-                runAction = runAction_changed;
-            }
-            //方法：存在action
-            public bool HasAction(Delegate action)
-            {
-                return actionsWithIndex.Exists((item) => item.action == action);
+                if (isOnRunAction)
+                {
+                    delayAddOrRemoveAction += MainAction;
+                    return;
+                }
+                else
+                {
+                    MainAction();
+                }
+
+                void MainAction()
+                {
+                    Dictionary<Action, int> actionsD = actionsDict;
+                    List<(int index, Action action)> acts = actions;
+                    if (actionsD.TryRemove(action, out var item))
+                    {
+                        int i = acts.FindIndex((x) => x.index == item.value);
+                        acts[i] = (item.value, acts[i].action - action);
+                    }
+                }
+
             }
 
 
-
-            private bool destroyed = false;
-            //方法：删除
-            public void Destroy()
-            {
-                Destroy(this);
-                destroyed = true;
-            }
-            //方法：是否删除
-            public bool IsDestroyed()
-            {
-                return destroyed;
-            }
 
 
 
@@ -102,40 +102,83 @@ namespace BasicEvent
 
         public class BasicEventMono<T> : BasicEventMono
         {
-            private Action<T> action = null;
-            private Action<T> runAction;
+            private List<(int index, Action<T> action)> actions = new List<(int index, Action<T> action)>();
+            private Dictionary<Action<T>, int> actionsDict = new Dictionary<Action<T>, int>();
 
-            public BasicEventMono()
-            {
-                runAction = runAction_default;
-            }
 
-            //方法：默认的运行方法
-            private void runAction_default(T date)
+            public void AddActionIfNotExist(Action<T> action, int index = 0)
             {
-                action?.Invoke(date);
-            }
-            //方法：修改后的运行方法
-            private void runAction_changed(T date)
-            {
-                //~重新生成排序后的action
-                action = null;
-                //遍历
-                foreach (var item in actionsWithIndex)
+                if (isOnRunAction)
                 {
-                    action += item.action as Action<T>;
+                    delayAddOrRemoveAction += MainAction;
+                    return;
                 }
-                //运行
-                action?.Invoke(date);
+                else
+                {
+                    MainAction();
+                }
 
-                runAction = runAction_default;
+                void MainAction()
+                {
+                    //找到队列中的序号,没有则新建
+                    List<(int index, Action<T> action)> acs = actions;
+                    int i = acs.FindIndex((item) => item.index == index);
+                    if (i == -1)
+                    {
+                        acs.Add((index, null));
+                        acs.SortBy((item) => item.index);
+                        i = acs.FindIndex((item) => item.index == index);
+                    }
+
+                    //存在则不作为,不存在则添加
+                    Dictionary<Action<T>, int> acsD = actionsDict;
+                    if (!acsD.ContainsKey(action))
+                    {
+                        acsD.Add(action, i);
+                        acs[i] = (index, acs[i].action + action);
+                    }
+                }
+
+            }
+            ///<summary> 移除方法 </summary>
+            public void RemoveAction(Action<T> action)
+            {
+                if (isOnRunAction)
+                {
+                    delayAddOrRemoveAction += MainAction;
+                    return;
+                }
+                else
+                {
+                    MainAction();
+                }
+
+                void MainAction()
+                {
+                    Dictionary<Action<T>, int> actionsD = actionsDict;
+                    List<(int index, Action<T> action)> acts = actions;
+                    if (actionsD.TryRemove(action, out var item))
+                    {
+                        int i = acts.FindIndex((x) => x.index == item.value);
+                        acts[i] = (item.value, acts[i].action - action);
+                    }
+                }
+
             }
 
             //方法：运行action,覆盖RunAction
             public void RunAction(T date)
             {
-                runAction?.Invoke(date);
+                isOnRunAction = true;
+                foreach (var item in actions)
+                {
+                    item.action?.Invoke(date);
+                }
+                isOnRunAction = false;
+                delayAddOrRemoveAction?.Invoke();
+                delayAddOrRemoveAction = null;
             }
+
 
         }
     }

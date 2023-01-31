@@ -23,22 +23,20 @@ namespace BasicEvent
 
     public class OnUpdate
     {
-        public static void Add(GameObject gameObject, Action action)
+        public static void Add(GameObject gameObject, Action action, int index = 0)
         {
-            BasicEvent.Core.Method.Add<Component.OnFixedUpdateComponent>(gameObject, action);
+            BasicEvent.Core.Method.Add<Component.OnUpdateComponent>(gameObject, action, index);
         }
 
 
-        public static void Remove(GameObject gameObject, Action action)
+
+        public static void Remove(GameObject gameObject, Action action, int index = 0)
         {
-            Core.Method.Remove<Component.OnFixedUpdateComponent>(gameObject, action);
+            BasicEvent.Core.Method.Remove<Component.OnUpdateComponent>(gameObject, action);
         }
 
 
-        public static bool Exist(GameObject gameObject, Action action)
-        {
-            return Core.Method.Exist<Component.OnFixedUpdateComponent>(gameObject, action);
-        }
+
 
 
     }
