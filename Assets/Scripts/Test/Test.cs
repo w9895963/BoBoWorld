@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Debug = UnityEngine.Debug;
 
 public class Test : MonoBehaviour
 {
