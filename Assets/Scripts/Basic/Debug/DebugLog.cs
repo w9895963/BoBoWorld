@@ -74,21 +74,24 @@ public static class DebugF
                 int i = 0;
                 foreach (var item in content as IEnumerable)
                 {
+                    Debug.Log(item);
                     if (item == null)
                     {
                         v += $"[<color=green>{i}</color>]<color=red>null</color> ;  ";
                         i++;
                     }
-                    else if (item.GetType().IsClass)
-                    {
-                        v += $"[<color=green>{i}</color>]{GetClassFieldsLog(item)}, \n";
-                        i++;
-                    }
-                    else
+                    else if (item.GetType().GetMethod("ToString") != null)
                     {
                         v += $"[<color=green>{i}</color>]{item.ToString()} ;  ";
                         i++;
                     }
+                    else if (item.GetType().IsClass)
+                    {
+                        Debug.Log("IsClass " + item.GetType());
+                        v += $"[<color=green>{i}</color>]{GetClassFieldsLog(item)}, \n";
+                        i++;
+                    }
+
                 }
 
 
