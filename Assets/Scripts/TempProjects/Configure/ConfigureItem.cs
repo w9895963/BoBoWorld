@@ -79,9 +79,9 @@ namespace Configure
             {
                 Type runnerType;
                 runnerType = this.GetType().GetNestedTypes()
-                .Log("GetNestedTypes")//Test
+                // .Log("GetNestedTypes")//Test
                 .FirstOrDefault(t => t.IsSubclassOf(typeof(ConfigureItemBase.ItemRunnerBase)));
-                runnerType.Log();
+                // runnerType.Log();//Test
 
                 var obj = Activator.CreateInstance(runnerType);
                 runnerType.GetField(nameof(ConfigureItemBase.ItemRunnerBase.config)).SetValue(obj, this);
