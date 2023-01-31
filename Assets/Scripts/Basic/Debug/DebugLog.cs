@@ -51,65 +51,58 @@ public static class DebugF
 
 
 
-    ///<summary> 拓展方法, 自动根据类型处理 </summary>
+    ///<summary>拓展方法, 自动根据类型处理 </summary>
     public static T Log<T>(this T content, string label = null, bool color = true)
     {
         string v = "";
-        //如果是null
-        if (content == null)
+
+        //~根据优先级, 逐个判断类型
+        if (content == null)//如果是null
         {
             v = "null";
         }
-        //如果为可枚举的类型
-        if (content is IEnumerable)
+        else if (content is string) //如果为字符串
         {
-            //如果为字符串
-            if (content is string)
+            v = content.ToString();
+        }
+        //如果为可枚举的类型
+        else if (content is IEnumerable)
+        {
+            //递增循环
+            int i = 0;
+            foreach (var item in content as IEnumerable)
             {
-
-            }
-            else
-            {
-                //递增循环
-                int i = 0;
-                foreach (var item in content as IEnumerable)
+                if (item == null)
                 {
-                    Debug.Log(item);
-                    if (item == null)
-                    {
-                        v += $"[<color=green>{i}</color>]<color=red>null</color> ;  ";
-                        i++;
-                    }
-                    else if (item.GetType().GetMethod("ToString") != null)
-                    {
-                        v += $"[<color=green>{i}</color>]{item.ToString()} ;  ";
-                        i++;
-                    }
-                    else if (item.GetType().IsClass)
-                    {
-                        Debug.Log("IsClass " + item.GetType());
-                        v += $"[<color=green>{i}</color>]{GetClassFieldsLog(item)}, \n";
-                        i++;
-                    }
-
+                    v += $"[<color=green>{i}</color>]<color=red>null</color> ;  ";
+                    i++;
+                }
+                else if (item.GetType().GetMethod("ToString").DeclaringType == item.GetType())//ToString方法是否是自己的,即是否能得到有效的字符串
+                {
+                    v += $"[<color=green>{i}</color>]{item.ToString()} ;  ";
+                    i++;
+                }
+                else if (item.GetType().IsClass)
+                {
+                    Debug.Log("IsClass " + item.GetType());
+                    v += $"[<color=green>{i}</color>]{GetClassFieldsLog(item)}, \n";
+                    i++;
                 }
 
-
             }
-
         }
 
-        //如果上面的都不是
+        //如果上面的都不是,则直接转换为字符串
         if (v == "")
         {
             v = content.ToString();
         }
-
+        //如果有标题, 则添加标题
         if (label != null)
         {
             v = $"<color=yellow>{label}</color> : {v}";
         }
-
+        //删除末尾的无意义字符
         v = v.TrimEnd(' ', ';', '\n');
 
         if (color)
