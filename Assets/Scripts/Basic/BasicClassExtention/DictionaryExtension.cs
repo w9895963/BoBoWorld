@@ -5,6 +5,23 @@ using UnityEngine;
 
 public static class Extension_Dictionary
 {
+
+
+
+    public static bool Exist<K, V>(this Dictionary<K, V> dict, K key, V value)
+    {
+        bool v = dict.ContainsKey(key);
+        if (v == false)
+        {
+            return false;
+        }
+        else
+        {
+            return dict[key].Equals(value);
+        }
+
+    }
+
     public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key, Func<V> defaultValue = null)
     {
 
@@ -26,6 +43,9 @@ public static class Extension_Dictionary
     {
         return GetOrCreate<K, V>(dict, key, () => new V());
     }
+
+
+
 
     public static V TryGetValue<K, V>(this Dictionary<K, V> dict, K key) where V : class
     {
@@ -49,24 +69,8 @@ public static class Extension_Dictionary
         return true;
     }
 
-
-
-    public static bool Exist<K, V>(this Dictionary<K, V> dict, K key, V value)
-    {
-        bool v = dict.ContainsKey(key);
-        if (v == false)
-        {
-            return false;
-        }
-        else
-        {
-            return dict[key].Equals(value);
-        }
-
-    }
-
     ///<summary>添加并返回被覆盖的,返回是否替换成功</summary>
-    public static bool AddAndReplace<K, V>(this Dictionary<K, V> dict, K key, V value, out V oldValue)
+    public static bool TryAddAndReplace<K, V>(this Dictionary<K, V> dict, K key, V value, out V oldValue)
     {
         bool isExist = dict.ContainsKey(key);
         //如果存在
@@ -86,6 +90,19 @@ public static class Extension_Dictionary
 
     }
 
-    ///<summary>添加并返回被覆盖的,返回是否替换成功</summary>
+    ///<summary>尝试从值获得对应的索引</summary>
+    public static bool TryGetKey<K, V>(this Dictionary<K, V> dict, V value, out K key)
+    {
+        foreach (var item in dict)
+        {
+            if (System.Object.Equals(item.Value, value))
+            {
+                key = item.Key;
+                return true;
+            }
+        }
+        key = default;
+        return false;
+    }
 
 }
