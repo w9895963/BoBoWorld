@@ -18,7 +18,7 @@ public static class TimerF
         simpleTimer.Wait(time, action);
         return simpleTimer;
     }
-  
+
 
 
     ///<summary> 等待下一帧更新世执行操作, 返回一个停止计时器的操作</summary>
@@ -48,7 +48,29 @@ public static class TimerF
         return re;
     }
 
+    ///<summary>延迟运行, 等待下一帧执行操作, !!编辑器使用!!</summary>
+    public static void WaitUpdate_InEditor(Action action, int updateCount = 1)
+    {
+        int count = 0;
+        UnityEditor.EditorApplication.update += MyEditorUpdateFunction;
+
+
+        void MyEditorUpdateFunction()
+        {
+
+            count++;
+            if (count >= updateCount)
+            {
+                action?.Invoke();
+                UnityEditor.EditorApplication.update -= MyEditorUpdateFunction;
+            }
+        }
+
+
+    }
 
 }
+
+
 
 

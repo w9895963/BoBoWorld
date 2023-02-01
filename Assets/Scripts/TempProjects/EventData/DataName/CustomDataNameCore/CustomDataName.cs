@@ -49,31 +49,31 @@ namespace EventData.CustomDataNameCore
 
 
             [SerializeField]
-            [NaughtyAttributes.AllowNesting]
-            [NaughtyAttributes.Label("数据名")]
+            
+            
             private string dataName = "数据名";
 
 
             [SerializeField]
-            [NaughtyAttributes.Label("数据类型")]
-            [NaughtyAttributes.Dropdown(nameof(AllTypes))]
-            [NaughtyAttributes.AllowNesting]
-            [NaughtyAttributes.DisableIf(nameof(autoType))]
+            
+            
+            
+            
             private string typeName = "选择类型名";
 
             [SerializeField]
-            [NaughtyAttributes.AllowNesting]
-            [NaughtyAttributes.Label("自动猜测类型")]
+            
+            
             private bool autoType = false;
 
             [SerializeField]
-            [NaughtyAttributes.AllowNesting]
-            [NaughtyAttributes.Label("全局属性")]
+            
+            
             private bool IsGlobal;
 
             [SerializeField]
-            [NaughtyAttributes.AllowNesting]
-            [NaughtyAttributes.ReadOnly]
+            
+            
             private string 数据重复检测;
 
             #endregion

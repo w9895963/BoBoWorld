@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Configure.InspectorInterface;
+using Configure.Inspector;
 
 using EventData;
 
-using StackableDecorator;
 
 using UnityEditor;
 
@@ -30,7 +29,7 @@ namespace Configure
             #region //&界面部分            
 
             [SerializeField]
-            private List<InspectorInterface.InputDataAndValue> 设置数据 = new(1);
+            private List<Inspector.InputDataAndValue> 设置数据 = new(1);
             [HideInInspector]
             public List<(string dataName, System.Object dataValue)> p设置数据 => 设置数据.Select(x => (x.dataName, x.dataValue)).ToList();
 
@@ -44,8 +43,8 @@ namespace Configure
 
 
 
-            [Space(30)]
-            public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("为数据赋予一个初始值");
+            [Space(5)]
+            public Inspector.HelpText 说明 = new Inspector.HelpText("为数据赋予一个初始值");
 
             #endregion 
             //&↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑

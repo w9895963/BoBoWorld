@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Sirenix.OdinInspector;
 using UnityEngine;
+
 
 
 
@@ -14,25 +15,35 @@ namespace Configure
     {
         #region //&界面部分
 
+        [FoldoutGroup("配置属性", false)]
+        [GUIColor(nameof(buttonColor))]
+        // public int placeHolderHead;
 
 
-        //*界面:配置类型选择,用来给界面标题显示用
-        // [HideInInspector]
-        [NaughtyAttributes.AllowNesting]
-        [NaughtyAttributes.Label("标题")]
-        public string insLabelConfigureType = "未选择配置类型";
+        //*界面:启动按钮
+        [Button("@buttonName", ButtonHeight = 44)]
 
+        [HorizontalGroup("配置属性/h")]
+        [ButtonGroup("配置属性/h/1")]
+        [PropertyOrder(-1)]
+        // [GUIColor(nameof(buttonColor))]
+        private void EnableButton() { 启用配置 = !启用配置; }
+        private string buttonName => 启用配置 ? "配置启用" : "配置停用";
+        private Color buttonColor => 启用配置 ? Color.green : Color.yellow;
 
 
         //*界面:脚本引用
         [SerializeField]
-        [StackableDecorator.EnableIf(false)]
-        [StackableDecorator.Label(title = "Script")]
-        [StackableDecorator.StackableField]
-        private UnityEditor.MonoScript scriptRefer;
+        [ReadOnly]
+        [BoxGroup("配置属性/h/2", false)]
+        [LabelWidth(60)]
+        private UnityEditor.MonoScript 脚本文件;
         //私有方法:设置脚本引用
         private void SetScriptRefer()
         {
+            //有则返回
+            if (脚本文件 != null)
+                return;
 
             Type type = this.GetType();
             //在unity资源管理器里找到这个脚本文件
@@ -41,25 +52,37 @@ namespace Configure
             string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
             //把路径转换成脚本
             UnityEditor.MonoScript script = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEditor.MonoScript>(path);
-            scriptRefer = script;
+            脚本文件 = script;
         }
 
 
 
+        //*界面:配置类型选择,用来给界面标题显示用
+        [BoxGroup("配置属性/h/2")]
+        [OnValueChanged(nameof(OnTitleChanged))]
+        [LabelWidth(60)]
+        public string 显示标题 = "";
+        private void OnTitleChanged()
+        {
+            //如果空了
+            if (string.IsNullOrEmpty(显示标题))
+            {
+                ConfigureCoreF.NameTypeDict.TryGetKey(this.GetType(), out 显示标题);
+            }
+        }
 
 
 
+        private bool 启用配置 = true;
 
 
-        //*界面:启用配置
-        [StackableDecorator.HelpBox("配置已经启用", "$interfaceEnabled", messageType = 0)]
-        [StackableDecorator.Box(4, 4, 4, 4)]
-        [StackableDecorator.Label(title = "启用配置")]
-        [StackableDecorator.ToggleLeft]
-        [StackableDecorator.StackableField]
-
-        [SerializeField]
-        private bool interfaceEnabled = true;
+        //*界面:配置停用时的提示
+        [InfoBox("配置已经停用", InfoMessageType.Warning, "@!" + nameof(启用配置))]
+        [GUIColor(nameof(color))]
+        [HideLabel]
+        public PlaceHolder placeHolder;
+        [Serializable] public class PlaceHolder { }
+        private Color color = Color.yellow;
 
 
 
@@ -78,20 +101,29 @@ namespace Configure
             if (this is ConfigureItemBase)
             {
                 Type runnerType;
-                runnerType = this.GetType().GetNestedTypes()
-                // .Log("GetNestedTypes")//Test
-                .FirstOrDefault(t => t.IsSubclassOf(typeof(ConfigureItemBase.ItemRunnerBase)));
-                // runnerType.Log();//Test
-
-                var obj = Activator.CreateInstance(runnerType);
-                runnerType.GetField(nameof(ConfigureItemBase.ItemRunnerBase.config)).SetValue(obj, this);
-                runnerType.GetField(nameof(ConfigureItemBase.ItemRunnerBase.gameObject)).SetValue(obj, monoBehaviour.gameObject);
-
-
-                IConfigureItemRunner r = (IConfigureItemRunner)obj;
+                runnerType = this.GetType()
+                // .Log("GetType")//Test
+                .GetNestedTypes()
+                .Log("GetNestedTypes")//Test
+                .Where(t => t.IsAbstract == false)
+                // .Log("Where")//Test
+                .FirstOrDefault(t => t.BaseType.GetGenericTypeDefinition() == typeof(ConfigureItemBase.ItemRunnerBase<>));
+                // runnerType.Log(" runnerType");//Test 
 
 
-                return new ConfigureRunner(r.Init, r.Enable, r.Disable, r.Destroy);
+                if (runnerType != null)
+                {
+                    var obj = Activator.CreateInstance(runnerType);
+                    runnerType.GetField(nameof(ConfigureItemBase.ItemRunnerBase<object>.config)).SetValue(obj, this);
+                    runnerType.GetField(nameof(ConfigureItemBase.ItemRunnerBase.gameObject)).SetValue(obj, monoBehaviour.gameObject);
+
+                    IConfigureItemRunner r = (IConfigureItemRunner)obj;
+
+
+                    return new ConfigureRunner(r.Init, r.Enable, r.Disable, r.Destroy);
+                }
+
+
             }
 
 
@@ -123,10 +155,14 @@ namespace Configure
             SetScriptRefer();
             onAfterCreate?.Invoke();
         }
+        ///<summary> 配置项目被编辑时候运行 </summary>
+        public void OnValidate()
+        {
+            SetScriptRefer();
+        }
 
 
-
-        public bool Enabled => interfaceEnabled;
+        public bool Enabled => 启用配置;
 
         ///<summary> 必要组件, 无重复 </summary>
         public List<System.Type> RequiredTypes

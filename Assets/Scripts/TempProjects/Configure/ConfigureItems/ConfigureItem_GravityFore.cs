@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-
 using EventData;
-using StackableDecorator;
 using UnityEditor;
-
 using UnityEngine;
 
 
@@ -23,21 +20,19 @@ namespace Configure.ConfigureItems
 
 
         #region //&界面部分
+        [Header("静态参数")]
 
-
+        [Tooltip("默认重力")]
+        public Vector2 p默认重力 = new Vector2(0, -10);
 
 
 
         [Header("动态参数")]
 
         [Tooltip("")]
-        [StackableField]
-        [HorizontalGroup("info1", true, "", 0, prefix = true, title = "重力向量", tooltip = "获得重力向量")]
-        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> p重力向量 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
+        public Configure.Inspector.DataNameDropDown<Vector2> p重力向量 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.重力向量);
         [Tooltip("")]
-        [StackableField]
-        [HorizontalGroup("info1", true, "", 0, prefix = true, title = "地表法线", tooltip = "获得地表法线")]
-        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> p地表法线 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
+        public Configure.Inspector.DataNameDropDown<Vector2> p地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.地表法线);
 
 
 
@@ -50,15 +45,13 @@ namespace Configure.ConfigureItems
         [Header("输出参数")]
 
         [Tooltip("")]
-        [StackableField]
-        [HorizontalGroup("info1", true, "", 0, prefix = true, title = "重力施力", tooltip = "根据输入计算出重力施力")]
-        public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> p重力施力 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.重力施力);
+        public Configure.Inspector.DataNameDropDown<Vector2> p重力施力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.重力施力);
 
 
 
 
         //脚本说明
-        public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("计算重力");
+        public Inspector.HelpText 说明 = new Inspector.HelpText("计算重力");
 
 
 
@@ -88,10 +81,9 @@ namespace Configure.ConfigureItems
 
 
 
-        public class Runner : ItemRunnerBase
+        public class Runner : ItemRunnerBase<ConfigureItem_GravityFore>
         {
 
-            private ConfigureItem_GravityFore Config => config as ConfigureItem_GravityFore;
 
             private EventDataHandler<Vector2> gravityVectorD;
             private Vector2 gravityVector => gravityVectorD.Data;
@@ -112,25 +104,39 @@ namespace Configure.ConfigureItems
 
             public override void Init()
             {
-                gravityVectorD = EventDataF.GetData<Vector2>(Config.gravityVectorName, gameObject);
-                groundNormalD = EventDataF.GetData<Vector2>(Config.groundNormalName, gameObject);
-                gravityForceD = EventDataF.GetData<Vector2>(Config.gravityForceName, gameObject);
+                base.config.Log("Init");
+                gravityVectorD = EventDataF.GetData<Vector2>(config.gravityVectorName, gameObject);
+                groundNormalD = EventDataF.GetData<Vector2>(config.groundNormalName, gameObject);
+                gravityForceD = EventDataF.GetData<Vector2>(config.gravityForceName, gameObject);
+
+                EventDataF.CreateConditionEnabler(CalcGravity, null, gravityForceD.OnUpdateCondition, groundNormalD.OnUpdateCondition, gravityVectorD.OnUpdateCondition);
             }
 
+            private void CalcGravity()
+            {
+                Vector2 gv = Vector2.zero;
+                if (groundNormal.y < 0)
+                {
+                    gv = gravityVector * groundNormal.y;
+                }
+
+
+
+
+
+                gravityForce = gv;
+            }
 
             public override void Destroy()
             {
-                throw new NotImplementedException();
             }
 
             public override void Disable()
             {
-                throw new NotImplementedException();
             }
 
             public override void Enable()
             {
-                throw new NotImplementedException();
             }
 
 

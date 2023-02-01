@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Configure.InspectorInterface.InterfaceItems;
+using Configure.Inspector.InterfaceItems;
 using UnityEngine;
 
-namespace Configure.InspectorInterface
+namespace Configure.Inspector
 {
 
     ///<summary>配置参数表</summary>
@@ -83,7 +83,7 @@ namespace Configure.InspectorInterface
 
 }
 
-namespace Configure.InspectorInterface.InterfaceItems
+namespace Configure.Inspector.InterfaceItems
 {
     public class InterfaceItem
     {
@@ -95,8 +95,8 @@ namespace Configure.InspectorInterface.InterfaceItems
     [Serializable]
     public class InterfaceItem<T> : InterfaceItem
     {
-        [NaughtyAttributes.AllowNesting]
-        [NaughtyAttributes.Label("值")]
+        
+        
         public T value;
 
     }
@@ -113,9 +113,9 @@ namespace Configure.InspectorInterface.InterfaceItems
     [Serializable]
     public class InterfaceItemDataNameDropList : InterfaceItem
     {
-        [NaughtyAttributes.AllowNesting]
-        [NaughtyAttributes.Dropdown(nameof(DataNameDropList))]
-        [NaughtyAttributes.Label("")]
+        
+        
+        
         public string value;
 
         private Type type;

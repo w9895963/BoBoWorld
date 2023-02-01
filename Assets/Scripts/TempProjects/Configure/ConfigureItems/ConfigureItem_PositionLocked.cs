@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Configure;
-using Configure.InspectorInterface;
+using Configure.Inspector;
 using EventData;
 using UnityEditor;
 using UnityEngine;
@@ -22,9 +22,9 @@ namespace Configure.ConfigureItems
 
 
         [SerializeField]
-        [StackableDecorator.TagPopup]
-        [StackableDecorator.Label(title = "锁定对象的标签")]
-        public string lockObjectTag = "玩家角色碰撞体";
+        
+        
+        public Inspector.TagDropDown 追踪对象标签 = new Inspector.TagDropDown(UnityTag.玩家角色碰撞体);
 
 
 
@@ -33,7 +33,7 @@ namespace Configure.ConfigureItems
 
 
         //脚本说明
-        public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("将自身位置锁定到目标位置");
+        public Inspector.HelpText 说明 = new Inspector.HelpText("将自身位置锁定到目标位置","参数解释");
 
 
 
@@ -72,7 +72,7 @@ namespace Configure.ConfigureItems
 
             public void Initialize()
             {
-                lockTarget = GameObject.FindGameObjectWithTag(cf.lockObjectTag);
+                lockTarget = GameObject.FindGameObjectWithTag(cf.追踪对象标签.tag);
 
             }
             public void Enable()

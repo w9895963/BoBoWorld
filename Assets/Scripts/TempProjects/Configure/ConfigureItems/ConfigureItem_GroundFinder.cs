@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Configure.InspectorInterface;
+using Configure.Inspector;
 
 using EventData;
 
-using StackableDecorator;
 
 using UnityEditor;
 
@@ -36,16 +35,12 @@ namespace Configure
             public float 地面最大夹角 = 10;
 
             [Tooltip("此标签外的物体不被视为地面")]
-            [TagPopup]
-            [Label(0)]
-            public List<string> 地面标签 = new List<string>() { "地表碰撞体" };
+            public List<Inspector.TagDropDown> 地面标签 = new List<Inspector.TagDropDown>() { new Inspector.TagDropDown(UnityTag.地表碰撞体) };
 
 
             [Header("动态参数")]
             [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info1", true, "", 0, prefix = true, title = "重力向量", tooltip = "获得重力向量")]
-            public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 重力 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.重力向量);
+            public Configure.Inspector.DataNameDropDown<Vector2> 重力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.重力向量);
 
 
 
@@ -55,24 +50,18 @@ namespace Configure
 
             [Header("输出参数")]
             [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地表法线", tooltip = "获得脚下的地面法线")]
-            public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 地表法线 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.地表法线);
+            public Configure.Inspector.DataNameDropDown<Vector2> 地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.地表法线);
             [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, tooltip = "此刻是否与地面物体物理接触")]
-            public Configure.InspectorInterface.DataHolder_NameDropDown<bool> 是否与地面物体物理接触 = new Configure.InspectorInterface.DataHolder_NameDropDown<bool>(DataName.是否与地面物体物理接触);
+            public Configure.Inspector.DataNameDropDown<bool> 是否与地面物体物理接触 = new Configure.Inspector.DataNameDropDown<bool>(DataName.是否与地面物体物理接触);
             [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "地面物体", tooltip = "获得脚下的地面物体")]
-            public Configure.InspectorInterface.DataHolder_NameDropDown<GameObject> 地面物体 = new Configure.InspectorInterface.DataHolder_NameDropDown<GameObject>(DataName.地面物体);
+            public Configure.Inspector.DataNameDropDown<GameObject> 地面物体 = new Configure.Inspector.DataNameDropDown<GameObject>(DataName.地面物体);
 
 
 
 
 
             [Space(10)]
-            public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("检测地面, 并获得一系列地面信息");
+            public Inspector.HelpText 说明 = new Inspector.HelpText("检测地面, 并获得一系列地面信息");
 
             #endregion 
             //&↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
@@ -139,7 +128,7 @@ namespace Configure
                     maxAngle = config.地面最大夹角;
                     gravity = Vector2.down;
                     groundNormal = Vector2.zero;
-                    tags = config.地面标签.Distinct().ToList();
+                    tags = config.地面标签.Select(t => t.tag).WhereNotNull().Distinct().ToList();
 
 
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Configure;
-using Configure.InspectorInterface;
+using Configure.Inspector;
 using EventData;
 using UnityEditor;
 using UnityEngine;
@@ -21,7 +21,7 @@ namespace Configure.ConfigureItems
     {
 
         [Tooltip("将所选向量数据作为力应用到刚体上")]
-        public List<DataHolder_NameDropDown<Vector2>> 施力数据列表;
+        public List<DataNameDropDown<Vector2>> 施力数据列表;
         public List<string> forceNameList
         {
             get
@@ -30,7 +30,7 @@ namespace Configure.ConfigureItems
             }
             set
             {
-                施力数据列表 = value.Select(x => new DataHolder_NameDropDown<Vector2>(x)).ToList();
+                施力数据列表 = value.Select(x => new DataNameDropDown<Vector2>(x)).ToList();
             }
         }
 
@@ -41,7 +41,7 @@ namespace Configure.ConfigureItems
 
 
         //脚本说明
-        public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("将所选向量数据作为力应用到刚体上");
+        public Inspector.HelpText 说明 = new Inspector.HelpText("将所选向量数据作为力应用到刚体上");
 
 
 

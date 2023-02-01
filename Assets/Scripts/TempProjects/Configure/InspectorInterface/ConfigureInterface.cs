@@ -5,14 +5,14 @@ using System.Linq;
 using EventData;
 using UnityEngine;
 
-namespace Configure.InspectorInterface
+namespace Configure.Inspector
 {
     [System.Serializable]
     public class DataHold_NameOrData<T>
     {
-        [StackableDecorator.StackableField]
-        [StackableDecorator.HorizontalGroup("info2", true, "", 0, 60, -1)]
-        public Configure.InspectorInterface.DataGetter<T> data;
+        
+        
+        public Configure.Inspector.DataGetter<T> data;
 
         public DataHold_NameOrData(System.Enum dataNamePreset)
         {
@@ -80,60 +80,6 @@ namespace Configure.InspectorInterface
 
 
 
-    [System.Serializable]
-    public class DataHolder_NameDropDown<T>
-    {
-        [NaughtyAttributes.AllowNesting]
-        [NaughtyAttributes.Dropdown(nameof(UpdateDropdownNames))]
-        [NaughtyAttributes.Label("")]
-        public string dataName;
-
-        public string[] UpdateDropdownNames()
-        {
-            return EventData.DataNameF.GetAllNamesOnType(typeof(T)).ToArray();
-        }
-
-
-
-
-
-
-        public DataHolder_NameDropDown(System.Enum dataNamePreset)
-        {
-            Construct(dataNamePreset.ToString());
-        }
-
-
-        public DataHolder_NameDropDown(string dataNamePreset)
-        {
-
-            Construct(dataNamePreset);
-        }
-        public void Construct(string dataNamePreset)
-        {
-            dataName = dataNamePreset;
-        }
-
-
-
-
-
-
-
-
-
-
-        public EventDataHandler<T> GetEventDataHandler(GameObject gameObject)
-        {
-            return EventDataF.GetData<T>(dataName, gameObject);
-        }
-
-
-
-    }
-
-
-
 
 
 
@@ -148,14 +94,14 @@ namespace Configure.InspectorInterface
     [System.Serializable]
     public class DataGetter<T>
     {
-        [StackableDecorator.StackableField]
-        [StackableDecorator.Label(-1, title = "引用", tooltip = "是否从外部引用数据")]
+        
+        
         public bool import = false;
 
 
         [SerializeReference]
-        [StackableDecorator.HorizontalGroup("info", true, "", 0, prefix = false)]
-        [StackableDecorator.StackableField]
+        
+        
         public DataBase dataBase;
 
 
@@ -296,7 +242,7 @@ namespace Configure.InspectorInterface
     [System.Serializable]
     public class DataConstFloat : DataBase
     {
-        [StackableDecorator.StackableField, StackableDecorator.Label(-1, title = "数值")]
+        
         public float data;
 
 
@@ -304,7 +250,7 @@ namespace Configure.InspectorInterface
     [System.Serializable]
     public class DataConstBool : DataBase
     {
-        [StackableDecorator.StackableField, StackableDecorator.Label(0)]
+        
         public bool data;
 
 
@@ -312,8 +258,8 @@ namespace Configure.InspectorInterface
     [System.Serializable]
     public class DataConstVector : DataBase
     {
-        [StackableDecorator.HorizontalGroup("info", true, "", 0, 30, -1, prefix = false)]
-        [StackableDecorator.StackableField]
+        
+        
         [SerializeField]
         private Holder holder = new Holder();
         [HideInInspector]
@@ -324,11 +270,11 @@ namespace Configure.InspectorInterface
         [System.Serializable]
         public class Holder
         {
-            [StackableDecorator.LabelOnly]
-            [StackableDecorator.StackableField]
+            
+            
             public int 向量 = 0;
-            [StackableDecorator.Label(0)]
-            [StackableDecorator.StackableField]
+            
+            
             public Vector2 dataInSide;
         }
 
@@ -351,7 +297,7 @@ namespace Configure.InspectorInterface
     [System.Serializable]
     public class DataConstGameObject : DataBase
     {
-        [StackableDecorator.StackableField, StackableDecorator.Label(0)]
+        
         public GameObject data;
 
     }

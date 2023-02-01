@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EventData;
-using StackableDecorator;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,14 +21,12 @@ namespace Configure
             // public int;
             [Header("输出参数")]
             [Tooltip("")]
-            [StackableField]
-            [HorizontalGroup("info2", true, "", 0, prefix = true, title = "运动速度", tooltip = "获得物体的运动速度")]
-            public Configure.InspectorInterface.DataHolder_NameDropDown<Vector2> 运动速度 = new Configure.InspectorInterface.DataHolder_NameDropDown<Vector2>(DataName.运动速度向量);
+            public Configure.Inspector.DataNameDropDown<Vector2> 运动速度 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.运动速度向量);
 
 
             [Space]
             //脚本说明
-            public InspectorInterface.ShowOnlyText 说明 = new InspectorInterface.ShowOnlyText("从Unity组件中获得物理数据:", "运动速度");
+            public Inspector.HelpText 说明 = new Inspector.HelpText("从Unity组件中获得物理数据:", "运动速度");
 
 
 

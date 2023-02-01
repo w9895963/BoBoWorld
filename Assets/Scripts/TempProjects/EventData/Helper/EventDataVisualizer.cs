@@ -33,7 +33,7 @@ namespace EventData
 
 
             //*方法：更新数据
-            [NaughtyAttributes.Button("刷新数据")]
+            
             public void UpdateData()
             {
                 GlobalData.Clear();

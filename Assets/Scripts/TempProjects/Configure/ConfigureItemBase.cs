@@ -21,14 +21,16 @@ namespace Configure
         public abstract class ItemRunnerBase : IConfigureItemRunner
         {
             public GameObject gameObject;
-            public ConfigureItemBase config;
-
-
 
             public abstract void Destroy();
             public abstract void Disable();
             public abstract void Enable();
             public abstract void Init();
+        }
+
+        public abstract class ItemRunnerBase<T> : ItemRunnerBase
+        {
+            public T config;
         }
 
 

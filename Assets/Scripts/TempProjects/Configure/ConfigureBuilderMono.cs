@@ -15,9 +15,9 @@ namespace Configure
     {
         //*按钮:检查缺失组件
 
-        [StackableDecorator.StackableField]
-        [StackableDecorator.SideButtons(titles = "检查缺失组件", onLeft = true, actions = nameof(CheckRequiredTypes))]
-        [StackableDecorator.Label(0)]
+        
+        
+        
         public string 缺失组件 = "无";
         private void CheckRequiredTypes()
         {

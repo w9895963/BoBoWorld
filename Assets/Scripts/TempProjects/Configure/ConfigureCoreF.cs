@@ -8,7 +8,7 @@ namespace Configure
     public static partial class ConfigureCoreF
     {
         ///<summary> 获得所有配置组件的(名字,类型)字典, 结果已排序 </summary>
-        public static Dictionary<string, Type> ConfigureTypeDict
+        public static Dictionary<string, Type> NameTypeDict
         {
             get
             {
@@ -64,6 +64,6 @@ namespace Configure
         private static Dictionary<string, Type> configureTypeDict_all = null;
 
 
-
+        
     }
 }

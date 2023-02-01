@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventData;
+using Sirenix.OdinInspector;
 using UnityEngine;
-using static Configure.InspectorInterface.InputDataAndValue;
+using static Configure.Inspector.InputDataAndValue;
 
-namespace Configure.InspectorInterface
+namespace Configure.Inspector
 {
 
     [Serializable]
@@ -42,18 +43,21 @@ namespace Configure.InspectorInterface
 
         }
         private string[] dataNames => DataNameF.GetDataNamesList();
-        [NaughtyAttributes.AllowNesting]
-        [NaughtyAttributes.OnValueChanged(nameof(OnDataNameChanged))]
-        [NaughtyAttributes.Label("数据名")]
-        [NaughtyAttributes.Dropdown(nameof(dataNames))]
+
+
+
+        [ValueDropdown(nameof(dataNames))]
+        [LabelText("数据名")]
+        [OnValueChanged(nameof(OnDataNameChanged))]
         public string dataName;
 
 
         //数据值
         [SerializeField]
         [SerializeReference]
-        [StackableDecorator.StackableField]
-        [StackableDecorator.HorizontalGroup("info1", true, "", 0, -1, prefix = true, title = "数据值")]
+        [InlineProperty]
+        [HideLabel] 
+        [HideReferenceObjectPicker]
         private InputValue value = new InputItem.InputValueInt();
 
 
@@ -69,8 +73,8 @@ namespace Configure.InspectorInterface
         [Serializable]
         public class InputValueT<T> : InputValue
         {
-            [StackableDecorator.StackableField]
-            [StackableDecorator.Label(0)]
+
+            [LabelText("数据值")]
             public T value;
 
 
