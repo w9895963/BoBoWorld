@@ -9,8 +9,7 @@ using Debug = UnityEngine.Debug;
 
 public class Test : MonoBehaviour
 {
-
-
+   
 
 
 
@@ -29,11 +28,13 @@ public class Test : MonoBehaviour
 
 
 
-    //测试方法1
-    [NaughtyAttributes.Button]
-    public void 测试方法1()
-    {
 
+
+
+    [UnityEditor.MenuItem("测试/测试方法")]
+    public static void 测试方法()
+    {
+       
     }
 
 
