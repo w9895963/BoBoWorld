@@ -18,23 +18,10 @@ namespace Configure.Inspector
             [Serializable] public class DataValueVector4 : DataValueNormalStyle<Vector4> { }
             [Serializable] public class DataValueColor : DataValueNormalStyle<Color> { }
             [Serializable] public class DataValueGameObject : DataValueNormalStyle<GameObject> { }
-            [Serializable] public class DataValueTest : DataValueNormalStyle<Test> { }
         }
 
 
 
-        [Serializable]
-        public class Test{
-            public int a;
-            public float b;
-            public string c;
-            public bool d;
-            public Vector2 e;
-            public Vector3 f;
-            public Vector4 g;
-            public Color h;
-            public GameObject i;
-        }
 
 
 
