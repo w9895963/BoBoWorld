@@ -84,7 +84,6 @@ public static class DebugF
                 }
                 else if (item.GetType().IsClass)
                 {
-                    Debug.Log("IsClass " + item.GetType());
                     v += $"[<color=green>{i}</color>]{GetClassFieldsLog(item)}, \n";
                     i++;
                 }
