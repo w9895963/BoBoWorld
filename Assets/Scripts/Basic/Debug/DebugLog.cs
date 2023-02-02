@@ -72,22 +72,25 @@ public static class DebugF
             int i = 0;
             foreach (var item in content as IEnumerable)
             {
-                if (item == null)
-                {
-                    v += $"[<color=green>{i}</color>]<color=red>null</color> ;  ";
-                    i++;
-                }
-                else if (item.GetType().GetMethod("ToString").DeclaringType == item.GetType())//ToString方法是否是自己的,即是否能得到有效的字符串
-                {
-                    v += $"[<color=green>{i}</color>]{item.ToString()} ;  ";
-                    i++;
-                }
-                else if (item.GetType().IsClass)
-                {
-                    v += $"[<color=green>{i}</color>]{GetClassFieldsLog(item)}, \n";
-                    i++;
-                }
+                string logStr = GetObjectLog(item, color);
 
+                v += $"[<color=green>{i}</color>]{logStr} ;  ";
+                i++;
+            }
+        }
+        //如果为值元组
+        else if (content.GetType().FullName.StartsWith("System.ValueTuple"))
+        {
+            //遍历
+            int i = 0;
+            foreach (var item in content.GetType().GetFields())
+            {
+                var value = item.GetValue(content);
+
+                string logStr = GetObjectLog(value, color);
+
+                v += $"[<color=green>{i}</color>]{logStr} ;  ";
+                i++;
             }
         }
 
@@ -119,7 +122,7 @@ public static class DebugF
 
 
     ///<summary> 将一个类型实例的字段打印出来 </summary>
-    public static string GetClassFieldsLog<T>(T content, bool color = true) where T : class
+    public static string GetClassFieldsLog<T>(T content, bool color = true)
     {
         string re = "";
 
@@ -149,6 +152,51 @@ public static class DebugF
         }
         re = re.TrimEnd(' ', ';');
         return re;
+    }
+    ///<summary> 分析一个物体将其转化成 Log 字符串 </summary>
+    public static string GetObjectLog<T>(T content, bool color = true)
+    {
+        string v = "";
+
+        if (content == null)
+        {
+            string t = "null";
+            if (color)
+                t = $"<color=red>{t}</color>";
+            v += t;
+        }
+        else if (content is IEnumerable)//如果为可枚举的
+        {
+            int i = 0;
+            v += "<";
+            foreach (var item in content as IEnumerable)
+            {
+                string logStr = GetObjectLog(item, color);
+                string iStr = color ? $"<color=green>{i}</color>" : $"{i}";
+
+                v += $"[{iStr}]{logStr} ;  ";
+                i++;
+            }
+            v = v.TrimEnd(' ', ';');
+            v += ">";
+        }
+
+        else if (content.GetType().IsValueType)//如果为值元组
+        {
+            v += $"{content.ToString()}";
+        }
+        else if (content.GetType().GetMethod("ToString").DeclaringType == content.GetType())//ToString方法是否是自己的, 即是否能得到有效的字符串
+        {
+            v += $"{content.ToString()}";
+
+        }
+        else if (content.GetType().IsClass)
+        {
+            v += $"{GetClassFieldsLog(content, color)}";
+        }
+
+
+        return v;
     }
 
 
