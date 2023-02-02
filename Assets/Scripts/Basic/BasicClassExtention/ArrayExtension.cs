@@ -180,7 +180,7 @@ public static class ExtensionArray
         return !IsEmpty(source);
     }
 
-   ///<summary>移动列表的某个元素</summary>
+    ///<summary>移动列表的某个元素</summary>
     public static void Move<T>(this List<T> source, int from, int to)
     {
         if (from == to)
@@ -233,6 +233,23 @@ public static class ExtensionArray
     public static void SortBy<T>(this List<T> source, Func<T, int> index)
     {
         source.Sort((x, y) => index(x).CompareTo(index(y)));
+    }
+
+    ///<summary>SelectMany方法拓展:排除Null</summary>
+    public static IEnumerable<TResult> SelectManyNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
+    {
+        return source.SelectMany((x) =>
+        {
+            var re = selector(x);
+            if (re == null)
+            {
+                return new List<TResult>();
+            }
+            else
+            {
+                return re;
+            }
+        });
     }
 
 
