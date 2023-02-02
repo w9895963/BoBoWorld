@@ -52,7 +52,7 @@ public static class DebugF
 
 
     ///<summary>拓展方法, 自动根据类型处理 </summary>
-    public static T Log<T>(this T content, string label = null, bool color = true)
+    public static T Log<T>(this T content, string label = null, bool color = true, bool logFields = true)
     {
         string v = "";
 
@@ -72,7 +72,7 @@ public static class DebugF
             int i = 0;
             foreach (var item in content as IEnumerable)
             {
-                string logStr = GetObjectLog(item, color);
+                string logStr = GetObjectLog(item, color, logFields);
 
                 v += $"[<color=green>{i}</color>]{logStr} ;  ";
                 i++;
@@ -87,7 +87,7 @@ public static class DebugF
             {
                 var value = item.GetValue(content);
 
-                string logStr = GetObjectLog(value, color);
+                string logStr = GetObjectLog(value, color, logFields);
 
                 v += $"[<color=green>{i}</color>]{logStr} ;  ";
                 i++;
@@ -154,9 +154,10 @@ public static class DebugF
         return re;
     }
     ///<summary> 分析一个物体将其转化成 Log 字符串 </summary>
-    public static string GetObjectLog<T>(T content, bool color = true)
+    public static string GetObjectLog<T>(T content, bool color = true, bool logFields = true)
     {
         string v = "";
+       
 
         if (content == null)
         {
@@ -190,12 +191,13 @@ public static class DebugF
             v += $"{content.ToString()}";
 
         }
-        else if (content.GetType().IsClass)
+        else if (content.GetType().IsClass)//获得字段
         {
-            v += $"{GetClassFieldsLog(content, color)}";
+            if (logFields)
+                v += $"{GetClassFieldsLog(content, color)}";
         }
 
-
+        v.TrimEnd(' ', ';', ':');
         return v;
     }
 

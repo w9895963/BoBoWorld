@@ -38,6 +38,38 @@ namespace EventData
 
             return arr;
         }
+        ///<summary>获取所有可能的数据名列表, 全名, 不去重,分组</summary>
+        public static string[] GetDataNamesListWithGroup()
+        {
+            string[] arr = GetDataNamesList();
+
+            arr = arr.Select(name =>
+              {
+                  string group = null;
+                  string fullName = name;
+                  var strings = name.Split("_").ToList();
+                  if (strings.Count > 1)
+                  {
+                      strings.RemoveLast();
+                      if (strings[0] == "全局")
+                          strings.RemoveAt(0);
+
+
+                      if (strings.Count > 1)
+                          group = string.Join("/", strings);
+                      else
+                          group = strings[0];
+                  }
+
+                  if (group != null)
+                      fullName = fullName.Insert(0, group + "/");
+                  return fullName;
+              }).ToArray();
+
+
+
+            return arr;
+        }
         ///<summary>获取所有可能的数据名列表, 全名, 不去重</summary>
         public static string[] GetDataNamesList_PresetName()
         {

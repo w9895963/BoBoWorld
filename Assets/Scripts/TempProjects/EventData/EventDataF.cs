@@ -13,7 +13,7 @@ namespace EventData
 
 
 
-        ///* <summary>获得数据，根据输入判断全局与否</summary>
+        ///<summary>获得数据，根据输入判断全局与否</summary>
         public static EventDataHandler<T> GetData<T>(string dataName, GameObject gameObject)
         {
             EventData<T> eventData = EventDataCoreF.GetEventData<T>(dataName, gameObject);
@@ -41,6 +41,15 @@ namespace EventData
             EventDataHandler dataOperator = new EventDataHandler(eventData);
             return dataOperator;
         }
+
+        ///<summary>生成一个简单的数据, 不加入库</summary>
+        public static EventDataHandler<T> CreateSimpleData<T>(T data)
+        {
+            EventData<T> eventData = new EventData<T>(data);
+            EventDataHandler<T> dataOperator = new EventDataHandler<T>(eventData);
+            return dataOperator;
+        }
+     
 
 
 

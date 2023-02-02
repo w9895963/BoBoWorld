@@ -51,7 +51,7 @@ namespace Configure
         //^界面:配置项目列表
         [SerializeReference]
         [HideReferenceObjectPicker]
-        [ListDrawerSettings(HideAddButton = true, ListElementLabelName = nameof(ConfigureItem.显示标题),DraggableItems = false)]
+        [ListDrawerSettings(HideAddButton = true, ListElementLabelName = nameof(ConfigureItem.显示标题), DraggableItems = false, Expanded = true)]
         [Space]
         public List<ConfigureItem> 配置文件列表 = new List<ConfigureItem>();
 
@@ -87,7 +87,7 @@ namespace Configure
         {
             HotUpdate();
 
-            
+
 
             配置文件列表.ForEach(x =>
             {

@@ -27,7 +27,7 @@ namespace EventData
 
 
 
-
+            public EventData() { }
 
             public EventData(string stringKey, GameObject gameObject = null, System.Type type = null)
             {
@@ -84,7 +84,7 @@ namespace EventData
         {
             public T data;
 
-
+            public EventData(T data) { }
             public EventData(string key, GameObject gameObject = null) : base(key, gameObject, typeof(T))
             {
 

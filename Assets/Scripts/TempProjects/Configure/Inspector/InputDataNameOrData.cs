@@ -11,7 +11,8 @@ namespace Configure.Inspector
 {
     [Serializable]
     [InlineProperty]
-    [LabelWidth(120)]
+    // [LabelWidth(120)]
+    // [HorizontalGroup("A", 0.5f)]
     public partial class InputDataNameOrData
     {
         [SerializeField]
@@ -24,53 +25,60 @@ namespace Configure.Inspector
 
 
 
-
-        private Type dataInputFileType;
-        private Type inspectorDataType;
-        private string presetDataName = "数据名或数据";
+        //
+        private Type dataInputFile_DataType;
+        private string presetDataName;
         private Object storeData;
+        private bool isStatic = true;
+        private Type dataInputFile_ObjectType;
+        private DataBox dataInputFile_DataObject;
+        private DataBox dataInputFile_NameObject;
         private Action switchToDataName;
         private Action switchToDataValue;
-        private bool isStatic = true;
 
-        public InputDataNameOrData(Type dataInputFileType, string presetDataName = null, Object presetData = null)
+        public InputDataNameOrData(Type dataInputFileType, string presetDataName = null, Object presetData = null, bool? forceStatic = null)
         {
-            this.dataInputFileType = dataInputFileType;
+            this.dataInputFile_DataType = dataInputFileType;
             this.presetDataName = presetDataName;
             this.storeData = presetData;
+            this.isStatic = forceStatic ?? (presetData != null);
 
+            dataInputFile_ObjectType = typeof(DataValueClassGroup).GetNestedTypes().FirstOrDefault(t => t.GetField(nameof(DataValueNormalStyle<Object>.dataValue)).FieldType == dataInputFileType);
+            if (dataInputFile_ObjectType != null)
+                dataInputFile_DataObject = (DataBox)Activator.CreateInstance(dataInputFile_ObjectType);
+            dataInputFile_NameObject = new DataName() { dataName = presetDataName };
 
             switchToDataName = () =>
             {
-                dataInputFile = new DataName() { dataName = presetDataName };
+                dataInputFile = dataInputFile_NameObject;
                 dataInputFile.switchDataAction += SwitchData;
                 dataInputFile.dataType = dataInputFileType;
-                isStatic = false;
+                dataInputFile.SetDataName(presetDataName);
             };
-            inspectorDataType = typeof(DataValueClassGroup).GetNestedTypes().FirstOrDefault(t => t.GetField(nameof(DataValueNormalStyle<Object>.dataValue)).FieldType == dataInputFileType);
+
             switchToDataValue = () =>
             {
-                if (inspectorDataType == null)
+                if (dataInputFile_ObjectType == null)
                 {
                     Debug.LogError("Configure.Inspector.InputDataNameOrData.DataValueClassGroup 内没有找到可以创建的类型");
                 }
                 else
                 {
-                    dataInputFile = (DataBox)Activator.CreateInstance(inspectorDataType);
+                    dataInputFile = dataInputFile_DataObject;
                     dataInputFile.switchDataAction += SwitchData;
                     dataInputFile.dataType = dataInputFileType;
-                    isStatic = true;
+                    dataInputFile.SetDataValue(storeData);
 
                 }
             };
-
 
 
 
 
             TimerF.WaitUpdate_InEditor(() =>
             {
-                SwitchData(presetDataName != null);
+
+                SwitchData(this.isStatic);
             }, 50);
 
 
@@ -82,32 +90,32 @@ namespace Configure.Inspector
             if (toNameType)
             {
                 switchToDataName();
+                isStatic = false;
 
             }
             else
             {
                 switchToDataValue();
+                isStatic = true;
             }
         }
 
 
 
 
-        public (Func<T> getter, Action<T> setter) CreateGetterSetter<T>(GameObject gameObject)
+        public EventData.EventDataHandler<T> CreateDataHandler<T>(GameObject gameObject)
         {
-            (Func<T> getter, Action<T> setter) re = default;
+            EventData.EventDataHandler<T> re = null;
             if (isStatic)
             {
-                re.getter = () => ((DataValueNormalStyle<T>)dataInputFile).dataValue;
-                re.setter = (v) => ((DataValueNormalStyle<T>)dataInputFile).dataValue = v;
+                re = EventData.EventDataF.CreateSimpleData<T>((T)dataInputFile.GetDataValue());
 
             }
             else
             {
-                EventData.EventDataHandler<T> eventDataHandler = EventData.EventDataF.GetData<T>(((DataName)dataInputFile).dataName, gameObject);
-                re.getter = () => eventDataHandler.Data;
-                re.setter = (v) => eventDataHandler.Data = v;
+                re = EventData.EventDataF.GetData<T>(((DataName)dataInputFile).dataName, gameObject);
             }
+
 
             return re;
         }
@@ -132,8 +140,32 @@ namespace Configure.Inspector
         [Serializable]
         public class DataBox
         {
+            protected Func<Object> dataValueGetter = null;
+            protected Action<Object> dataValueSetter = null;
+
+
             public Action<bool> switchDataAction = null;
             public Type dataType;
+
+
+            public void SetDataName(string dataName)
+            {
+                if (this is DataName)
+                {
+                    ((DataName)this).dataName = dataName;
+                }
+            }
+
+            public void SetDataValue(Object dataValue)
+            {
+                if (dataValue != null)
+                    dataValueSetter?.Invoke(dataValue);
+            }
+
+            public Object GetDataValue()
+            {
+                return dataValueGetter?.Invoke();
+            }
         }
 
 
@@ -141,18 +173,22 @@ namespace Configure.Inspector
         [Serializable]
         public class DataName : DataBox
         {
+
+
+            [HideLabel]
+            [ValueDropdown(nameof(dataNameList))]
+            [HorizontalGroup("A", 0)]
+            public string dataName;
+
+
             [Button("动")]
-            [PropertyOrder(-1)]
-            [HorizontalGroup("A")]
-            [HorizontalGroup("A/1", 40)]
+            [PropertyTooltip("动态数据会在运行时根据名字获取数据,静态数据会在运行时直接获取设定的数据")]
+            [PropertyOrder(1)]
+            [HorizontalGroup("A", 40, MinWidth = 25)]
             public void SwitchData()
             {
                 switchDataAction?.Invoke(false);
             }
-            [HideLabel]
-            [ValueDropdown(nameof(dataNameList))]
-            [HorizontalGroup("A/2")]
-            public string dataName;
 
 
             private string[] dataNameList => EventData.DataNameF.GetAllNamesOnType(dataType).ToArray();
@@ -161,17 +197,27 @@ namespace Configure.Inspector
         [Serializable]
         public class DataValueNormalStyle<T> : DataBox
         {
-            [Button("静")]
-            [PropertyOrder(-1)]
+
+
+
+            [HideLabel]
             [HorizontalGroup("A")]
-            [HorizontalGroup("A/1", 40)]
+            public T dataValue;
+
+            public DataValueNormalStyle()
+            {
+                dataValueGetter = () => dataValue;
+                dataValueSetter = (v) => dataValue = (T)v;
+            }
+
+            [Button("静")]
+            [PropertyTooltip("动态数据会在运行时根据名字获取数据,静态数据会在运行时直接获取设定的数据")]
+            [PropertyOrder(1)]
+            [HorizontalGroup("A", 40, MinWidth = 25)]
             public void SwitchData()
             {
                 switchDataAction?.Invoke(true);
             }
-            [HideLabel]
-            [HorizontalGroup("A/2")]
-            public T dataValue;
         }
     }
 }
