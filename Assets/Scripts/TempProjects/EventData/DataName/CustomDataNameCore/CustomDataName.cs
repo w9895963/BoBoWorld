@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EventData.CustomDataNameCore;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace EventData.CustomDataNameCore
@@ -10,7 +11,9 @@ namespace EventData.CustomDataNameCore
     [CreateAssetMenu(fileName = "数据名列表", menuName = "配置/数据名列表", order = 0)]
     public partial class CustomDataName : ScriptableObject
     {
+        [ListDrawerSettings(ListElementLabelName = nameof(DataNameSetup.labelName))]
         public List<DataNameSetup> 数据名列表 = new List<DataNameSetup>();
+
 
         ///<summary> 获得所有自定义数据名和类型的列表, 允许重复, 允许空类型</summary>
         public static List<(string, Type)> GetAllAdditionDataNamesAndTypesList()
@@ -23,9 +26,9 @@ namespace EventData.CustomDataNameCore
                 list.数据名列表.ForEach((data) =>
                 {
                     // 如果数据名不为空, 且类型不为空
-                    if (data.DataNameFull.IsNotEmpty())
+                    if (data.数据全名.IsNotEmpty())
                         //添加数据名和类型
-                        re.Add((data.DataNameFull, data.type));
+                        re.Add((data.数据全名, data.type));
                 });
             });
 
@@ -42,38 +45,44 @@ namespace EventData.CustomDataNameCore
             #region //&界面
 
 
-            [SerializeField]
             [HideInInspector]
-            private string labelName;
+            public string labelName;
+            [ShowInInspector]
+            public string 数据全名
+            {
+                get
+                {
+                    string pre = 全局数据 ? "全局_" : "";
+                    string n = 数据名;
+                    return pre + n;
+                }
+            }
 
 
 
             [SerializeField]
-            
-            
-            private string dataName = "数据名";
+
+
+            private string 数据名 = "数据名";
 
 
             [SerializeField]
-            
-            
-            
-            
-            private string typeName = "选择类型名";
+            [ValueDropdown(nameof(AllTypes))]
+
+            private string 选择类型 = "选择类型名";
 
             [SerializeField]
-            
-            
-            private bool autoType = false;
+            [HorizontalGroup("选择类型" )]
+            [ToggleLeft]
+            private bool 猜测类型 = false;
 
             [SerializeField]
-            
-            
-            private bool IsGlobal;
+            [HorizontalGroup("选择类型" )]
+            [ToggleLeft]
+            private bool 全局数据;
 
             [SerializeField]
-            
-            
+            [ReadOnly]
             private string 数据重复检测;
 
             #endregion
@@ -85,20 +94,12 @@ namespace EventData.CustomDataNameCore
 
 
 
-            public Type type => EventData.DataNameF.GetAllTypes().Where((t) => t.ToString() == typeName).FirstOrDefault();
+            public Type type => EventData.DataNameF.GetAllTypes().Where((t) => t.ToString() == 选择类型).FirstOrDefault();
 
 
 
 
-            public string DataNameFull
-            {
-                get
-                {
-                    string pre = IsGlobal ? "全局_" : "";
-                    string n = dataName;
-                    return pre + n;
-                }
-            }
+
 
             public void OnValidate()
             {
@@ -109,7 +110,7 @@ namespace EventData.CustomDataNameCore
 
             private void UpdateLabelName()
             {
-                labelName = $"数据名: {DataNameFull}; 数据类型: {typeName}";
+                labelName = $"数据名: {数据全名}; 数据类型: {选择类型}";
             }
             //检查数据名是否重复
             private void checkDuplicate()
@@ -118,7 +119,7 @@ namespace EventData.CustomDataNameCore
                 IEnumerable<string> customNames = GetAllAdditionDataNamesAndTypesList().Select((x) => x.Item1);
                 string[] names = Prenames.Concat(customNames).ToArray();
                 //如果数据在所有数据名中
-                if (names.Count((n) => n == DataNameFull) > 1)
+                if (names.Count((n) => n == 数据全名) > 1)
                 {
                     数据重复检测 = "数据名重复";
                 }
@@ -131,14 +132,14 @@ namespace EventData.CustomDataNameCore
 
             private void CheckType()
             {
-                if (autoType)
+                if (猜测类型)
                 {
-                    string v = EventData.DataNameF.GetPresetType(DataNameFull)?.ToString();
+                    string v = EventData.DataNameF.GetPresetType(数据全名)?.ToString();
                     if (v.IsEmpty())
                     {
                         v = AllTypes[0];
                     }
-                    typeName = v;
+                    选择类型 = v;
                 }
             }
 

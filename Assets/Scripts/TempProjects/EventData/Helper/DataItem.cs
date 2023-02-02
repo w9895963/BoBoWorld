@@ -1,4 +1,5 @@
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace EventData
@@ -9,6 +10,7 @@ namespace EventData
     {
         //*类：数据条目
         [System.Serializable]
+      
         public class DataItem
         {
             [HideInInspector]

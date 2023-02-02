@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EventData.Core;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace EventData
@@ -18,9 +19,11 @@ namespace EventData
         public class EventDataVisualizer : MonoBehaviour
         {
             //字段：全局数据条目列表
-            public List<DataItem> GlobalData = new List<DataItem>();
+            [ListDrawerSettings(ListElementLabelName = nameof(DataItem.labelName), Expanded = false)]
+            public List<DataItem> 全局数据 = new List<DataItem>();
             //字段：本地数据条目列表
-            public List<DataItem> ObjectData = new List<DataItem>();
+            [ListDrawerSettings(ListElementLabelName = nameof(DataItem.labelName), Expanded = false)]
+            public List<DataItem> 本地数据 = new List<DataItem>();
 
 
 
@@ -33,11 +36,11 @@ namespace EventData
 
 
             //*方法：更新数据
-            
+
             public void UpdateData()
             {
-                GlobalData.Clear();
-                ObjectData.Clear();
+                全局数据.Clear();
+                本地数据.Clear();
 
                 //获得事件数据存储字典
                 List<KeyValuePair<string, Core.EventData>> eventDataGo = Core.DataHolder.GetGlobalDict().ToList();
@@ -45,17 +48,17 @@ namespace EventData
                 //如果组件存在
 
 
-                AddData(GlobalData, eventDataGo);
-                AddData(ObjectData, eventDataLo);
+                AddData(全局数据, eventDataGo);
+                AddData(本地数据, eventDataLo);
 
-                AddDataAutoUpdateEvent(GlobalData);
-                AddDataAutoUpdateEvent(ObjectData);
-                
+                AddDataAutoUpdateEvent(全局数据);
+                AddDataAutoUpdateEvent(本地数据);
+
 
                 //~排序
                 var list = DataNameF.GetDataNamesList().ToList();
-                ObjectData.SortBy((a) => list.IndexOf(a.eventData.Key));
-                GlobalData.SortBy((a) => list.IndexOf(a.eventData.Key));
+                本地数据.SortBy((a) => list.IndexOf(a.eventData.Key));
+                全局数据.SortBy((a) => list.IndexOf(a.eventData.Key));
 
             }
 
@@ -67,7 +70,7 @@ namespace EventData
                 //打印内容
                 string log = "";
                 //选择所有打印的数据
-                List<DataItem> dataItemList = GlobalData.Where(dataItem => dataItem.打印).ToList();
+                List<DataItem> dataItemList = 全局数据.Where(dataItem => dataItem.打印).ToList();
                 //如果有
                 if (dataItemList.Count > 0)
                 {
@@ -82,7 +85,7 @@ namespace EventData
                     }
                 }
                 //选择所有打印的本地数据
-                List<DataItem> dataItemList_ObjectData = ObjectData.Where(dataItem => dataItem.打印).ToList();
+                List<DataItem> dataItemList_ObjectData = 本地数据.Where(dataItem => dataItem.打印).ToList();
                 //如果有
                 if (dataItemList_ObjectData.Count > 0)
                 {

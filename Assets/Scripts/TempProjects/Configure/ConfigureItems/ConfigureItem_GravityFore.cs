@@ -22,17 +22,20 @@ namespace Configure.ConfigureItems
         #region //&界面部分
         [Header("静态参数")]
 
-        [Tooltip("默认重力")]
-        public Vector2 p默认重力 = new Vector2(0, -10);
+
 
 
 
         [Header("动态参数")]
-
+        [Tooltip("默认重力")]
+        [SerializeField]
+        private Vector2 默认重力 = new Vector2(0, -10);
         [Tooltip("")]
-        public Configure.Inspector.DataNameDropDown<Vector2> p重力向量 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.重力向量);
+        [SerializeField]
+        private Configure.Inspector.DataNameDropDown<Vector2> 当前重力向量 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.重力向量);
         [Tooltip("")]
-        public Configure.Inspector.DataNameDropDown<Vector2> p地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.地表法线);
+        [SerializeField]
+        private Configure.Inspector.DataNameDropDown<Vector2> 地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.地表法线);
 
 
 
@@ -70,8 +73,8 @@ namespace Configure.ConfigureItems
 
 
 
-        public string gravityVectorName => p重力向量.dataName;
-        public string groundNormalName => p地表法线.dataName;
+        public string gravityVectorName => 当前重力向量.dataName;
+        public string groundNormalName => 地表法线.dataName;
         public string gravityForceName => p重力施力.dataName;
 
 

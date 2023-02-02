@@ -15,12 +15,12 @@ namespace Configure
     {
         #region //&界面部分
 
-        [FoldoutGroup("配置属性", false)]
-        [GUIColor(nameof(buttonColor))]
-        // public int placeHolderHead;
+
 
 
         //*界面:启动按钮
+        [FoldoutGroup("配置属性", false)]
+        [GUIColor(nameof(buttonColor))]
         [Button("@buttonName", ButtonHeight = 44)]
 
         [HorizontalGroup("配置属性/h")]

@@ -50,8 +50,12 @@ namespace EventData
         ///<summary>获得某一类型的所有数据名</summary>
         public static string[] GetAllNamesOnType(System.Type type)
         {
+            if (type == null)
+                return new string[0];
+
             List<string> re = new List<string>();
             //所有数据名
+
 
 
 
@@ -175,9 +179,9 @@ namespace EventData
                 list.数据名列表.ForEach((data) =>
                 {
                     // 如果数据名不为空, 且类型不为空
-                    if (data.DataNameFull.IsNotEmpty() && data.type != null)
+                    if (data.数据全名.IsNotEmpty() && data.type != null)
                         //添加数据名和类型
-                        re.TryAdd(data.DataNameFull, data.type);
+                        re.TryAdd(data.数据全名, data.type);
                 });
             });
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 
@@ -14,11 +15,8 @@ namespace Configure
     public class ConfigureBuilderMono : MonoBehaviour
     {
         //*按钮:检查缺失组件
-
-        
-        
-        
-        public string 缺失组件 = "无";
+        [Button("检查缺失组件")]
+        [PropertyOrder(-1)]
         private void CheckRequiredTypes()
         {
             //~缺失组件
@@ -27,9 +25,14 @@ namespace Configure
 
 
 
-            types_ = 配置列表.WhereNotNull()
-            .SelectMany(x => x.配置文件列表)
-            .SelectMany(x => x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null))
+            types_ =
+            配置列表
+            // .Log("配置列表")//Test
+            .WhereNotNull()
+            .SelectManyNotNull(x => x.配置文件列表)
+            // .Log("配置文件列表")//Test
+            .SelectManyNotNull(x => x.RequiredTypes == null ? new List<Type>() : x.RequiredTypes.Where(y => gameObject.GetComponent(y) == null))
+            // .Log("RequiredTypes")//Test
             .Select(x => x.ToString()).ToList();
 
             types.AddRange(types_);
@@ -37,9 +40,13 @@ namespace Configure
             缺失组件 = types.Count == 0 ? "无" : string.Join("\n", types);
 
         }
+        [ReadOnly]
+        public string 缺失组件 = "无";
+
 
 
         //*配置列表
+        [Space]
         public List<ConfigureItemManager> 配置列表 = new List<ConfigureItemManager>();
 
 

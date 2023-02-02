@@ -88,7 +88,7 @@ namespace Configure.Inspector
     }
 
 
-    //数据值的细分类型
+    ///<summary> 数据值的细分类型 </summary>
     public partial class InputDataAndValue
     {
         [Serializable]
