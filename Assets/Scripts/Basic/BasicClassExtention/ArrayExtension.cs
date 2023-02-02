@@ -200,6 +200,13 @@ public static class ExtensionArray
         source.RemoveAll((x) => x.Equals(items));
     }
 
+    ///<summary>移除末尾</summary>
+    public static void RemoveLast<T>(this List<T> source)
+    {
+        if (source.Count > 0)
+            source.RemoveAt(source.Count - 1);
+    }
+
     public static void RemoveEach<T>(this List<T> source, params T[] items)
     {
         foreach (var item in items)
