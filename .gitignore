@@ -9,8 +9,9 @@
 # 不忽略Assets文件夹
 /*/
 !/Assets/
-
-
+# 不忽略Packages文件夹,除了Packages下的json文件
+!/Packages/
+/Packages/*.json
 
 # 忽略Assets文件夹下的所有子文件夹
 # 不忽略Assets文件夹下的Scripts文件夹
