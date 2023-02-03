@@ -41,7 +41,7 @@ public class CharacterGroundEvent_CMP : MonoBehaviour
             if (ct.normal.Angle(UpDirection) <= allowAngle)
             {
                 (GameObject obj, List<ContactPoint2D> ps) newM = (ct.collider.gameObject, new List<ContactPoint2D>());
-                var ms = groundObjects.FIndOrAdd(newM, (o) => o.Item1 == ct.collider.gameObject);
+                var ms = groundObjects.FindOrAdd(newM, (o) => o.Item1 == ct.collider.gameObject);
                 ms.Item2.Add(ct);
             }
         });

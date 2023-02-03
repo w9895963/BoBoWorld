@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public static class StringExtension
+public static partial class ExtensionMethods
 {
 
     public static string InsertLast(this string str, string text)

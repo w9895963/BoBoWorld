@@ -7,8 +7,10 @@ using System.Reflection;
 
 
 
-public static class Extension_Type
+public static partial class ExtensionMethods
 {
+
+
     ///<summary>获得类型的所有子类</summary>
     public static List<Type> GetSubTypes(this Type type, string nameSpace = null)
     {
@@ -27,4 +29,7 @@ public static class Extension_Type
         }
         return types;
     }
+
+
+
 }

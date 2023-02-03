@@ -1,18 +1,17 @@
 {
-  "name": "com.w9895963.colorfullogextension",
-  "displayName": "Colorful Log",
+  "name": "com.whuma.smartlogextension",
+  "displayName": "Smart Log",
   "version": "0.5.0",
   "unity": "2019.4",
-  "description": "Beatify log with color",
+  "description": "smart log with color",
   "author": {
-    "name": "Puff",
+    "name": "w9895963",
     "url": "https://github.com/w9895963"
   },
-  "changelogUrl": "https://github.com/vertxxyz/Vertx.Debugging/blob/master/CHANGELOG.md",
-  "documentationUrl": "https://github.com/vertxxyz/Vertx.Debugging",
+  "changelogUrl": "",
+  "documentationUrl": "",
   "keywords": [
-    "debug" 
+    "debug"
   ],
-  "category": "Tools",
-  "dependencies": {}
+  "category": "Tools"
 }

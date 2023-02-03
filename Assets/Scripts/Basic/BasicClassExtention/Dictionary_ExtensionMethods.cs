@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Extension_Dictionary
+public static partial class ExtensionMethods
 {
 
 
@@ -104,5 +104,7 @@ public static class Extension_Dictionary
         key = default;
         return false;
     }
+
+
 
 }

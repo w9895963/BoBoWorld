@@ -17,7 +17,7 @@ public class CameraManager : MonoBehaviour
 
     public void FollowMainCharacter(bool enabled = true)
     {
-        CameraAction_Follow_Conf conf = 配置文件.FIndType<CameraAction_Follow_Conf>();
+        CameraAction_Follow_Conf conf = 配置文件.FindType<CameraAction_Follow_Conf>();
 
 
 

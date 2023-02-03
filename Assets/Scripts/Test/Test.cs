@@ -11,12 +11,6 @@ public class Test : MonoBehaviour
 {
 
 
-    public Configure.Inspector.ConditionTrigger conditionTrigger = new Configure.Inspector.ConditionTrigger();
-
-
-    public Configure.Inspector.ConditionTriggerList conditionTriggers = new Configure.Inspector.ConditionTriggerList();
-
-
 
     private void Start()
     {
@@ -28,7 +22,7 @@ public class Test : MonoBehaviour
 
     public void 本地测试方法()
     {
-        conditionTrigger.GetCondition(gameObject).Log("conditionTrigger");
+
         
 
     }

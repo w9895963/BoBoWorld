@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 
-public static class Extension_Input
+public static partial class ExtensionMethods
 {
 
 

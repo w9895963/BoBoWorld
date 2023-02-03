@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public static class ExtensionMethodUnity
+public static partial class ExtensionMethods
 {
 
 

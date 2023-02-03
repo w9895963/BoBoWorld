@@ -3,18 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static ExtensionMethods.DebugLog;
 using Object = System.Object;
-using static Extension.DebugLog;
 
-public static partial class Extension
-{   //生成英文文档
-    ///<summary culture="en-US">Log the content with color</summary>
-    ///<summary>拓展方法, 自动根据类型处理 </summary>
-   
-    public static T Log<T>(this T content, string label = null, bool color = true, int limitDepth = 3)
+public static partial class ExtensionMethods
+{
+
+    ///<summary>自动根据类型把对象打印出来,根据类型自动处理</summary>
+    ///<summary culture="en-US">Get the log infos of an object</summary>
+    public static T Log<T>(this T content, string label = null, bool color = true, int limitDepth = 3, bool showType = true, bool showName = true, bool showIndex = true)
     {
 
-        var infos = GetObjectLogInfos(content, limitDepth);
+        var infos = GetOLogInfos(content, limitDepth);
 
         int maxDepth = infos.Max(x => x.depth);
 
@@ -24,20 +24,25 @@ public static partial class Extension
              string logStr;
 
              string type = x.type == null ? "Null" : x.type.Name;
-             string index = x.index.ToString();
+             string index = x.index == null ? "" : x.index.ToString();
              string name = x.name;
              string value = x.value;
              if (color)
              {
                  type = $"<color=green>{type}</color>";
-                 index = $"<color=green>{index}</color>";
+                 index = index != "" ? $"<color=green>{index}</color>" : "";
                  name = $"<color=yellow>{name}</color>";
-                 value = $"<color=blue>{value}</color>";
+                 value = $"<color=cyan>{value}</color>";
              }
              //修饰
              type = $"({type})";
-             index = $"[{index}]";
+             index = index != "" ? $"[{index}]" : "";
              name = $"{name} : ";
+
+             //开关
+             type = showType ? type : "";
+             index = showIndex ? index : "";
+             name = showName ? name : "";
 
              //组装
              logStr = $"{index}{type}{name}{value}";
@@ -56,24 +61,28 @@ public static partial class Extension
     }
 
 
+
+
+
     public static class DebugLog
-    {   ///<summary culture="en-US">Get the log infos of an object</summary>
+    {
         ///<summary> 将一个类型实例的字段打印出来 </summary>
-        public static List<(int depth, int index, string name, Type type, string value)> GetObjectLogInfos(Object content, int limitDepth = 3)
+        ///<summary culture="en-US">Get the log infos of an object</summary>
+        public static List<(int depth, int? index, string name, Type type, string value)> GetOLogInfos(Object content, int limitDepth = 3)
         {
             List<int> depths = new List<int>();
-            List<int> indexes = new List<int>();
+            List<int?> indexes = new List<int?>();
             List<string> names = new List<string>();
             List<Type> types = new List<Type>();
             List<string> values = new List<string>();
 
-            List<(int depth, int index, string name, Type type, string value)> GetReturn()
+            List<(int depth, int? index, string name, Type type, string value)> GetReturn()
             {
                 return depths.Select((x, i) => (depth: x, index: indexes[i], name: names[i], type: types[i], value: values[i])).ToList(); ;
             }
 
             depths.Add(limitDepth);
-            indexes.Add(0);
+            indexes.Add(null);
             names.Add("");
 
             //~根据优先级, 逐个判断类型
@@ -95,39 +104,42 @@ public static partial class Extension
             else if (content is IEnumerable)//如果为可枚举的
             {
                 values.Add("");
-                if (limitDepth > 0)
+                int curIndex = values.Count - 1;
+
+                int i = 0;
+                foreach (var valueObject in content as IEnumerable)
                 {
-                    int i = 0;
-                    foreach (var valueObject in content as IEnumerable)
+                    if (limitDepth > 0)
                     {
-                        var logInfos = GetObjectLogInfos(valueObject, limitDepth - 1);
-                        logInfos.ForEach(x =>
-                        {
-                            depths.Add(x.depth);
-                            indexes.Add(i);
-                            names.Add(x.name);
-                            types.Add(x.type);
-                            values.Add(x.value);
-                        });
-                        i++;
+                        var logInfos = GetOLogInfos(valueObject, limitDepth - 1);
+                        logInfos[0] = (logInfos[0].depth, i, logInfos[0].name, logInfos[0].type, logInfos[0].value);
+                        logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
                     }
+                    i++;
                 }
+                values[curIndex] = $"({i})⇣";
+
             }
 
             else if (content.GetType().FullName.StartsWith("System.ValueTuple")) //如果为值元组
             {
                 values.Add("");
-                if (limitDepth > 0)
+                int curIndex = values.Count - 1;
+
+                int i = 0;
+                foreach (var item in content.GetType().GetFields())
                 {
-                    int i = 0;
-                    foreach (var item in content.GetType().GetFields())
+                    if (limitDepth > 0)
                     {
                         var valueObject = item.GetValue(content);
-                        var logInfos = GetObjectLogInfos(valueObject, limitDepth - 1);
-                        logInfos.ForEach(x => { depths.Add(x.depth); indexes.Add(i); names.Add(item.Name); types.Add(x.type); values.Add(x.value); });
-                        i++;
+                        var logInfos = GetOLogInfos(valueObject, limitDepth - 1);
+                        logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
+                        logInfos.ForEach(x => { depths.Add(x.depth); indexes.Add(x.index); names.Add(x.name); types.Add(x.type); values.Add(x.value); });
                     }
+                    i++;
                 }
+                values[curIndex] = $"({i})⇣";
+
             }
             else if (content.GetType().IsValueType)//如果为值类型
             {
@@ -140,17 +152,23 @@ public static partial class Extension
             else if (content.GetType().IsClass)//获得字段
             {
                 values.Add("");
-                if (limitDepth > 0)
+                int curIndex = values.Count - 1;
+
+                int i = 0;
+                foreach (var item in content.GetType().GetFields())
                 {
-                    int i = 0;
-                    foreach (var item in content.GetType().GetFields())
+                    if (limitDepth > 0)
                     {
                         var valueObject = item.GetValue(content);
-                        var logInfos = GetObjectLogInfos(valueObject, limitDepth - 1);
-                        logInfos.ForEach(x => { depths.Add(x.depth); names.Add(item.Name); indexes.Add(i); types.Add(x.type); values.Add(x.value); });
-                        i++;
+                        var logInfos = GetOLogInfos(valueObject, limitDepth - 1);
+                        logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
+                        logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
                     }
+                    i++;
+
                 }
+                values[curIndex] = $"({i})⇣";
+
             }
             else
             {
@@ -165,9 +183,5 @@ public static partial class Extension
         }
 
     }
-
-
-
-
 
 }

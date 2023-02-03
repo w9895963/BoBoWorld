@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-public static class Extention_GameObject
+public static partial class ExtensionMethods
 {
     #region Destroy
     public static void Destroy(this List<Object> objects)
