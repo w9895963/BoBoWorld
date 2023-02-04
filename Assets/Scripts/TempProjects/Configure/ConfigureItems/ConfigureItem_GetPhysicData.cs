@@ -21,7 +21,7 @@ namespace Configure
             // public int;
             [Header("输出参数")]
             [Tooltip("")]
-            public Configure.Inspector.DataNameDropDown<Vector2> 运动速度 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.运动速度向量);
+            public Configure.Inspector.DataNameDropDown<Vector2> 运动速度 = new Configure.Inspector.DataNameDropDown<Vector2>(DataNamePreset.运动速度向量);
 
 
             [Space]

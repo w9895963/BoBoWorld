@@ -5,21 +5,31 @@ using System.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+
+
+
+
 namespace Configure.Inspector
 {
 
     [Serializable]
+    [InlineProperty]
+    [HideLabel]
     public class ConditionTriggerList
     {
         [SerializeField]
-        [ListDrawerSettings(Expanded = true)]
-        private List<ConditionTrigger> 触发条件列表 = new List<ConditionTrigger>();
+        [ListDrawerSettings(Expanded = false)]
+        [LabelText("$"+nameof(labelName))]
+        private List<ConditionTrigger> conditionList = new List<ConditionTrigger>();
+
+        [HideInInspector]
+        public string labelName = "触发条件列表";
 
 
 
         public (EventData.Core.EventData, Func<bool>)[] GetConditions(GameObject gameObject)
         {
-            return 触发条件列表.Select(c => c.GetCondition(gameObject)).ToArray();
+            return conditionList.Select(c => c.GetCondition(gameObject)).ToArray();
         }
     }
 
@@ -49,7 +59,7 @@ namespace Configure.Inspector
         {
             Type type = typeof(ConditionTrigger).GetNestedTypes()
             .Where(t => t.BaseType == typeof(ConditionCore))
-            .Log()
+            // .Log()//Test
             .FirstOrDefault(t => t.GetProperty(nameof(ConditionCore.dataType)).GetValue(Activator.CreateInstance(t)) as Type == EventData.DataNameF.GetType(dataName));
 
             if (type == null)

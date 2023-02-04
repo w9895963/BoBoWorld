@@ -43,7 +43,7 @@ namespace Configure
 
 
             [Tooltip("")]
-            public Configure.Inspector.DataNameDropDown<bool> p是否与地面物体物理接触 = new Configure.Inspector.DataNameDropDown<bool>(DataName.是否与地面物体物理接触);
+            public Configure.Inspector.DataNameDropDown<bool> p是否与地面物体物理接触 = new Configure.Inspector.DataNameDropDown<bool>(DataNamePreset.是否与地面物体物理接触);
 
 
 
@@ -54,7 +54,7 @@ namespace Configure
 
 
             [Tooltip("")]
-            public Configure.Inspector.DataNameDropDown<bool> p是否站立在地面 = new Configure.Inspector.DataNameDropDown<bool>(DataName.是否站在地面);
+            public Configure.Inspector.DataNameDropDown<bool> p是否站立在地面 = new Configure.Inspector.DataNameDropDown<bool>(DataNamePreset.是否站在地面);
 
 
 

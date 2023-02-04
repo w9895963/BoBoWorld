@@ -40,7 +40,7 @@ namespace Configure
 
             [Header("动态参数")]
             [Tooltip("")]
-            public Configure.Inspector.DataNameDropDown<Vector2> 重力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.重力向量);
+            public Configure.Inspector.DataNameDropDown<Vector2> 重力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataNamePreset.重力向量);
 
 
 
@@ -50,11 +50,11 @@ namespace Configure
 
             [Header("输出参数")]
             [Tooltip("")]
-            public Configure.Inspector.DataNameDropDown<Vector2> 地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.地表法线);
+            public Configure.Inspector.DataNameDropDown<Vector2> 地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataNamePreset.地表法线);
             [Tooltip("")]
-            public Configure.Inspector.DataNameDropDown<bool> 是否与地面物体物理接触 = new Configure.Inspector.DataNameDropDown<bool>(DataName.是否与地面物体物理接触);
+            public Configure.Inspector.DataNameDropDown<bool> 是否与地面物体物理接触 = new Configure.Inspector.DataNameDropDown<bool>(DataNamePreset.是否与地面物体物理接触);
             [Tooltip("")]
-            public Configure.Inspector.DataNameDropDown<GameObject> 地面物体 = new Configure.Inspector.DataNameDropDown<GameObject>(DataName.地面物体);
+            public Configure.Inspector.DataNameDropDown<GameObject> 地面物体 = new Configure.Inspector.DataNameDropDown<GameObject>(DataNamePreset.地面物体);
 
 
 

@@ -35,11 +35,11 @@ namespace Configure.ConfigureItems
         [Header("动态参数")]
 
         [Tooltip("")]
-        public Configure.Inspector.DataNameDropDown<float> 移动指令 = new Configure.Inspector.DataNameDropDown<float>(DataName.全局_输入_移动横向值);
+        public Configure.Inspector.DataNameDropDown<float> 移动指令 = new Configure.Inspector.DataNameDropDown<float>(DataNamePreset.全局_输入_移动横向值);
         [Tooltip("")]
-        public Configure.Inspector.DataNameDropDown<Vector2> 地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.地表法线);
+        public Configure.Inspector.DataNameDropDown<Vector2> 地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataNamePreset.地表法线);
         [Tooltip("")]
-        public Configure.Inspector.DataNameDropDown<Vector2> 运动速度 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.运动速度向量);
+        public Configure.Inspector.DataNameDropDown<Vector2> 运动速度 = new Configure.Inspector.DataNameDropDown<Vector2>(DataNamePreset.运动速度向量);
 
 
 
@@ -54,7 +54,7 @@ namespace Configure.ConfigureItems
         [Header("输出参数")]
 
         [Tooltip("")]
-        public Configure.Inspector.DataNameDropDown<Vector2> 行走施力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.行走施力);
+        public Configure.Inspector.DataNameDropDown<Vector2> 行走施力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataNamePreset.行走施力);
 
 
 

@@ -1,7 +1,7 @@
 namespace EventData
 {
     //枚举 ：数据名
-    public enum DataName
+    public enum DataNamePreset
     {
         全局_输入_移动向量,
         全局_输入_移动横向值,

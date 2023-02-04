@@ -36,17 +36,29 @@ namespace Configure.Inspector
         private Action switchToDataName;
         private Action switchToDataValue;
 
-        public InputDataOrValue(Type dataInputFileType, string presetDataName = null, Object presetData = null, bool? forceStatic = null)
+        public InputDataOrValue(Type dataInputFileType, string presetDataName = null, Object presetData = null, bool? forceStatic = null, bool hideSwicher = false, bool isUseDataForTrigger = true)
         {
             this.dataInputFile_DataType = dataInputFileType;
             this.presetDataName = presetDataName;
             this.storeData = presetData;
             this.isStatic = forceStatic ?? (presetData != null);
 
+
+
             dataInputFile_ObjectType = typeof(DataValueClassGroup).GetNestedTypes().FirstOrDefault(t => t.GetField(nameof(DataValueNormalStyle<Object>.dataValue)).FieldType == dataInputFileType);
             if (dataInputFile_ObjectType != null)
+            {
                 dataInputFile_DataObject = (DataBox)Activator.CreateInstance(dataInputFile_ObjectType);
-            dataInputFile_NameObject = new DataName() { dataName = presetDataName };
+                dataInputFile_DataObject.hideSwicher = hideSwicher;
+            }
+            dataInputFile_NameObject = new DataName()
+            {
+                dataName = presetDataName,
+                isUseDataForCondition = isUseDataForTrigger,
+                hideSwicher = hideSwicher,
+            };
+
+
 
             switchToDataName = () =>
             {
@@ -77,7 +89,6 @@ namespace Configure.Inspector
 
             TimerF.WaitUpdate_InEditor(() =>
             {
-
                 SwitchData(this.isStatic);
             }, 50);
 
@@ -103,6 +114,8 @@ namespace Configure.Inspector
 
 
 
+
+
         public EventData.EventDataHandler<T> CreateDataHandler<T>(GameObject gameObject)
         {
             EventData.EventDataHandler<T> re = null;
@@ -117,13 +130,47 @@ namespace Configure.Inspector
             }
 
 
+
+            return re;
+        }
+
+        public OutDataHolder<T> CreateDataHandlerInstance<T>(GameObject gameObject)
+        {
+            EventData.EventDataHandler<T> dataHander = null;
+            if (isStatic)
+            {
+                dataHander = EventData.EventDataF.CreateSimpleData<T>((T)dataInputFile.GetDataValue());
+
+            }
+            else
+            {
+                dataHander = EventData.EventDataF.GetData<T>(((DataName)dataInputFile).dataName, gameObject);
+            }
+
+            OutDataHolder<T> re = new OutDataHolder<T>(dataHander);
+
             return re;
         }
 
 
+    }
+
+
+    public class OutDataHolder<T>
+    {
+
+        public T data { get => dataHandler.Data; set => dataHandler.Data = value; }
+        public (EventData.Core.EventData, Func<bool>) condition => dataHandler.OnUpdateCondition;
+
+
+        public OutDataHolder(EventData.EventDataHandler<T> dataHandler)
+        {
+            this.dataHandler = dataHandler;
+        }
 
 
 
+        private EventData.EventDataHandler<T> dataHandler;
     }
 
 
@@ -131,10 +178,7 @@ namespace Configure.Inspector
 
 
 
-
-
-
-    // 这里是用来自定义每一种类型的数据输入框风格的
+    // 这里是用来创建不同类型的数据输入界面的
     public partial class InputDataOrValue
     {
         [Serializable]
@@ -143,7 +187,8 @@ namespace Configure.Inspector
             protected Func<Object> dataValueGetter = null;
             protected Action<Object> dataValueSetter = null;
 
-
+            [HideInInspector]
+            public bool hideSwicher = false; //是否隐藏切换按钮
             public Action<bool> switchDataAction = null;
             public Type dataType;
 
@@ -181,17 +226,43 @@ namespace Configure.Inspector
             public string dataName;
 
 
-            [Button("动")]
-            [PropertyTooltip("动态数据会在运行时根据名字获取数据,静态数据会在运行时直接获取设定的数据")]
+
+            [Button("更")]
+            [PropertyTooltip("是否将数据作为更新的触发条件")]
+            [GUIColor(nameof(SwitcGenerateCondition_ButtonColor))]
             [PropertyOrder(1)]
             [HorizontalGroup("A", 40, MinWidth = 25)]
-            public void SwitchData()
+            [HideIf(nameof(hideSwicher))]
+            public void SwitcGenerateCondition()
+            {
+                isUseDataForCondition = !isUseDataForCondition;
+            }
+
+
+
+            [Button("动")]
+            [PropertyTooltip("动态数据:会在运行时根据名字获取数据\n静态数据:会在运行时直接获取设定的数据")]
+            [PropertyOrder(1)]
+            [HorizontalGroup("A", 40, MinWidth = 25)]
+            [HideIf(nameof(hideSwicher))]
+            private void SwitchData()
             {
                 switchDataAction?.Invoke(false);
             }
 
 
-            private string[] dataNameList => EventData.DataNameF.GetAllNamesOnType(dataType).ToArray();
+
+
+
+
+            //是否生成更新条件
+            [HideInInspector]
+            public bool isUseDataForCondition = false;
+
+
+            private Color SwitcGenerateCondition_ButtonColor => isUseDataForCondition ? Color.green : Color.grey;
+            private string[] dataNameList => EventData.DataNameF.GetAllNamesOnTypeWithGroup(dataType).ToArray();
+
         }
 
         [Serializable]
@@ -211,9 +282,10 @@ namespace Configure.Inspector
             }
 
             [Button("静")]
-            [PropertyTooltip("动态数据会在运行时根据名字获取数据,静态数据会在运行时直接获取设定的数据")]
+            [PropertyTooltip("动态数据:会在运行时根据名字获取数据\n静态数据:会在运行时直接获取设定的数据")]
             [PropertyOrder(1)]
             [HorizontalGroup("A", 40, MinWidth = 25)]
+            [HideIf(nameof(hideSwicher))]
             public void SwitchData()
             {
                 switchDataAction?.Invoke(true);

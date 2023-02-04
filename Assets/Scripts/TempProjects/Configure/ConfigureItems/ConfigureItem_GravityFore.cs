@@ -20,26 +20,18 @@ namespace Configure.ConfigureItems
 
 
         #region //&界面部分
-        [Header("静态参数")]
-
-
 
 
 
         [Header("动态参数")]
-        [Tooltip("默认重力")]
-        [SerializeField]
-        private Inspector.InputDataNameOrData 默认重力 = new Inspector.InputDataNameOrData(typeof(Vector2), null, new Vector2(0, -9.8f));
-        [Tooltip("")]
-        [SerializeField]
-        private Inspector.InputDataNameOrData 当前重力向量 = new Inspector.InputDataNameOrData(typeof(Vector2), DataName.重力向量.ToString());
-        [Tooltip("")]
-        [SerializeField]
-        private Configure.Inspector.DataNameDropDown<Vector2> 地表法线 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.地表法线);
+
+        [Tooltip("默认重力:当没有其他任何影响, 物体的重力为此值, 若不成功则为零")]
+        public Inspector.InputDataOrValue 默认重力 = new(typeof(Vector2), DataNamePreset.重力向量.ToString(), new Vector2(0, -9.8f));
 
 
 
 
+        public Inspector.ConditionTriggerList 触发条件 = new Inspector.ConditionTriggerList(){labelName = "触发条件"};
 
 
 
@@ -48,13 +40,13 @@ namespace Configure.ConfigureItems
         [Header("输出参数")]
 
         [Tooltip("")]
-        public Configure.Inspector.DataNameDropDown<Vector2> p重力施力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataName.重力施力);
+        public Configure.Inspector.DataNameDropDown<Vector2> 重力施力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataNamePreset.重力施力);
 
 
 
 
         //脚本说明
-        public Inspector.HelpText 说明 = new Inspector.HelpText("计算重力");
+        public Inspector.HelpText 说明 = new Inspector.HelpText("计算物体此时所受重力");
 
 
 
@@ -73,9 +65,7 @@ namespace Configure.ConfigureItems
 
 
 
-       
-        public string groundNormalName => 地表法线.dataName;
-        public string gravityForceName => p重力施力.dataName;
+
 
 
 
@@ -87,47 +77,41 @@ namespace Configure.ConfigureItems
         public class Runner : ItemRunnerBase<ConfigureItem_GravityFore>
         {
 
+            // 预设重力
+            private Func<Vector2> getPresetGravity;
+            private Vector2 presetGravity => getPresetGravity();
 
-            private EventDataHandler<Vector2> gravityVectorD;
-            private Vector2 gravityVector => gravityVectorD.Data;
-            private EventDataHandler<Vector2> groundNormalD;
-            private Vector2 groundNormal => groundNormalD.Data;
-
-
-
-            private EventDataHandler<Vector2> gravityForceD;
-            private Vector2 gravityForce { set => gravityForceD.Data = value; }
-
-
-
-
-
-
-            private (Action Enable, Action Disable) enabler;
+            // 重力设置
+            private Action<Vector2> setPresetGravity;
+            private Vector2 gravityForce { set => setPresetGravity(value); }
+            private (Action Enable, Action Disable) enabler = (null, null);
 
             public override void Init()
             {
-                gravityVectorD = config.当前重力向量.CreateDataHandler<Vector2>(gameObject);
-                groundNormalD = EventDataF.GetData<Vector2>(config.groundNormalName, gameObject);
-                gravityForceD = EventDataF.GetData<Vector2>(config.gravityForceName, gameObject);
-
-                EventDataF.CreateConditionEnabler(CalcGravity, null, gravityForceD.OnUpdateCondition, groundNormalD.OnUpdateCondition, gravityVectorD.OnUpdateCondition);
+                var outDataHolder = config.默认重力.CreateDataHandlerInstance<Vector2>(gameObject);
+                getPresetGravity = () => outDataHolder.data;
+                EventDataF.CreateConditionEnabler(CalcGravity, GravityDisable, ref enabler);
             }
+
+
+
+
+
+
+
 
             private void CalcGravity()
             {
-                Vector2 gv = Vector2.zero;
-                if (groundNormal.y < 0)
-                {
-                    gv = gravityVector * groundNormal.y;
-                }
-
-
-
-
-
-                gravityForce = gv;
+                gravityForce = presetGravity;
             }
+            private void GravityDisable()
+            {
+                gravityForce = Vector2.zero;
+            }
+
+
+
+
 
             public override void Destroy()
             {
@@ -135,10 +119,12 @@ namespace Configure.ConfigureItems
 
             public override void Disable()
             {
+                enabler.Disable();
             }
 
             public override void Enable()
             {
+                enabler.Enable();
             }
 
 

@@ -22,7 +22,7 @@ namespace EventData
 
                 //~判断数据类型是否符合预设,如果不符合则返回null
                 //判断key是否存在DataName中
-                if (Enum.IsDefined(typeof(DataName), key))
+                if (Enum.IsDefined(typeof(DataNamePreset), key))
                 {
                     System.Type type = DataNameF.GetType(key);
                     if (type != typeof(T))

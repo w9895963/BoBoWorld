@@ -9,8 +9,7 @@ using UnityEngine;
 
 namespace EventData
 {
-    //数据名方法
-    public static class DataNameF
+    public static partial class DataNameF
     {
         ///<summary>从完整数据名中获得单纯数据名</summary>
 
@@ -18,12 +17,13 @@ namespace EventData
         {
             return fullDataName.Split("_").Last();
         }
+
         ///<summary>获取所有可能的数据名列表,全名, 不去重</summary>
         public static string[] GetDataNamesList()
         {
 
             //分割并获取最后一个
-            IEnumerable<string> l1 = System.Enum.GetNames(typeof(DataName));
+            IEnumerable<string> l1 = System.Enum.GetNames(typeof(DataNamePreset));
 
             //获得额外的数据名
             string[] l2 = GetAllCustomDataNamesAndTypesDict().Keys.ToArray();
@@ -42,38 +42,17 @@ namespace EventData
         public static string[] GetDataNamesListWithGroup()
         {
             string[] arr = GetDataNamesList();
-
-            arr = arr.Select(name =>
-              {
-                  string group = null;
-                  string fullName = name;
-                  var strings = name.Split("_").ToList();
-                  if (strings.Count > 1)
-                  {
-                      strings.RemoveLast();
-                      if (strings[0] == "全局")
-                          strings.RemoveAt(0);
-
-
-                      if (strings.Count > 1)
-                          group = string.Join("/", strings);
-                      else
-                          group = strings[0];
-                  }
-
-                  if (group != null)
-                      fullName = fullName.Insert(0, group + "/");
-                  return fullName;
-              }).ToArray();
-
-
+            arr = DataName_AddGroup(arr);
 
             return arr;
         }
+
+
+
         ///<summary>获取所有可能的数据名列表, 全名, 不去重</summary>
         public static string[] GetDataNamesList_PresetName()
         {
-            return System.Enum.GetNames(typeof(DataName));
+            return System.Enum.GetNames(typeof(DataNamePreset));
         }
 
 
@@ -106,6 +85,15 @@ namespace EventData
 
             return re.ToArray();
         }
+        ///<summary>获得某一类型的所有数据名</summary>
+        public static string[] GetAllNamesOnTypeWithGroup(System.Type type)
+        {
+            string[] arr = GetAllNamesOnType(type);
+            arr = DataName_AddGroup(arr);
+
+
+            return arr;
+        }
 
 
 
@@ -136,7 +124,7 @@ namespace EventData
             return type;
         }
         /// <summary>获取数据名对应类型,核心</summary>
-        public static System.Type GetType(DataName dataName)
+        public static System.Type GetType(DataNamePreset dataName)
         {
             return GetType(dataName.ToString());
         }
@@ -224,18 +212,72 @@ namespace EventData
 
 
 
+        ///<summary>新建数据名</summary>
+        public static void CreateDataName(DataName.IDataName dataName)
+        {
+            DataName.CustomDataName.AllNames.Add(dataName);
+        }
 
 
+        ///<summary>删除数据名</summary>
+        public static void RemoveDataName(DataName.IDataName dataName)
+        {
+            DataName.CustomDataName.AllNames.Remove(dataName);
+        }
+
+        ///<summary>重命名数据名</summary>
+        public static void Rename(string currentName, string newName)
+        {
+            //~检查重名, 如果重名, 重命名失败
+            var allNames = DataName.CustomDataName.AllNames;
+            bool isRepeat = allNames.Any((data) => data.DataName == newName);
+            if (isRepeat)
+            {
+                Debug.Log($"重命名失败, 尝试重命名 {currentName} 为已存在的数据名: {newName}");
+                return;
+            }
+
+            allNames.Where((data) => data.DataName == currentName).ForEach((data) =>
+            {
+                data.DataName = newName;
+            });
 
 
-
-
-
-
-
-
-
+        }
     }
 
 
+
+
+    ///<summary>内部方法</summary>
+    public static partial class DataNameF
+    {
+        ///<summary>将数据名列表加上分组</summary>
+        private static string[] DataName_AddGroup(string[] arr)
+        {
+            arr = arr.Select(name =>
+            {
+                string group = null;
+                string fullName = name;
+                var strings = name.Split("_").ToList();
+                if (strings.Count > 1)
+                {
+                    strings.RemoveLast();
+                    if (strings[0] == "全局")
+                        strings.RemoveAt(0);
+
+
+                    if (strings.Count > 1)
+                        group = string.Join("/", strings);
+                    else
+                        group = strings[0];
+                }
+
+                if (group != null)
+                    fullName = fullName.Insert(0, group + "/");
+                return fullName;
+            }).ToArray();
+            return arr;
+        }
+    }
 }
