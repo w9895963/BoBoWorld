@@ -186,6 +186,14 @@ public static partial class ExtensionMethods
     }
 
 
+    ///<summary>尝试查找</summary>
+    public static bool TryFind<T>(this List<T> source, System.Predicate<T> match, out T result)
+    {
+        result = source.Find(match);
+        return result != null;
+    }
+
+
 
 
 }
