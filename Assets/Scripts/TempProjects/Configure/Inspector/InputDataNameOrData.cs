@@ -13,7 +13,7 @@ namespace Configure.Inspector
     [InlineProperty]
     // [LabelWidth(120)]
     // [HorizontalGroup("A", 0.5f)]
-    public partial class InputDataNameOrData
+    public partial class InputDataOrValue
     {
         [SerializeField]
         [SerializeReference]
@@ -36,7 +36,7 @@ namespace Configure.Inspector
         private Action switchToDataName;
         private Action switchToDataValue;
 
-        public InputDataNameOrData(Type dataInputFileType, string presetDataName = null, Object presetData = null, bool? forceStatic = null)
+        public InputDataOrValue(Type dataInputFileType, string presetDataName = null, Object presetData = null, bool? forceStatic = null)
         {
             this.dataInputFile_DataType = dataInputFileType;
             this.presetDataName = presetDataName;
@@ -135,7 +135,7 @@ namespace Configure.Inspector
 
 
     // 这里是用来自定义每一种类型的数据输入框风格的
-    public partial class InputDataNameOrData
+    public partial class InputDataOrValue
     {
         [Serializable]
         public class DataBox

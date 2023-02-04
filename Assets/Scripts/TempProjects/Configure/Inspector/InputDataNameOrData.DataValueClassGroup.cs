@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Configure.Inspector
 {
-    public partial class InputDataNameOrData
+    public partial class InputDataOrValue
     {
         //可以创建的类型
         public class DataValueClassGroup
