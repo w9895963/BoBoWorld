@@ -20,42 +20,56 @@ public static partial class ExtensionMethods
 
 
         var logStrs = infos.Select(x =>
-         {
-             string logStr;
+        {
+            string logStr;
 
-             string type = x.type == null ? "Null" : x.type.Name;
-             string index = x.index == null ? "" : x.index.ToString();
-             string name = x.name;
-             string value = x.value;
-             if (color)
-             {
-                 type = $"<color=green>{type}</color>";
-                 index = index != "" ? $"<color=green>{index}</color>" : "";
-                 name = $"<color=yellow>{name}</color>";
-                 value = $"<color=cyan>{value}</color>";
-             }
-             //修饰
-             type = $"({type})";
-             index = index != "" ? $"[{index}]" : "";
-             name = $"{name} : ";
+            string type = x.type == null ? "Null" : x.type.Name;
+            string index = x.index == null ? "" : x.index.ToString();
+            string name = x.name;
+            string value = x.value;
+            if (color)
+            {
+                type = $"<color=green>{type}</color>";
+                index = index != "" ? $"<color=green>{index}</color>" : "";
+                name = $"<color=yellow>{name}</color>";
+                value = $"<color=cyan>{value}</color>";
+            }
+            //修饰
+            type = $"({type})";
+            index = index != "" ? $"[{index}]" : "";
+            name = $"{name} : ";
 
-             //开关
-             type = showType ? type : "";
-             index = showIndex ? index : "";
-             name = showName ? name : "";
+            //开关
+            type = showType ? type : "";
+            index = showIndex ? index : "";
+            name = showName ? name : "";
 
-             //组装
-             logStr = $"{index}{type}{name}{value}";
-             //缩进
-             string indent = "";
-             indent = indent.PadLeft((maxDepth - x.depth) * 8, ' ');
-             logStr = logStr.Insert(0, indent);
+            //组装
+            logStr = $"{index}{type}{name}{value}";
+            //缩进
+            string indent = "";
+            indent = indent.PadLeft((maxDepth - x.depth) * 8, ' ');
+            logStr = logStr.Insert(0, indent);
 
 
-             return logStr;
-         });
+            return logStr;
+        });
 
-        Debug.Log(string.Join("\n", logStrs));
+
+
+        string message = string.Join("\n", logStrs);
+
+        //添加标题
+        if (label != null)
+        {
+            if (color)
+                label = $"<color=red>{label}</color>";
+            message = $"{label} : {message}";
+        }
+
+        Debug.Log(message);
+
+
 
         return content;
     }
