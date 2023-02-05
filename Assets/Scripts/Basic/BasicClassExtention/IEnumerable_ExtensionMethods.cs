@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using IEnumerable = System.Collections.IEnumerable;
 
 ///<summary>数组扩展</summary>
@@ -18,6 +19,7 @@ public static partial class ExtensionMethods
 
         return defaultOut;
     }
+  
 
     public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
     {
@@ -62,23 +64,23 @@ public static partial class ExtensionMethods
     {
         return !IsEmpty(source);
     }
+    ///<summary>合并所有</summary>
+    public static string Join(this IEnumerable<string> source, string separator = "")
+    {
+       return string.Join(separator, source);
+    }
+
+    ///<summary>选择但是不包含Null</summary>
+    public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+    {
+      return  source.Select(selector).Where((x) => x != null);
+    }
 
 
     ///<summary>SelectMany方法拓展:排除Null</summary>
     public static IEnumerable<TResult> SelectManyNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
     {
-        return source.SelectMany((x) =>
-        {
-            var re = selector(x);
-            if (re == null)
-            {
-                return new List<TResult>();
-            }
-            else
-            {
-                return re;
-            }
-        });
+        return source.SelectMany(selector).Where((x) => x != null);
     }
 
 

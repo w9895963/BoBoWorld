@@ -22,33 +22,7 @@ public static partial class ExtensionMethods
 
 
 
-    public static float? TryFloat(this string str)
-    {
-        float? re = null;
-        float f;
-        bool v = float.TryParse(str, out f);
-        if (v)
-        {
-            re = f;
-        }
-        return re;
-    }
-    public static float?[] TryFloat(this string[] strAr)
-    {
-        int length = strAr.Length;
-        float?[] re = new float?[length];
-        for (int i = 0; i < length; i++)
-        {
-            float f;
-            bool v = float.TryParse(strAr[i], out f);
-            if (v)
-            {
-                re[i] = f;
-            }
-        }
-
-        return re;
-    }
+    
 
     public static bool IsMatch(this string str, string regex)
     {
@@ -62,17 +36,9 @@ public static partial class ExtensionMethods
     {
         return Regex.Split(str, @"\s+");
     }
-    public static int? TryInt(this string str)
-    {
-        int? re = null;
-        int f;
-        bool v = int.TryParse(str, out f);
-        if (v)
-        {
-            re = f;
-        }
-        return re;
-    }
+
+  
+
 
     public static string ToPath(this string str)
     {

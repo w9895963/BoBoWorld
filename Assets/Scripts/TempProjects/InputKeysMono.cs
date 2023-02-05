@@ -13,9 +13,9 @@ public class InputKeysMono : MonoBehaviour
         InputActionAsset asset = GameObject.FindObjectOfType<PlayerInput>().actions;
 
 
-        EventDataHandler<Vector2> move = EventDataF.GetDataGlobal<Vector2>(DataNamePreset.全局_输入_移动向量);
-        EventDataHandler<float> moveX = EventDataF.GetDataGlobal<float>(DataNamePreset.全局_输入_移动横向值);
-        EventDataHandler<float> moveY = EventDataF.GetDataGlobal<float>(DataNamePreset.全局_输入_移动纵向值);
+        EventDataHandler<Vector2> move = EventDataF.GetDataGlobal<Vector2>(EventData.DataName.Preset.PresetName.全局_输入_移动向量);
+        EventDataHandler<float> moveX = EventDataF.GetDataGlobal<float>(EventData.DataName.Preset.PresetName.全局_输入_移动横向值);
+        EventDataHandler<float> moveY = EventDataF.GetDataGlobal<float>(EventData.DataName.Preset.PresetName.全局_输入_移动纵向值);
         asset.FindAction("Move").performed += (d) =>
         {
             Vector2 vector2 = d.ReadValueAsVector2();
@@ -29,8 +29,8 @@ public class InputKeysMono : MonoBehaviour
 
         List<(string InputActionName, System.Enum CmDataName)> nameMapList = new List<(string InputActionName, System.Enum CmDataName)>
         {
-            ("Jump", DataNamePreset.全局_输入_跳跃键),
-            ("Dash", DataNamePreset.全局_输入_冲刺键),
+            ("Jump", EventData.DataName.Preset.PresetName.全局_输入_跳跃键),
+            ("Dash", EventData.DataName.Preset.PresetName.全局_输入_冲刺键),
         };
 
 

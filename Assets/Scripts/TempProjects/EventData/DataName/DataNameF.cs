@@ -23,7 +23,7 @@ namespace EventData
         {
 
             //分割并获取最后一个
-            IEnumerable<string> l1 = System.Enum.GetNames(typeof(DataNamePreset));
+            IEnumerable<string> l1 = System.Enum.GetNames(typeof(DataName.Preset.PresetName));
 
             //获得额外的数据名
             string[] l2 = GetAllCustomDataNamesAndTypesDict().Keys.ToArray();
@@ -38,6 +38,24 @@ namespace EventData
 
             return arr;
         }
+        ///<summary>获取数据名列表, 预设, 全名, 不去重</summary>
+        public static string[] GetDataNamesList_PresetName()
+        {
+            return System.Enum.GetNames(typeof(DataName.Preset.PresetName));
+        }
+
+        ///<summary>获取所有可能的数据名列表,全名, 不去重</summary>
+        public static IEnumerable<NameInfo> GetDataNameInfoList()
+        {
+            foreach (string name in GetDataNamesList())
+            {
+                yield return new NameInfo(name);
+            }
+        }
+
+
+
+
         ///<summary>获取所有可能的数据名列表, 全名, 不去重,分组</summary>
         public static string[] GetDataNamesListWithGroup()
         {
@@ -49,11 +67,7 @@ namespace EventData
 
 
 
-        ///<summary>获取所有可能的数据名列表, 全名, 不去重</summary>
-        public static string[] GetDataNamesList_PresetName()
-        {
-            return System.Enum.GetNames(typeof(DataNamePreset));
-        }
+
 
 
 
@@ -71,7 +85,7 @@ namespace EventData
 
 
             //~创建一个正则表达式⁡,并匹配内置数据名
-            if (DataNameD.TypeDict.TryGetValue(type, out string pattern))
+            if (DataName.Preset.TypeDict.TryGetValue(type, out string pattern))
             {
                 //创建一个正则表达式
                 Regex regex = new Regex(pattern);
@@ -102,7 +116,7 @@ namespace EventData
 
 
         ///<summary>获取数据名对应类型,核心</summary>
-        public static System.Type GetType(string dataName)
+        public static System.Type GetDataType(string dataName)
         {
             //返回值
             System.Type type = null;
@@ -123,28 +137,24 @@ namespace EventData
 
             return type;
         }
-        /// <summary>获取数据名对应类型,核心</summary>
-        public static System.Type GetType(DataNamePreset dataName)
-        {
-            return GetType(dataName.ToString());
-        }
+
         ///<summary>获得一个数据的类型预设, 不对数据名进行预处理</summary>
         public static System.Type GetPresetType(string dataName)
         {
             System.Type type = null;
 
             //历遍正则字典TypeRegexDic
-            DataNameD.TypeDict.ForEach((keyValue) =>
-            {
-                //创建一个正则表达式
-                Regex r = new Regex(keyValue.Value);
-                //匹配
-                if (r.IsMatch(dataName))
-                {
-                    //返回类型
-                    type = keyValue.Key;
-                }
-            });
+            DataName.Preset.TypeDict.ForEach((keyValue) =>
+             {
+                 //创建一个正则表达式
+                 Regex r = new Regex(keyValue.Value);
+                 //匹配
+                 if (r.IsMatch(dataName))
+                 {
+                     //返回类型
+                     type = keyValue.Key;
+                 }
+             });
 
             return type;
         }
@@ -162,6 +172,8 @@ namespace EventData
                 }
             });
 
+            type = EventData.DataNameD.AllNameInstance.FirstOrDefault((ins) => ins.DataName == dataName)?.DataType;
+
 
 
             return type;
@@ -174,7 +186,7 @@ namespace EventData
         ///<summary>获取现有数据类型表</summary>
         public static System.Type[] GetAllTypes()
         {
-            return DataNameD.TypeDict.Keys.Distinct().ToArray();
+            return DataName.Preset.TypeDict.Keys.Distinct().ToArray();
         }
 
 
@@ -205,45 +217,67 @@ namespace EventData
                 });
             });
 
+
+            //另一个获得所有数据名列表
+            EventData.DataNameD.AllNameInstance
+            .GroupBy(name => name.DataName)
+            // .Log("AllNameInstance")
+            .ForEach((group) =>
+            {
+                //获得所有数据名
+                int count = group.Count();
+                string name = group.Key;
+                Type type = group.First().DataType;
+
+                re.Add(name, type);
+
+            });
+
             return re;
         }
 
 
+    }
 
 
 
-        ///<summary>新建数据名</summary>
-        public static void CreateDataName(DataName.IDataName dataName)
+
+
+    ///<summary>类定义</summary>
+    public static partial class DataNameF
+    {
+        public struct NameInfo
         {
-            DataName.CustomDataName.AllNames.Add(dataName);
-        }
+            public string DataName;
 
+            public Type DataType => GetDataType(DataName);
+            public string DataGroup => GetGroup(DataName);
+            public string DataNameWithGroup => String.Join('/', DataGroup, DataName);
+            public IEnumerable<DataName.IDataName> DataNameInstances => GetDataNameInstances();
+            public int InstanceCount => DataNameInstances.Count();
 
-        ///<summary>删除数据名</summary>
-        public static void RemoveDataName(DataName.IDataName dataName)
-        {
-            DataName.CustomDataName.AllNames.Remove(dataName);
-        }
-
-        ///<summary>重命名数据名</summary>
-        public static void Rename(string currentName, string newName)
-        {
-            //~检查重名, 如果重名, 重命名失败
-            var allNames = DataName.CustomDataName.AllNames;
-            bool isRepeat = allNames.Any((data) => data.DataName == newName);
-            if (isRepeat)
+            public NameInfo(string dataName)
             {
-                Debug.Log($"重命名失败, 尝试重命名 {currentName} 为已存在的数据名: {newName}");
-                return;
+                DataName = dataName;
             }
 
-            allNames.Where((data) => data.DataName == currentName).ForEach((data) =>
+            private IEnumerable<DataName.IDataName> GetDataNameInstances()
             {
-                data.DataName = newName;
-            });
+                foreach (var item in DataNameD.AllNameInstance)
+                {
+                    if (item.DataName == DataName)
+                    {
+                        yield return item;
+                    }
+                }
+            }
 
 
         }
+
+
+
+
     }
 
 
@@ -279,5 +313,37 @@ namespace EventData
             }).ToArray();
             return arr;
         }
+
+
+
+
+        ///<summary>从数据名获得分组字符串</summary>
+        private static string GetGroup(string dataName)
+        {
+            string group = null;
+            string name = dataName;
+            var strings = name.Split("_").ToList();
+            if (strings.Count > 1)
+            {
+                strings.RemoveLast();
+                if (strings[0] == "全局")
+                    strings.RemoveAt(0);
+
+
+                if (strings.Count > 1)
+                    group = string.Join("/", strings);
+                else
+                    group = strings[0];
+            }
+
+            return group;
+
+        }
+
+
+
+
+
     }
+
 }

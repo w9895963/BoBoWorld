@@ -30,6 +30,21 @@ public static partial class ExtensionMethods
         return types;
     }
 
+    ///<summary>获得类型的类型名, 带有类型参数</summary>
+    public static string GetName(this Type type)
+    {
+        string typeName = type.Name;
+        if (type.IsGenericType)
+        {
+            typeName = typeName.Substring(0, typeName.IndexOf('`'));
+            typeName += "<";
+            Type[] genericTypes = type.GetGenericArguments();
+            typeName += genericTypes.Select(x => GetName(x)).Join(",");
+            typeName += ">";
+        }
+        return typeName;
+    }
+
 
 
 }

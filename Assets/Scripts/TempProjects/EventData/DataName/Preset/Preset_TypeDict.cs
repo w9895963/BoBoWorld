@@ -2,14 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace EventData
+
+
+namespace EventData.DataName
 {
-
-
-
-    public static partial class DataNameD
+    public static partial class Preset
     {
-
         //字典:类型判断正则表达
         public static Dictionary<System.Type, string> TypeDict = new Dictionary<System.Type, string>(){
             {typeof(Vector2), @"(向量|施力|法线|位置)$"},
@@ -20,13 +18,5 @@ namespace EventData
 
 
     }
-
-
-
-
-
-
 }
-
-
 

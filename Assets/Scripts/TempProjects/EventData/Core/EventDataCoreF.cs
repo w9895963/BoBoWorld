@@ -22,9 +22,9 @@ namespace EventData
 
                 //~判断数据类型是否符合预设,如果不符合则返回null
                 //判断key是否存在DataName中
-                if (Enum.IsDefined(typeof(DataNamePreset), key))
+                if (Enum.IsDefined(typeof(DataName.Preset.PresetName), key))
                 {
-                    System.Type type = DataNameF.GetType(key);
+                    System.Type type = DataNameF.GetDataType(key);
                     if (type != typeof(T))
                     {
                         Debug.LogError($"数据名[{key}]对应的类型为[{type}], 但是你使用的类型为[{typeof(T)}]");
@@ -123,7 +123,7 @@ namespace EventData
                 if (eventData == null)
                 {
                     //获得类型,没有则报错
-                    System.Type type = DataNameF.GetType(key);
+                    System.Type type = DataNameF.GetDataType(key);
                     if (type != null)
                     {
                         //新建

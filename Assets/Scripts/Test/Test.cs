@@ -8,42 +8,35 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Debug = UnityEngine.Debug;
 
-public class Test : MonoBehaviour
+public partial class Test : MonoBehaviour
 {
 
 
-    public Configure.Inspector.OutDataInspector<Vector2> outData = new();
 
 
+
+    private void Reset()
+    {
+
+    }
 
 
     private void OnValidate()
     {
-        Debug.Log("OnValidate");
-        outData.OnValidate();
-        outData.Enabled=enabled;
+
     }
 
 
 
-    //unity事件:OnEnable
-    private void OnEnable()
-    {
-        Debug.Log("OnEnable");
-        outData.Enabled = true;
-    }
-    private void OnDisable()
-    {
-        outData.Enabled = false;
-    }
+
+
+
 
 
 
 
     public void 本地测试方法()
     {
-        EventData.DataName.CustomDataName.AllNames.Log();
-
 
     }
 
@@ -51,10 +44,21 @@ public class Test : MonoBehaviour
     public static void 测试方法()
     {
 
+
     }
 
 
 
+
+
+}
+
+
+
+
+
+public partial class Test : MonoBehaviour
+{
     public static class TestMethodInMenu
     {
         [UnityEditor.MenuItem("测试/测试方法")]
@@ -64,5 +68,4 @@ public class Test : MonoBehaviour
             Test.测试方法();
         }
     }
-
 }

@@ -26,7 +26,7 @@ namespace Configure.ConfigureItems
         [Header("动态参数")]
 
         [Tooltip("默认重力:当没有其他任何影响, 物体的重力为此值, 若不成功则为零")]
-        public Inspector.InputDataOrValue 默认重力 = new(typeof(Vector2), DataNamePreset.重力向量.ToString(), new Vector2(0, -9.8f));
+        public Inspector.InputDataOrValue 默认重力 = new(typeof(Vector2), EventData.DataName.Preset.PresetName.重力向量.ToString(), new Vector2(0, -9.8f));
 
 
 
@@ -40,7 +40,7 @@ namespace Configure.ConfigureItems
         [Header("输出参数")]
 
         [Tooltip("")]
-        public Configure.Inspector.DataNameDropDown<Vector2> 重力施力 = new Configure.Inspector.DataNameDropDown<Vector2>(DataNamePreset.重力施力);
+        public Configure.Inspector.DataNameDropDown<Vector2> 重力施力 = new Configure.Inspector.DataNameDropDown<Vector2>(EventData.DataName.Preset.PresetName.重力施力);
 
 
 

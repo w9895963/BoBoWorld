@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using static ExtensionMethods.DebugLog;
 using Object = System.Object;
@@ -11,10 +12,10 @@ public static partial class ExtensionMethods
 
     ///<summary>自动根据类型把对象打印出来,根据类型自动处理</summary>
     ///<summary culture="en-US">Get the log infos of an object</summary>
-    public static T Log<T>(this T content, string label = null, bool color = true, int limitDepth = 3, bool showType = true, bool showName = true, bool showIndex = true)
+    public static T Log<T>(this T content, string label = null, bool color = true, int limitDepth = 3, bool showValueType = true, bool showName = true, bool showIndex = true)
     {
 
-        var infos = GetOLogInfos(content, limitDepth);
+        var infos = GetLogInfos(content, limitDepth);
 
         int maxDepth = infos.Max(x => x.depth);
 
@@ -23,29 +24,29 @@ public static partial class ExtensionMethods
         {
             string logStr;
 
-            string type = x.type == null ? "Null" : x.type.Name;
+            string typeOfValue = x.type == null ? "Null" : GetName(x.type);
             string index = x.index == null ? "" : x.index.ToString();
             string name = x.name;
             string value = x.value;
             if (color)
             {
-                type = $"<color=green>{type}</color>";
+                typeOfValue = $"<color=green>{typeOfValue}</color>";
                 index = index != "" ? $"<color=green>{index}</color>" : "";
                 name = $"<color=yellow>{name}</color>";
                 value = $"<color=cyan>{value}</color>";
             }
             //修饰
-            type = $"({type})";
+            typeOfValue = $"({typeOfValue})";
             index = index != "" ? $"[{index}]" : "";
             name = $"{name} : ";
 
             //开关
-            type = showType ? type : "";
+            typeOfValue = showValueType ? typeOfValue : "";
             index = showIndex ? index : "";
             name = showName ? name : "";
 
             //组装
-            logStr = $"{index}{type}{name}{value}";
+            logStr = $"{index}{name}{value}{typeOfValue}";
             //缩进
             string indent = "";
             indent = indent.PadLeft((maxDepth - x.depth) * 8, ' ');
@@ -82,7 +83,7 @@ public static partial class ExtensionMethods
     {
         ///<summary> 将一个类型实例的字段打印出来 </summary>
         ///<summary culture="en-US">Get the log infos of an object</summary>
-        public static List<(int depth, int? index, string name, Type type, string value)> GetOLogInfos(Object content, int limitDepth = 3)
+        public static List<(int depth, int? index, string name, Type type, string value)> GetLogInfos(Object content, int limitDepth = 3)
         {
             List<int> depths = new List<int>();
             List<int?> indexes = new List<int?>();
@@ -125,7 +126,7 @@ public static partial class ExtensionMethods
                 {
                     if (limitDepth > 0)
                     {
-                        var logInfos = GetOLogInfos(valueObject, limitDepth - 1);
+                        var logInfos = GetLogInfos(valueObject, limitDepth - 1);
                         logInfos[0] = (logInfos[0].depth, i, logInfos[0].name, logInfos[0].type, logInfos[0].value);
                         logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
                     }
@@ -146,7 +147,7 @@ public static partial class ExtensionMethods
                     if (limitDepth > 0)
                     {
                         var valueObject = item.GetValue(content);
-                        var logInfos = GetOLogInfos(valueObject, limitDepth - 1);
+                        var logInfos = GetLogInfos(valueObject, limitDepth - 1);
                         logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
                         logInfos.ForEach(x => { depths.Add(x.depth); indexes.Add(x.index); names.Add(x.name); types.Add(x.type); values.Add(x.value); });
                     }
@@ -169,18 +170,31 @@ public static partial class ExtensionMethods
                 int curIndex = values.Count - 1;
 
                 int i = 0;
-                foreach (var item in content.GetType().GetFields())
+                foreach (var item in content.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
                     if (limitDepth > 0)
                     {
                         var valueObject = item.GetValue(content);
-                        var logInfos = GetOLogInfos(valueObject, limitDepth - 1);
+                        var logInfos = GetLogInfos(valueObject, limitDepth - 1);
                         logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
                         logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
                     }
                     i++;
 
                 }
+                foreach (var item in content.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+                {
+                    if (limitDepth > 0)
+                    {
+                        var valueObject = item.GetValue(content);
+                        var logInfos = GetLogInfos(valueObject, limitDepth - 1);
+                        logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
+                        logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
+                    }
+                    i++;
+
+                }
+
                 values[curIndex] = $"({i})⇣";
 
             }
@@ -196,6 +210,23 @@ public static partial class ExtensionMethods
             return GetReturn();
         }
 
-    }
 
+
+
+
+    }
+    ///<summary>获得类型的类型名, 带有类型参数</summary>
+    private static string GetName(this Type type)
+    {
+        string typeName = type.Name;
+        if (type.IsGenericType)
+        {
+            typeName = typeName.Substring(0, typeName.IndexOf('`'));
+            typeName += "<";
+            Type[] genericTypes = type.GetGenericArguments();
+            typeName += string.Join(",", genericTypes.Select(x => GetName(x)));
+            typeName += ">";
+        }
+        return typeName;
+    }
 }
