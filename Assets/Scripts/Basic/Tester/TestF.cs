@@ -104,12 +104,12 @@ public static class TestF
         if (medianTime1 > medianTime2)
         {
             str += Environment.NewLine;
-            str += $"对比总时长:方法1:{medianTime1}t,方法2:{medianTime2}t,方法2比方法1快{(float)(medianTime1 - medianTime2) / (float)medianTime1 * 100}%";
+            str += $"对比中位数:方法1:{medianTime1}t,方法2:{medianTime2}t,方法2比方法1快{(float)(medianTime1 - medianTime2) / (float)medianTime1 * 100}%";
         }
         else
         {
             str += Environment.NewLine;
-            str += $"对比总时长:方法1:{medianTime1}t,方法2:{medianTime2}t, 方法1比方法2快{(float)(medianTime2 - medianTime1) / (float)medianTime2 * 100}%";
+            str += $"对比中位数:方法1:{medianTime1}t,方法2:{medianTime2}t, 方法1比方法2快{(float)(medianTime2 - medianTime1) / (float)medianTime2 * 100}%";
         }
 
         //如果时间为0，说明方法执行时间太短，无法计算
