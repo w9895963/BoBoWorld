@@ -81,9 +81,15 @@ public static partial class ExtensionMethods
 
     public static class DebugLog
     {
+
+
         ///<summary> 将一个类型实例的字段打印出来 </summary>
         ///<summary culture="en-US">Get the log infos of an object</summary>
-        public static List<(int depth, int? index, string name, Type type, string value)> GetLogInfos(Object content, int limitDepth = 3)
+        public static List<(int depth, int? index, string name, Type type, string value)> GetLogInfos(
+            Object content,
+            int limitDepth = 3,
+            bool showPrivateField = false,
+            bool showDelegate = false)
         {
             List<int> depths = new List<int>();
             List<int?> indexes = new List<int?>();
@@ -170,28 +176,61 @@ public static partial class ExtensionMethods
                 int curIndex = values.Count - 1;
 
                 int i = 0;
-                foreach (var item in content.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+                BindingFlags BindingAttr = BindingFlags.Instance | BindingFlags.Public;
+                if (showPrivateField)
+                    BindingAttr |= BindingFlags.NonPublic;
+                foreach (var item in content.GetType().GetFields(BindingAttr))
                 {
                     if (limitDepth > 0)
                     {
                         var valueObject = item.GetValue(content);
                         var logInfos = GetLogInfos(valueObject, limitDepth - 1);
                         logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
+                        if (showDelegate == false)
+                        {
+                            logInfos.RemoveRange(1, logInfos.Count - 1);
+                        }
                         logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
                     }
                     i++;
 
                 }
-                foreach (var item in content.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+                foreach (var item in content.GetType().GetProperties(BindingAttr))
                 {
+                    Object valueObject = null;
+
                     if (limitDepth > 0)
                     {
-                        var valueObject = item.GetValue(content);
-                        var logInfos = GetLogInfos(valueObject, limitDepth - 1);
-                        logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
-                        logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
+
+
+                        try
+                        {
+                            valueObject = item.GetValue(content);
+                        }
+                        catch (Exception)
+                        {
+                            valueObject = null;
+                            // Debug.LogError(e);
+                        }
+                        if (valueObject != null)
+                        {
+                            var logInfos = GetLogInfos(valueObject, limitDepth - 1);
+                            logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
+                            if (showDelegate == false)
+                            {
+                                logInfos.RemoveRange(1, logInfos.Count - 1);
+                            }
+                            logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
+                        }
+
+
+
                     }
-                    i++;
+                    if (valueObject != null)
+                    {
+                        i++;
+                    }
+
 
                 }
 

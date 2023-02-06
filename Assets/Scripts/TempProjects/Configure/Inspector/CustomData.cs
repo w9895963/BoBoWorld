@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Configure.Inspector
 {
@@ -11,22 +12,23 @@ namespace Configure.Inspector
 
 
 
-    public abstract class CustomData : EventData.DataName.IDataName
+    public abstract class CustomData : EventData.DataName.IDataNameInstance
     {
-        public static List<EventData.DataName.IDataName> AllNames => EventData.DataNameD.AllNameInstance;
+        public static List<EventData.DataName.IDataNameInstance> AllNames => EventData.DataNameD.AllNameInstance.ToList();
 
 
 
         public Action<string> onDataNameChangeAction = null;
+        public Object creator = null;
 
 
-
+        /// <summary>数据名, 设置时会触发事件改名事件</summary>
         public string DataName { get => dataName; set { dataName = value; onDataNameChangeAction?.Invoke(value); } }
         public Func<bool> enableGetter = () => true;
         public bool Enabled => enableGetter();
-        public Type DataType =>type;
+        public Type DataType => type;
 
-        public void Rename(string newName)
+        public void RenameAllSameNameTo(string newName)
         {
             var allNames = AllNames;
             var currentName = dataName;
@@ -36,11 +38,11 @@ namespace Configure.Inspector
             });
         }
 
-        
+
 
         public CustomData(Type type, string dataName = null, Func<bool> enableGetter = null)
         {
-                
+
             this.type = type;
             if (enableGetter != null)
             {
@@ -71,8 +73,19 @@ namespace Configure.Inspector
             }
 
 
-            //清理掉未启用的名字  
-            // AllNames.SelectNotNull(n => n as CustomData).Where(n => !n.Enabled).ForEach(n => AllNames.Remove(n));
+            //清理掉重复的名字
+            AllNames.RemoveAll((data) =>
+            {
+                bool re = false;
+                if(data is CustomData customData)
+                {
+                    if (customData.creator == creator)
+                    {
+                        re = true;
+                    }
+                }
+                return re;
+            });
 
             AllNames.Add(this);
         }
@@ -81,16 +94,22 @@ namespace Configure.Inspector
         private string dataName = "未命名数据";
         private Type type;
 
+
+      
+
     }
 
 
 
-    public class CustomData<T> : CustomData, EventData.DataName.IDataName
+    public class CustomData<T> : CustomData, EventData.DataName.IDataNameInstance
     {
         public CustomData(string dataName = null, Func<bool> enableGetter = null)
         : base(typeof(T), dataName, enableGetter)
-        {
-        }
+        { }
+
+
+
+
     }
 
 

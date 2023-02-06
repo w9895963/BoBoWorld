@@ -30,6 +30,10 @@ namespace EventData.DataName
             跳跃施力,
             重力施力,
         }
+
+
+
+        
     }
 
 

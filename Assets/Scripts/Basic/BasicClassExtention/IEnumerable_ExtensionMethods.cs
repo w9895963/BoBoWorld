@@ -11,7 +11,7 @@ public static partial class ExtensionMethods
     {
         foreach (var item in source)
         {
-            if (item.IsType<T>())
+            if (item.GetType() == typeof(T))
             {
                 return (T)Convert.ChangeType(item, typeof(T));
             }

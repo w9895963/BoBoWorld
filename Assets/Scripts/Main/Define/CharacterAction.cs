@@ -133,16 +133,15 @@ public class CharacterAction
 
         public bool? IsKeyPressed(string inputName)
         {
-            InputAction.CallbackContext inputD = default;
-            bool success = sourceData.TryConvert<InputAction.CallbackContext>(out inputD);
-            if (success)
+
+            if(sourceData is InputAction.CallbackContext inputD)
             {
                 if (inputD.action.name == inputName)
                 {
                     return inputD.IsKeyOn();
                 }
-
             }
+            
 
             return null;
 

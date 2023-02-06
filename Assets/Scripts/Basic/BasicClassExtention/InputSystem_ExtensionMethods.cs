@@ -33,7 +33,7 @@ public static partial class ExtensionMethods
     {
         Vector2? re = null;
         object v = date.ReadValueAsObject();
-        if (v.IsType<Vector2>())
+        if (v.GetType() == typeof(Vector2))
             re = (Vector2)v;
         return re;
     }
@@ -41,7 +41,7 @@ public static partial class ExtensionMethods
     {
         float? re = null;
         object v = date.ReadValueAsObject();
-        if (v.IsType<float>())
+        if (v.GetType() == typeof(float))
             re = (float)v;
         return re;
     }
@@ -49,7 +49,7 @@ public static partial class ExtensionMethods
     {
         bool? re = null;
         object v = date.ReadValueAsObject();
-        if (v.IsType<float>())
+        if (v.GetType() == typeof(float))
             re = (float)v == 1;
         return re;
     }

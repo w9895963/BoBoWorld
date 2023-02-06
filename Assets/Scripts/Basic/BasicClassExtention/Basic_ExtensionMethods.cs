@@ -14,31 +14,6 @@ public static partial class ExtensionMethods
 
 
 
-    #region System.Object
-    /// <summary>类型检查, 必须完全相等, 不能是继承关系</summary>
-    public static bool IsType<T>(this System.Object obj)
-    {
-        return obj.GetType() == typeof(T);
-    }
-
-    public static bool TryConvert<T>(this System.Object obj, out T outData)
-    {
-        bool isType = obj.GetType() == typeof(T);
-        if (isType)
-        {
-            outData = (T)obj;
-        }
-        else
-        {
-            outData = default;
-        }
-        return isType;
-    }
-
-
-
-
-    #endregion
 
 
 

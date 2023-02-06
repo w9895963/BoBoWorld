@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Configure;
 using EventData;
 using EventData.CustomDataNameCore;
+using EventData.DataName;
 using UnityEngine;
 
 namespace EventData
@@ -44,14 +45,7 @@ namespace EventData
             return System.Enum.GetNames(typeof(DataName.Preset.PresetName));
         }
 
-        ///<summary>获取所有可能的数据名列表,全名, 不去重</summary>
-        public static IEnumerable<NameInfo> GetDataNameInfoList()
-        {
-            foreach (string name in GetDataNamesList())
-            {
-                yield return new NameInfo(name);
-            }
-        }
+
 
 
 
@@ -237,6 +231,9 @@ namespace EventData
         }
 
 
+
+
+
     }
 
 
@@ -246,26 +243,31 @@ namespace EventData
     ///<summary>类定义</summary>
     public static partial class DataNameF
     {
-        public struct NameInfo
-        {
-            public string DataName;
 
-            public Type DataType => GetDataType(DataName);
-            public string DataGroup => GetGroup(DataName);
-            public string DataNameWithGroup => String.Join('/', DataGroup, DataName);
-            public IEnumerable<DataName.IDataName> DataNameInstances => GetDataNameInstances();
+
+
+
+        public struct NameInfoPreSet : IDataNameInfo
+        {
+            public string dataName;
+            public string DataName => dataName;
+
+            public Type DataType => GetDataType(dataName);
+            public string DataGroup => GetGroup(dataName);
+            public string DataNameWithGroup => String.Join('/', DataGroup, dataName);
+            public IEnumerable<DataName.IDataNameInstance> DataNameInstances => GetDataNameInstances();
             public int InstanceCount => DataNameInstances.Count();
 
-            public NameInfo(string dataName)
+            public NameInfoPreSet(string dataName)
             {
-                DataName = dataName;
+                this.dataName = dataName;
             }
 
-            private IEnumerable<DataName.IDataName> GetDataNameInstances()
+            private IEnumerable<DataName.IDataNameInstance> GetDataNameInstances()
             {
                 foreach (var item in DataNameD.AllNameInstance)
                 {
-                    if (item.DataName == DataName)
+                    if (item.DataName == dataName)
                     {
                         yield return item;
                     }
@@ -276,9 +278,53 @@ namespace EventData
         }
 
 
+        public struct NameInfoInstance : IDataNameInfo
+        {
+            private IDataNameInstance instance;
+            public string DataName => instance.DataName;
+
+            public Type DataType => instance.DataType;
+            public string DataGroup => GetGroup(instance.DataName);
+            public string DataNameWithGroup => String.Join('/', DataGroup, DataName);
+            public IEnumerable<DataName.IDataNameInstance> DataNameInstances => GetDataNameInstances();
+            public int InstanceCount => DataNameInstances.Count();
+
+            public NameInfoInstance(DataName.DataNameInstance nameInstance)
+            {
+                instance = nameInstance;
+            }
+            public NameInfoInstance(IDataNameInstance nameInstance)
+            {
+                instance = nameInstance;
+            }
+
+
+            private IEnumerable<DataName.IDataNameInstance> GetDataNameInstances()
+            {
+                foreach (var item in EventData.DataName.DataNameInstance.AllNameInstance)
+                {
+                    if (item.DataName == instance.DataName)
+                    {
+                        yield return item;
+                    }
+                }
+            }
+
+           
+
+        
+
+           
+        }
+
+
 
 
     }
+
+
+
+
 
 
 
@@ -347,3 +393,5 @@ namespace EventData
     }
 
 }
+
+

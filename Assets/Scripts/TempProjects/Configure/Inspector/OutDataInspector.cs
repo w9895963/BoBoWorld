@@ -10,24 +10,29 @@ namespace Configure.Inspector
 {
     [Serializable]
     [InlineProperty]
-    public class OutDataInspector<T>
+    public abstract partial class OutDataInspector : IDataSetter
     {
         #region //&界面
 
 
 
-        [ValueDropdown(nameof(dataNamesDropDownList))]
-        [SuffixLabel("$" + nameof(type), true)]
+        [ValueDropdown(nameof(currentName_NamesDropDownList))]
+        [SuffixLabel("$" + nameof(typeName), true)]
         [HorizontalGroup("A")]
         [ShowIf(nameof(uiTab), 0)]
         [HideLabel]
         public string currentName;
+        private string currentName_beforeEdit;
+
+
         [HideInInspector]
-        public string type;
+        public string typeName;
+
         [HorizontalGroup("A")]
         [ShowIf(nameof(uiTab), 1)]
         [HideLabel]
         public string rename = "";
+
         [HorizontalGroup("A", MinWidth = 25)]
         [PropertyTooltip("重命名, 填写完名字后, 再次点击确认改名")]
         [Button("改")]
@@ -51,41 +56,63 @@ namespace Configure.Inspector
                 uiTab = 0;
             }
         }
+
         [HideInInspector]
         public bool doRename = false;
+
         [HideInInspector]
         public string helpInfo;
+
         [Button("?")]
         [PropertyTooltip("$" + nameof(helpInfo))]
-        [HorizontalGroup("A", MaxWidth = 18)]
+        [HorizontalGroup("A", MaxWidth = 20)]
         private void helpIcon() { }
 
 
 
         private int uiTab = 0;
+        private IEnumerable currentName_NamesDropDownList => GetDataNamesDropDownList();
+        private IEnumerable GetDataNamesDropDownList()
+        {
+            ValueDropdownList<string> valueDropdownList = new ValueDropdownList<string>();
+            EventData.DataNameD.AllDataNameInfo
+            .Where((data) => data.DataType == DataType)
+            .Where((data) => data.DataName.IsNotEmpty())
+            .ForEach((data) =>
+            {
+                string countStr = data.InstanceCount == 0 ? "" : $"({data.InstanceCount})";
+                valueDropdownList.Add($"{data.DataGroup}/{countStr}{data.DataName}", data.DataName);
+            });
 
+            valueDropdownList.Insert(0, new ValueDropdownItem<string>("未命名", ""));
 
+            return valueDropdownList;
+        }
 
 
         #endregion
         //&Region  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-
-
-        public OutDataInspector(string dataName = "", Func<bool> aliveChecker = null)
+        public Action<T> CreateDataSetter<T>(GameObject gameObject)
         {
-            currentName = dataName;
-            type = typeof(T).Name;
-            this.aliveChecker = aliveChecker;
+            //~名字为空时, 返回空方法
+            OutDataInspector<T> thisT = (OutDataInspector<T>)this;
+            if (thisT.currentName == null)
+            {
+                return (data) => { };
+            }
+            return (data) => EventData.EventDataF.GetData<T>(thisT.currentName, gameObject).Data = data;
         }
+
+
 
         public void OnValidate()
         {
             //~初始化
-            Init();
+            EventData.DataName.IDataNameInstance useName = UseName;
+
 
             //~固定名称
-            type = typeof(T).Name;
+            typeName = DataType.Name;
 
 
             //~重命名
@@ -96,69 +123,76 @@ namespace Configure.Inspector
             }
 
             //~数据名改变
-            if (currentName != customData.DataName)
+            if (currentName != currentName_beforeEdit)
             {
-                customData.DataName = currentName;
+                currentName_beforeEdit = currentName;
+                UseName.DataName = currentName;
             }
 
+
             //~获得帮助信息
-            //引用次数
+            BuildHelpInfo();
+
+
+
+
+
+
+        }
+
+
+
+
+
+        protected Func<bool> aliveChecker;
+        private EventData.DataName.IDataNameInstance useName_data;
+        private EventData.DataName.IDataNameInstance UseName
+        {
+            get
+            {
+                EventData.DataName.IDataNameInstance dataNameInstance = useName_data ?? (useName_data = EventData.DataName.DataNameInstance.AddName(new()
+                {
+                    nameGetter = () => currentName,
+                    nameSetter = (newName) => currentName = newName,
+                    typeGetter = () => DataType,
+                    isAliveChecker = () => aliveChecker?.Invoke() ?? false,
+                }));
+                return dataNameInstance;
+
+            }
+        }
+
+        private void BuildHelpInfo()
+        {
             var count = EventData.DataNameD.AllNameInstance.Where((data) => data.DataName == currentName).Count();
             var refCount = $"引用次数:{count}";
-            var help = "";
+            var help = "如果不设置名字将不会被输出";
 
 
             string[] helpInfoList = { refCount, help };
             helpInfo = string.Join(Environment.NewLine, helpInfoList);
-
-
         }
-
-        public Action<T> CreateDataSetter(GameObject gameObject)
-        {
-            return (data) => EventData.EventDataF.GetData<T>(currentName, gameObject).Data = data;
-        }
-
-
-
-
-        private Func<bool> aliveChecker;
-        private bool isInitial => customData != null;
-        private CustomData customData;
-        private IEnumerable dataNamesDropDownList => GetDataNamesDropDownList();
-
-
-
-        private void Init()
-        {
-            if (!isInitial)
-            {
-                customData = new CustomData<T>(currentName, aliveChecker);
-                customData.onDataNameChangeAction = (newName) =>
-                {
-                    currentName = newName;
-                };
-            }
-        }
-        private static IEnumerable GetDataNamesDropDownList()
-        {
-            ValueDropdownList<string> valueDropdownList = new ValueDropdownList<string>();
-            EventData.DataNameF.GetDataNameInfoList().Where((data) => data.DataType == typeof(T)).ForEach((data) =>
-            {
-                string countStr = data.InstanceCount == 0 ? "" : $"({data.InstanceCount})";
-                valueDropdownList.Add($"{data.DataGroup}/{countStr}{data.DataName}", data.DataName);
-            });
-
-            return valueDropdownList;
-        }
-
-
 
         /// <summary>重命名</summary>
         private void Rename(string newName)
         {
-            customData.Rename(newName);
+            //~重命名所有或自身
+            if (currentName.IsEmpty())
+            {
+                UseName.DataName = newName;
+            }
+            else
+            {
+                EventData.DataNameD.AllNameInstance.Where((data) => data.DataName == currentName).ForEach((data) => data.DataName = newName);
+            }
+
         }
+
+
+
+
+
+        protected abstract Type DataType { get; }
 
 
     }
@@ -169,4 +203,39 @@ namespace Configure.Inspector
 
 
 
+
+
+
+
+
+    [Serializable]
+    [InlineProperty]
+    public class OutDataInspector<T> : OutDataInspector
+    {
+        protected override Type DataType => typeof(T);
+
+
+
+
+
+        public OutDataInspector(string dataName = "", Func<bool> aliveChecker = null)
+        {
+            currentName = dataName;
+            typeName = typeof(T).Name;
+            this.aliveChecker = aliveChecker;
+        }
+
+
+    }
+
+
+    public class OutDataInspectorVector2 : OutDataInspector<Vector2>
+    {
+       
+    }
+
+
 }
+
+
+
