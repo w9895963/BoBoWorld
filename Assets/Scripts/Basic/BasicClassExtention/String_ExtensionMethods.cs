@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -22,14 +23,24 @@ public static partial class ExtensionMethods
 
 
 
-    
+
 
     public static bool IsMatch(this string str, string regex)
     {
         return Regex.IsMatch(str, regex);
     }
 
+    /// <summary>复制字符串一定数量的次数</summary>
+    public static string Repeat(this string source, int repeatTimes)
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < repeatTimes; i++)
+        {
+            sb.Append(source);
+        }
 
+        return sb.ToString();
+    }
 
 
     public static string[] SplitWhite(this string str)
@@ -37,7 +48,7 @@ public static partial class ExtensionMethods
         return Regex.Split(str, @"\s+");
     }
 
-  
+
 
 
     public static string ToPath(this string str)

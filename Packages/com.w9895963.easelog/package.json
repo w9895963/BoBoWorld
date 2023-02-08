@@ -1,9 +1,9 @@
 {
-  "name": "com.whuma.smartlogextension",
-  "displayName": "Smart Log",
+  "name": "com.whuma.easelog",
+  "displayName": "Ease Log",
   "version": "0.5.0",
   "unity": "2019.4",
-  "description": "smart log with color",
+  "description": "log with color",
   "author": {
     "name": "w9895963",
     "url": "https://github.com/w9895963"

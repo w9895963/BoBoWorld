@@ -193,6 +193,25 @@ public static partial class ExtensionMethods
         return result != null;
     }
 
+    ///<summary>尝试删除</summary>
+    public static bool TryRemove<T>(this List<T> source, System.Predicate<T> match, out T result)
+    {
+        T t = source.Find(match);
+        source.Remove(t);
+        result = t;
+        return t != null;
+    }
+    ///<summary>尝试删除</summary>
+    public static bool TryRemoveAll<T>(this List<T> source, System.Predicate<T> match, out T[] result)
+    {
+        List<T> t = source.FindAll(match);
+        foreach (var it in t)
+            source.Remove(it);
+        result = t?.ToArray() ?? new T[0];
+        return t.IsNotEmpty();
+    }
+
+
 
 
 

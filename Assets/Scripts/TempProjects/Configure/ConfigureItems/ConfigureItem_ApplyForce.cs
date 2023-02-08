@@ -17,7 +17,7 @@ namespace Configure.ConfigureItems
 
 
     [System.Serializable]
-    public class ConfigureItem_ApplyForce : ConfigureItem
+    public class ConfigureItem_ApplyForce : ConfigureItem, IConfigureRunnerBuilder
     {
 
         [Tooltip("将所选向量数据作为力应用到刚体上")]
@@ -61,12 +61,15 @@ namespace Configure.ConfigureItems
         private ConfigureRunner GetCreateRunner(GameObject gameObject)
         {
             Runner r = new Runner(gameObject, this);
-            return new ConfigureRunner(r.initialize, r.enable, r.disable, r.destroy);
+            return new ConfigureRunner(r.Initialize, r.Enable, r.Disable, r.Destroy);
         }
 
+        IConfigureRunner IConfigureRunnerBuilder.CreateRunnerOver(GameObject gameObject)
+        {
+            return new Runner(gameObject, this);
+        }
 
-
-        private class Runner
+        private class Runner :IConfigureRunner
         {
             private GameObject gameObject;
             private Rigidbody2D rigidbody2D;
@@ -82,7 +85,9 @@ namespace Configure.ConfigureItems
             private List<EventDataHandler<Vector2>> forceDList;
             private List<Vector2> forceList = new List<Vector2>() { Vector2.zero };
 
-            public void initialize()
+            public bool AllowEnable => true;
+
+            public void Initialize()
             {
 
                 //获取施力数据列表
@@ -112,19 +117,19 @@ namespace Configure.ConfigureItems
 
             }
 
-            public void destroy()
+            public void Destroy()
             {
                 enablerList.ForEach(x => x.Disable());
             }
 
-            public void enable()
+            public void Enable()
             {
 
                 BasicEvent.OnFixedUpdate.Add(gameObject, FixedUpdate);
 
             }
 
-            public void disable()
+            public void Disable()
             {
 
                 BasicEvent.OnFixedUpdate.Remove(gameObject, FixedUpdate);

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using EaseTool;
 using UnityEngine;
 using static ExtensionMethods.DebugLog;
 using Object = System.Object;
@@ -10,76 +12,115 @@ using Object = System.Object;
 public static partial class ExtensionMethods
 {
 
+   
+
+
     ///<summary>自动根据类型把对象打印出来,根据类型自动处理</summary>
-    ///<summary culture="en-US">Get the log infos of an object</summary>
-    public static T Log<T>(this T content,
-                           string label = null,
-                           bool color = true,
-                           int limitDepth = 3,
-                           bool showValueType = true,
-                           bool showName = true,
-                           bool showIndex = true,
-                           bool showPrivateField = false)
+    ///<summary culture="en-US">log an object</summary>
+    public static T Log<T>(this T content, EaseTool.EaseLog.LogParam logParam = null)
     {
+        if (logParam == null)
+            logParam = new EaseTool.EaseLog.LogParam();
 
-        var infos = GetLogInfos(content, limitDepth, showPrivateField);
 
+        string message = "";
+
+        List<EaseTool.EaseLog.LogInfo> infos = EaseTool.EaseLog.GetLogInfos(content, logParam);
+        //将深度反转, 使其从0开始
         int maxDepth = infos.Max(x => x.depth);
+        infos.ForEach(x => x.depth = maxDepth - x.depth);
 
 
-        var logStrs = infos.Select(x =>
+
+
+        //获取所有要打印的行
+        IEnumerable<string> texts = infos.Select(x =>
         {
-            string logStr;
+            string re = "";
 
-            string typeOfValue = x.type == null ? "Null" : GetName(x.type);
-            string index = x.index == null ? "" : x.index.ToString();
-            string name = x.name;
-            string value = x.value;
-            if (color)
-            {
-                typeOfValue = $"<color=green>{typeOfValue}</color>";
-                index = index != "" ? $"<color=green>{index}</color>" : "";
-                name = $"<color=yellow>{name}</color>";
-                value = $"<color=cyan>{value}</color>";
-            }
-            //修饰
-            typeOfValue = $"({typeOfValue})";
-            index = index != "" ? $"[{index}]" : "";
-            name = $"{name} : ";
+            string indent = logParam.indentContent.Repeat(logParam.indent * x.depth);
+            string typeStr = x.type == null ? "Null" : GetName(x.type);
+            string indexStr = x.index == null ? "" : x.index.ToString();
 
-            //开关
-            typeOfValue = showValueType ? typeOfValue : "";
-            index = showIndex ? index : "";
-            name = showName ? name : "";
+            string nameString = EaseLog.GetLogString(x.name, logParam.showName, logParam.nameColor, logParam.showColor, logParam.nameTemplate);
+            string valueString = EaseLog.GetLogString(x.value, logParam.showValue, logParam.valueColor, logParam.showColor, logParam.valueTemplate);
+            string typeString = EaseLog.GetLogString(typeStr, logParam.showType, logParam.typeColor, logParam.showColor, logParam.typeTemplate);
+            string indexString = EaseLog.GetLogString(indexStr, logParam.showIndex, logParam.indexColor, logParam.showColor, logParam.indexTemplate);
 
-            //组装
-            logStr = $"{index}{name}{value}{typeOfValue}";
-            //缩进
-            string indent = "";
-            indent = indent.PadLeft((maxDepth - x.depth) * 8, ' ');
-            logStr = logStr.Insert(0, indent);
+            re = indent + string.Format(logParam.lineTemplate, indexString, nameString, typeString, valueString);
 
 
-            return logStr;
+            return re;
         });
 
 
+        //组合行
+        message = string.Join("\n", texts);
 
-        string message = string.Join("\n", logStrs);
 
         //添加标题
-        if (label != null)
-        {
-            if (color)
-                label = $"<color=red>{label}</color>";
-            message = $"{label} : {message}";
-        }
+        string label = EaseLog.GetLogString(logParam.label,  logParam.label != null, logParam.labelColor, logParam.showColor, logParam.labelTemplate);
+        message = $"{label}{message}";
+
 
         Debug.Log(message);
 
-
-
         return content;
+    }
+
+
+
+    ///<summary>自动根据类型把对象打印出来,根据类型自动处理</summary>
+    ///<summary culture="en-US">log an object</summary>
+    public static T Log<T>(this T content, string label, EaseTool.EaseLog.LogParam logParam = null)
+    {
+        if (logParam == null)
+            logParam = new EaseTool.EaseLog.LogParam();
+
+        logParam.label = label;
+
+        return Log(content, logParam);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ///<summary>获得类型的类型名, 带有类型参数</summary>
+    private static string GetName(this Type type)
+    {
+        string typeName = type.Name;
+        if (type.IsGenericType)
+        {
+            typeName = typeName.Substring(0, typeName.IndexOf('`'));
+            typeName += "<";
+            Type[] genericTypes = type.GetGenericArguments();
+            typeName += string.Join(",", genericTypes.Select(x => GetName(x)));
+            typeName += ">";
+        }
+        return typeName;
+    }
+
+    /// <summary>复制字符串一定数量的次数</summary>
+    public static string Repeat(this string source, int repeatTimes)
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < repeatTimes; i++)
+        {
+            sb.Append(source);
+        }
+
+        return sb.ToString();
     }
 
 
@@ -93,10 +134,7 @@ public static partial class ExtensionMethods
         ///<summary> 将一个类型实例的字段打印出来 </summary>
         ///<summary culture="en-US">Get the log infos of an object</summary>
         public static List<(int depth, int? index, string name, Type type, string value)> GetLogInfos(
-            Object content,
-            int limitDepth = 3,
-            bool showPrivateField = false,
-            bool showDelegate = false)
+            Object content, int limitDepth = 3, bool showPrivateField = false, bool showDelegate = false)
         {
             List<int> depths = new List<int>();
             List<int?> indexes = new List<int?>();
@@ -258,21 +296,6 @@ public static partial class ExtensionMethods
 
 
 
-
-
-    }
-    ///<summary>获得类型的类型名, 带有类型参数</summary>
-    private static string GetName(this Type type)
-    {
-        string typeName = type.Name;
-        if (type.IsGenericType)
-        {
-            typeName = typeName.Substring(0, typeName.IndexOf('`'));
-            typeName += "<";
-            Type[] genericTypes = type.GetGenericArguments();
-            typeName += string.Join(",", genericTypes.Select(x => GetName(x)));
-            typeName += ">";
-        }
-        return typeName;
     }
 }
+

@@ -42,7 +42,6 @@ namespace EventData.DataName
         /// <summary>移除标记物的数据</summary>
         public static void RemoveData(Object identifier)
         {
-            identifier.Log();
             allNameInstance.RemoveAll((data) => data.identifier == identifier);
         }
        

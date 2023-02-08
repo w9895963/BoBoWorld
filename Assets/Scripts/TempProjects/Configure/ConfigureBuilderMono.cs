@@ -12,7 +12,8 @@ namespace Configure
 {
     //属性:组件名,配置安装器
     [AddComponentMenu("配置/配置安装器")]
-    public class ConfigureBuilderMono : MonoBehaviour
+    [ExecuteInEditMode]
+    public partial class ConfigureBuilderMono : MonoBehaviour
     {
         //*按钮:检查缺失组件
         [Button("检查缺失组件")]
@@ -54,6 +55,8 @@ namespace Configure
         //列表:配置启用器列表
         private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
         private Dictionary<ConfigureItem, ConfigureRunner> runnerList = new();
+
+
 
 
 
@@ -113,28 +116,79 @@ namespace Configure
 
 
 
-        //*Unity事件
-        //苏醒
+
+
+
+
+
+    }
+
+
+    //*新写法
+    public partial class ConfigureBuilderMono
+    {
+        List<(IConfigureRunnerBuilder, IConfigureRunner)> oldKeep = new();
+
+        ///<summary> 根据变动更新实际运行的配置, 并执行对应启用等操作 </summary>
+        public void UpdateRunnersAddRemove()
+        {
+            IEnumerable<IConfigureRunnerBuilder> current = 配置列表.SelectManyNotNull(x => (x as IConfigureRunnerBuilders)?.RunnerBuilders);
+            IEnumerable<IConfigureRunnerBuilder> newsToAddBuilder = current.Except(oldKeep.Select(x => x.Item1));
+            IEnumerable<(IConfigureRunnerBuilder, IConfigureRunner)> oldsToRemove = oldKeep.Where(x => !current.Contains(x.Item1));
+            IEnumerable<(IConfigureRunnerBuilder, IConfigureRunner)> newsToAdd = newsToAddBuilder.Select(x => (x, x.CreateRunnerOver(gameObject)));
+
+
+            oldsToRemove.ForEach(x => manager.RemoveRunner(x.Item2));
+            newsToAdd.ForEach(x => manager.AddRunner(x.Item2));
+
+            oldKeep.AddRange(newsToAdd);
+            oldKeep.RemoveAll(x => oldsToRemove.Select(y => y.Item1).Contains(x.Item1));
+
+        }
+    }
+
+
+
+
+    //*Unity事件
+    public partial class ConfigureBuilderMono
+    {
+        //*苏醒
         void Awake()
         {
+            manager.Initialize();
         }
         void OnEnable()
         {
-            UpdateRunners();
+            manager.Enable();
 
         }
 
         void OnDisable()
         {
-            UpdateRunners();
+            manager.Disable();
+        }
+
+        void OnDestroy()
+        {
+            manager.Destroy();
         }
 
 
+        //*编辑器变动
+        void OnValidate()
+        {
+            UpdateRunners();
+            UpdateRunnersAddRemove();
+        }
+    }
 
 
 
-
-
+    public partial class ConfigureBuilderMono
+    {
+        private ConfigureManager manager = new();
+       
 
 
     }

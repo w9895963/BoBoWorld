@@ -14,6 +14,8 @@ namespace Configure
     {
         public abstract string MenuName { get; }
         public abstract Type[] RequireComponents { get; }
+        public abstract ItemRunnerBase CreateRunnerOver(GameObject gameObject);
+       
 
 
 

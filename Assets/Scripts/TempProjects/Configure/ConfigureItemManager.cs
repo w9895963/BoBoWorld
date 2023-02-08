@@ -14,7 +14,7 @@ namespace Configure
     //类：配置管理器
     [CreateAssetMenu(fileName = "配置管理器", menuName = "配置/配置管理器", order = 0)]
     //可脚本化对象
-    public class ConfigureItemManager : ScriptableObject
+    public partial class ConfigureItemManager : ScriptableObject
     {
         //^界面:选择类型并添加
         [ValueDropdown(nameof(configureTypes))]
@@ -113,12 +113,49 @@ namespace Configure
 
 
 
+    public partial class ConfigureItemManager : IConfigureRunnerBuilders
+    {
+        IConfigureRunnerBuilder[] IConfigureRunnerBuilders.RunnerBuilders => 配置文件列表.SelectNotNull(x => x as IConfigureRunnerBuilder).ToArray();
+    }
 
 
 
 
+    interface IConfigureRunnerManager
+    {
+        void AddRunner(IConfigureRunner runner);
+        void RemoveRunner(IConfigureRunner runner);
+        void Initialize();
+        void Destroy();
+        void Enable();
+        void Disable();
+    }
 
 
+
+
+    interface IConfigureRunnerBuilders
+    {
+        IConfigureRunnerBuilder[] RunnerBuilders { get; }
+        void OnValidate();
+    }
+
+
+    interface IConfigureRunnerBuilder
+    {
+        IConfigureRunner CreateRunnerOver(GameObject gameObject);
+    }
+
+
+    public interface IConfigureRunner
+    {
+        bool AllowEnable { get; }
+        void Initialize();
+        void Destroy();
+        void Enable();
+        void Disable();
+
+    }
 
 
 

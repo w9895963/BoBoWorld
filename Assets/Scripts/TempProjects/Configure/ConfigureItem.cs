@@ -98,33 +98,15 @@ namespace Configure
             //~从下列几种方法中选择一个创建运行器
 
 
-            if (this is ConfigureItemBase)
+
+            if (this is ConfigureItemBase itemBase)
             {
-                Type runnerType;
-                runnerType = this.GetType()
-                // .Log("GetType")//Test
-                .GetNestedTypes()
-                .Log("GetNestedTypes")//Test
-                .Where(t => t.IsAbstract == false)
-                // .Log("Where")//Test
-                .FirstOrDefault(t => t.BaseType.GetGenericTypeDefinition() == typeof(ConfigureItemBase.ItemRunnerBase<>));
-                // runnerType.Log(" runnerType");//Test 
-
-
-                if (runnerType != null)
-                {
-                    var obj = Activator.CreateInstance(runnerType);
-                    runnerType.GetField(nameof(ConfigureItemBase.ItemRunnerBase<object>.config)).SetValue(obj, this);
-                    runnerType.GetField(nameof(ConfigureItemBase.ItemRunnerBase.gameObject)).SetValue(obj, monoBehaviour.gameObject);
-
-                    IConfigureItemRunner r = (IConfigureItemRunner)obj;
-
-
-                    return new ConfigureRunner(r.Init, r.Enable, r.Disable, r.Destroy);
-                }
-
-
+                ConfigureItemBase.ItemRunnerBase itemRunnerBase = itemBase.CreateRunnerOver(monoBehaviour.gameObject);
+                return new ConfigureRunner(itemRunnerBase.Init, itemRunnerBase.Enable, itemRunnerBase.Disable, itemRunnerBase.Destroy);
             }
+
+
+            
 
 
 

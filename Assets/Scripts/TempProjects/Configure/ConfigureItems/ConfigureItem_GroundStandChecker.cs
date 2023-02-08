@@ -24,17 +24,14 @@ namespace Configure.ConfigureItems
 
         public List<string> tags => 地面标签;
 
+        public override ItemRunnerBase CreateRunnerOver(GameObject gameObject)
+        {
+            return new Runner() { gameObject = gameObject, config = this };
+        }
 
-
-
-
-
-
-
-        public class Runner : ItemRunnerBase
+        public class Runner : ItemRunnerBase<ConfigureItem_GroundStandChecker>
         {
 
-            // private List<string> tags => config.tags;
 
 
 
