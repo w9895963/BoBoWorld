@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Configure;
 using EventData;
-using EventData.CustomDataNameCore;
 using EventData.DataName;
 using UnityEngine;
 
@@ -22,22 +21,20 @@ namespace EventData
         ///<summary>获取所有可能的数据名列表,全名, 不去重</summary>
         public static string[] GetDataNamesList()
         {
-
+            IEnumerable<string> re = new string[0];
             //分割并获取最后一个
             IEnumerable<string> l1 = System.Enum.GetNames(typeof(DataName.Preset.PresetName));
 
-            //获得额外的数据名
-            string[] l2 = GetAllCustomDataNamesAndTypesDict().Keys.ToArray();
 
 
 
 
             //合并多个字符串数组
-            string[] arr = l1.Concat(l2).ToArray();
+            re = re.Concat(l1);
 
 
 
-            return arr;
+            return re.ToArray();
         }
         ///<summary>获取数据名列表, 预设, 全名, 不去重</summary>
         public static string[] GetDataNamesList_PresetName()
@@ -87,8 +84,7 @@ namespace EventData
                 re.AddRange(GetDataNamesList_PresetName().Where(name => regex.IsMatch(GetNameFromFullName(name))));
             }
 
-            //~匹配自定义数据名
-            re.AddRange(GetAllCustomDataNamesAndTypesDict().Where(keyValue => keyValue.Value == type).Select(keyValue => keyValue.Key));
+
 
 
             return re.ToArray();
@@ -116,16 +112,7 @@ namespace EventData
             System.Type type = null;
 
 
-            System.Type type1 = GetCustomType(dataName);
-            if (type1 != null)
-            {
-                return type1;
-            }
-            System.Type type2 = GetPresetType(dataName);
-            if (type2 != null)
-            {
-                return type2;
-            }
+            type = GetPresetType(dataName) ?? type;
 
 
 
@@ -153,25 +140,7 @@ namespace EventData
             return type;
         }
 
-        ///<summary>获得一个数据的自定义类型预设, 不对数据名进行预处理</summary>
-        public static System.Type GetCustomType(string dataName)
-        {
-            System.Type type = null;
-
-            GetAllCustomDataNamesAndTypesDict().ForEach((keyValue) =>
-            {
-                if (keyValue.Key == dataName)
-                {
-                    type = keyValue.Value;
-                }
-            });
-
-            type = EventData.DataNameD.AllNameInstance.FirstOrDefault((ins) => ins.DataName == dataName)?.DataType;
-
-
-
-            return type;
-        }
+      
 
 
 
@@ -194,41 +163,7 @@ namespace EventData
 
 
 
-        ///<summary> 获得所有自定义数据名和类型的字典, 不会重复 </summary>
-        public static Dictionary<string, Type> GetAllCustomDataNamesAndTypesDict()
-        {
-            Dictionary<string, Type> re = new Dictionary<string, Type>();
-            //获得所有数据名列表
-            GameObject.FindObjectOfType<CustomDataNameLoaderMono>()?.数据列表.ForEach((list) =>
-            {
-                //获得所有数据名
-                list.数据名列表.ForEach((data) =>
-                {
-                    // 如果数据名不为空, 且类型不为空
-                    if (data.数据全名.IsNotEmpty() && data.type != null)
-                        //添加数据名和类型
-                        re.TryAdd(data.数据全名, data.type);
-                });
-            });
 
-
-            //另一个获得所有数据名列表
-            EventData.DataNameD.AllNameInstance
-            .GroupBy(name => name.DataName)
-            // .Log("AllNameInstance")
-            .ForEach((group) =>
-            {
-                //获得所有数据名
-                int count = group.Count();
-                string name = group.Key;
-                Type type = group.First().DataType;
-
-                re.Add(name, type);
-
-            });
-
-            return re;
-        }
 
 
 
@@ -310,11 +245,11 @@ namespace EventData
                 }
             }
 
-           
 
-        
 
-           
+
+
+
         }
 
 

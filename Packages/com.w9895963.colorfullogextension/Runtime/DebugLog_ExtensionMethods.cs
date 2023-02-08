@@ -12,10 +12,17 @@ public static partial class ExtensionMethods
 
     ///<summary>自动根据类型把对象打印出来,根据类型自动处理</summary>
     ///<summary culture="en-US">Get the log infos of an object</summary>
-    public static T Log<T>(this T content, string label = null, bool color = true, int limitDepth = 3, bool showValueType = true, bool showName = true, bool showIndex = true)
+    public static T Log<T>(this T content,
+                           string label = null,
+                           bool color = true,
+                           int limitDepth = 3,
+                           bool showValueType = true,
+                           bool showName = true,
+                           bool showIndex = true,
+                           bool showPrivateField = false)
     {
 
-        var infos = GetLogInfos(content, limitDepth);
+        var infos = GetLogInfos(content, limitDepth, showPrivateField);
 
         int maxDepth = infos.Max(x => x.depth);
 
@@ -132,7 +139,7 @@ public static partial class ExtensionMethods
                 {
                     if (limitDepth > 0)
                     {
-                        var logInfos = GetLogInfos(valueObject, limitDepth - 1);
+                        var logInfos = GetLogInfos(valueObject, limitDepth - 1, showPrivateField, showDelegate);
                         logInfos[0] = (logInfos[0].depth, i, logInfos[0].name, logInfos[0].type, logInfos[0].value);
                         logInfos.ForEach(x => { depths.Add(x.depth); names.Add(x.name); indexes.Add(x.index); types.Add(x.type); values.Add(x.value); });
                     }
@@ -153,7 +160,7 @@ public static partial class ExtensionMethods
                     if (limitDepth > 0)
                     {
                         var valueObject = item.GetValue(content);
-                        var logInfos = GetLogInfos(valueObject, limitDepth - 1);
+                        var logInfos = GetLogInfos(valueObject, limitDepth - 1, showPrivateField, showDelegate);
                         logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
                         logInfos.ForEach(x => { depths.Add(x.depth); indexes.Add(x.index); names.Add(x.name); types.Add(x.type); values.Add(x.value); });
                     }
@@ -184,7 +191,7 @@ public static partial class ExtensionMethods
                     if (limitDepth > 0)
                     {
                         var valueObject = item.GetValue(content);
-                        var logInfos = GetLogInfos(valueObject, limitDepth - 1);
+                        var logInfos = GetLogInfos(valueObject, limitDepth - 1, showPrivateField, showDelegate);
                         logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
                         if (showDelegate == false)
                         {
@@ -214,7 +221,7 @@ public static partial class ExtensionMethods
                         }
                         if (valueObject != null)
                         {
-                            var logInfos = GetLogInfos(valueObject, limitDepth - 1);
+                            var logInfos = GetLogInfos(valueObject, limitDepth - 1, showPrivateField, showDelegate);
                             logInfos[0] = (logInfos[0].depth, i, item.Name, logInfos[0].type, logInfos[0].value);
                             if (showDelegate == false)
                             {

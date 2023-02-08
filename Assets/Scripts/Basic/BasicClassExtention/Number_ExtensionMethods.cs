@@ -1,26 +1,76 @@
+using System;
 using UnityEngine;
 
 public static partial class ExtensionMethods
 {
-
-
-
-
-
-
-
-    public static float Min(this float f, float compareWith)
-    {
-        return f < compareWith ? f : compareWith;
-    }
-    public static float Sign(this float f)
-    {
-        return Mathf.Sign(f);
-    }
     public static float Abs(this float f)
     {
         return Mathf.Abs(f);
     }
+    public static float Ceil(this float f)
+    {
+        return Mathf.Ceil(f);
+    }
+    public static int CeilToInt(this float f)
+    {
+        return (int)Mathf.Ceil(f);
+    }
+    public static float Ceil(this float f, float step)
+    {
+        return Mathf.Ceil(f / step) * step;
+    }
+
+    /// <summary>循环</summary>
+    public static void Loop(this int times,Action<int> action)
+    {
+        for (int i = 0; i < times; i++)
+        {
+            action(i);
+        }
+    }
+
+
+
+
+
+    public static Vector2 Map(this int f, int inputStart, int inputEnd, Vector2 outputStart, Vector2 outputEnd, bool clamp = true)
+    {
+        float f1 = f;
+        if (clamp) f1 = f.Clamp(inputStart, inputEnd);
+        return (f1 - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart;
+    }
+    public static float Map(this float f, float inputStart, float inputEnd, float outputStart, float outputEnd, bool clamp = true)
+    {
+        float f1 = f;
+        if (clamp) f1 = f.Clamp(inputStart, inputEnd);
+        return (f1 - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart;
+    }
+
+    public static Vector2 Map(this float f, float inputStart, float inputEnd, Vector2 outputStart, Vector2 outputEnd, bool clamp = true)
+    {
+        float f1 = f;
+        if (clamp) f1 = f.Clamp(inputStart, inputEnd);
+        return (f1 - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart;
+    }
+
+
+
+    /// <summary>最大值</summary>
+    public static int Max(this int i, int compareWith)
+    {
+        return i > compareWith ? i : compareWith;
+    }
+    public static float Min(this float f, float compareWith)
+    {
+        return f < compareWith ? f : compareWith;
+    }
+
+
+    public static float Sign(this float f)
+    {
+        return Mathf.Sign(f);
+    }
+
 
     public static float Sqrt(this float f)
     {
@@ -76,32 +126,9 @@ public static partial class ExtensionMethods
         return i > Min ? i : Min;
     }
 
-    public static float ZeroRid(this float f, bool negative = false, float value = 0.0001f)
-    {
-        return f != 0 ? f : (negative == false ? Mathf.Abs(value) : -Mathf.Abs(value));
-    }
 
 
 
-    public static Vector2 Map(this int f, int inputStart, int inputEnd, Vector2 outputStart, Vector2 outputEnd, bool clamp = true)
-    {
-        float f1 = f;
-        if (clamp) f1 = f.Clamp(inputStart, inputEnd);
-        return (f1 - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart;
-    }
-    public static float Map(this float f, float inputStart, float inputEnd, float outputStart, float outputEnd, bool clamp = true)
-    {
-        float f1 = f;
-        if (clamp) f1 = f.Clamp(inputStart, inputEnd);
-        return (f1 - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart;
-    }
-
-    public static Vector2 Map(this float f, float inputStart, float inputEnd, Vector2 outputStart, Vector2 outputEnd, bool clamp = true)
-    {
-        float f1 = f;
-        if (clamp) f1 = f.Clamp(inputStart, inputEnd);
-        return (f1 - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart;
-    }
 
 
     public static float Floor(this float f)
@@ -112,18 +139,7 @@ public static partial class ExtensionMethods
     {
         return Mathf.FloorToInt(f);
     }
-    public static float Ceil(this float f)
-    {
-        return Mathf.Ceil(f);
-    }
-    public static int CeilToInt(this float f)
-    {
-        return (int)Mathf.Ceil(f);
-    }
-    public static float Ceil(this float f, float step)
-    {
-        return Mathf.Ceil(f / step) * step;
-    }
+
 
     public static bool ToBool(this float f)
     {
@@ -144,7 +160,10 @@ public static partial class ExtensionMethods
 
 
 
-
+    public static float ZeroRid(this float f, bool negative = false, float value = 0.0001f)
+    {
+        return f != 0 ? f : (negative == false ? Mathf.Abs(value) : -Mathf.Abs(value));
+    }
 
 
 }

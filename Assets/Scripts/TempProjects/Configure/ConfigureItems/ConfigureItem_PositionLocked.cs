@@ -24,7 +24,7 @@ namespace Configure.ConfigureItems
         [SerializeField]
         
         
-        public Inspector.TagDropDown 追踪对象标签 = new Inspector.TagDropDown(UnityTag.玩家角色碰撞体);
+        public Inspector.TagDropDown 追踪对象标签 = new Inspector.TagDropDown(BaseData.UnityTag.玩家角色碰撞体);
 
 
 

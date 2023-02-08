@@ -35,7 +35,7 @@ namespace Configure
             public float 地面最大夹角 = 10;
 
             [Tooltip("此标签外的物体不被视为地面")]
-            public List<Inspector.TagDropDown> 地面标签 = new List<Inspector.TagDropDown>() { new Inspector.TagDropDown(UnityTag.地表碰撞体) };
+            public List<Inspector.TagDropDown> 地面标签 = new List<Inspector.TagDropDown>() { new Inspector.TagDropDown(BaseData.UnityTag.地表碰撞体) };
 
 
             [Header("动态参数")]

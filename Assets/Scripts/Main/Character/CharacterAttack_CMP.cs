@@ -23,7 +23,8 @@ public class CharacterAttack_CMP : MonoBehaviour
 
     private void OnDisable()
     {
-        disableAction?.Invoke(true);
+        disableAction?.Invoke();
+        disableAction = null;
     }
 
 

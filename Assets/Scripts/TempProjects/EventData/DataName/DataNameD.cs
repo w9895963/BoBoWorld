@@ -10,18 +10,19 @@ namespace EventData
     {
         public static IEnumerable<DataName.IDataNameInstance> AllNameInstance => EventData.DataName.DataNameInstance.AllNameInstance;
 
-        public static IEnumerable<string> AllNamePreset => System.Enum.GetNames(typeof(DataName.Preset.PresetName));
-        public static IEnumerable<DataName.IDataNameInfo> AllNamePresetInfo => DataNameD.AllNamePreset.SelectNotNull((name) => new DataNameF.NameInfoPreSet(name) as IDataNameInfo);
+        private static IEnumerable<string> allNamePreset;
+        public static IEnumerable<string> AllNamePreset => allNamePreset ?? (allNamePreset = System.Enum.GetNames(typeof(DataName.Preset.PresetName)));
+        public static IEnumerable<DataName.IDataNameInfo> AllNameInfo_Preset => DataNameD.AllNamePreset.SelectNotNull((name) => new DataNameF.NameInfoPreSet(name) as IDataNameInfo);
 
 
         public static IEnumerable<DataName.IDataNameInfo> AllDataNameInfo
         {
             get
             {
-                IEnumerable<IDataNameInfo> re = new IDataNameInfo[0];
-                re = AllNamePresetInfo;
-                IEnumerable<IDataNameInfo> enumerable1 = DataNameInstance.AllNameInstance.Cast<IDataNameInstance>().Select((name) => name.ToDataNameInfo());
-                re = re.Concat(enumerable1);
+                IEnumerable<IDataNameInfo> re = AllNameInfo_Preset;
+                IEnumerable<IDataNameInfo> add;
+                add = DataNameInstance.AllNameInstance.Cast<IDataNameInstance>().Select((name) => name.ToDataNameInfo());
+                re = re.Concat(add);
 
                 return re;
             }

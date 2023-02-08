@@ -11,7 +11,7 @@ namespace Configure.ConfigureItems
     public class ConfigureItem_GroundStandChecker : ConfigureItemBase
     {
         [SerializeField]
-        private List<string> 地面标签 = new List<string>() { UnityTag.地表碰撞体.ToString() };
+        private List<string> 地面标签 = new List<string>() { BaseData.UnityTag.地表碰撞体.ToString() };
 
 
 

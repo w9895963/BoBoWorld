@@ -65,7 +65,8 @@ public class CharacterJump_CMP : MonoBehaviour
 
     private void OnDisable()
     {
-        disableAction?.Invoke(true);
+        disableAction?.Invoke();
+        disableAction = null;
     }
 
 
