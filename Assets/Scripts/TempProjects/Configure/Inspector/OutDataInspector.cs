@@ -11,6 +11,128 @@ using Object = System.Object;
 namespace Configure.Inspector
 {
 
+
+    //*公用方法
+    public partial class OutDataInspector : IDataSetter
+    {
+        public void Enable()
+        {
+            if (enabled)
+            {
+                return;
+            }
+            UseName = EventData.DataName.DataNameInstance.AddName(new()
+            {
+                nameGetter = () => currentName,
+                nameSetter = (name) => currentName = name,
+                typeGetter = () => DataType,
+                aliveChecker = null,
+                identifier = this,
+            });
+            enabled = true;
+        }
+        public void Disable()
+        {
+            if (!enabled)
+            {
+                return;
+            }
+            UseName = null;
+            EventData.DataName.DataNameInstance.RemoveData(this);
+            enabled = false;
+        }
+
+
+        public string DataName { get => currentName; set => currentName = value; }
+        public Type DataType
+        {
+            get
+            {
+                //从名字中获取类型
+                nameTypeDic.TryGetValue(dataTypeName, out Type type);
+                return type;
+            }
+
+            set
+            {
+                dataTypeName = value?.Name ?? "";
+            }
+        }
+
+
+
+
+
+        public Action<T> CreateDataSetter<T>(GameObject gameObject)
+        {
+            //~名字为空时, 返回空方法
+            if (currentName == null)
+            {
+                return (data) => { };
+            }
+            EventData.EventDataHandler<T> eventDataHandler = EventData.EventDataF.GetData<T>(currentName, gameObject);
+            return (data) => eventDataHandler.Data = data;
+        }
+
+
+
+
+
+        private bool enabled = false;
+        private EventData.DataName.IDataNameInstance UseName;
+        //字典:名字-类型
+        private static Dictionary<string, Type> nameTypeDic = new Dictionary<string, Type>(){
+            {"Int32",typeof(int)},
+            {"Single",typeof(float)},
+            {"String",typeof(string)},
+            {"Boolean",typeof(bool)},
+            {"Vector2",typeof(Vector2)},
+            {"Vector3",typeof(Vector3)},
+            {"Vector4",typeof(Vector4)},
+            {"Quaternion",typeof(Quaternion)},
+            {"Color",typeof(Color)},
+            {"GameObject",typeof(GameObject)},
+            {"Transform",typeof(Transform)},
+            {"Object",typeof(Object)},
+            {"Texture",typeof(Texture)},
+            {"Material",typeof(Material)},
+            {"Sprite",typeof(Sprite)},
+            {"AnimationClip",typeof(AnimationClip)},
+            {"AudioClip",typeof(AudioClip)},
+            {"Font",typeof(Font)},
+            {"RuntimeAnimatorController",typeof(RuntimeAnimatorController)},
+            {"ScriptableObject",typeof(ScriptableObject)},
+            {"Component",typeof(Component)},
+            {"Behaviour",typeof(Behaviour)},
+            {"MonoBehaviour",typeof(MonoBehaviour)},
+            {"Collider",typeof(Collider)},
+            {"Collider2D",typeof(Collider2D)},
+            {"Rigidbody",typeof(Rigidbody)},
+            {"Rigidbody2D",typeof(Rigidbody2D)},
+            {"Joint",typeof(Joint)},
+            {"Joint2D",typeof(Joint2D)},
+            {"Animation",typeof(Animation)},
+            {"Animator",typeof(Animator)},
+            {"AudioSource",typeof(AudioSource)},
+            {"Camera",typeof(Camera)},
+            {"Light",typeof(Light)},
+            {"Renderer",typeof(Renderer)},
+            {"TrailRenderer",typeof(TrailRenderer)},
+            {"LineRenderer",typeof(LineRenderer)},
+            {"MeshRenderer",typeof(MeshRenderer)},
+            {"SkinnedMeshRenderer",typeof(SkinnedMeshRenderer)},
+            {"ParticleSystem",typeof(ParticleSystem)},
+        };
+
+    }
+
+
+
+
+
+
+
+
     //*界面组成
     [Serializable]
     [InlineProperty]
@@ -22,7 +144,7 @@ namespace Configure.Inspector
         [ShowIf(nameof(uiTab), 0)]
         [HideLabel]
         public string currentName;
-        private string currentName_typeName => dataType.Name;
+        private string currentName_typeName => dataTypeName;
         private IEnumerable currentName_NamesDropDownList => GetDataNamesDropDownList();
 
         [HorizontalGroup("A")]
@@ -37,6 +159,7 @@ namespace Configure.Inspector
         {
             if (uiTab == 0)
             {
+                rename = currentName;
             }
             else
             {
@@ -94,8 +217,9 @@ namespace Configure.Inspector
         private IEnumerable GetDataNamesDropDownList()
         {
             ValueDropdownList<string> valueDropdownList = new ValueDropdownList<string>();
+
             EventData.DataNameD.AllDataNameInfo
-            .Where((data) => data.DataType == dataType)
+            .Where((data) => data.DataType == DataType)
             .Where((data) => data.DataName.IsNotEmpty())
             .ForEach((data) =>
             {
@@ -116,56 +240,7 @@ namespace Configure.Inspector
 
 
 
-    //*公用方法
-    public partial class OutDataInspector: IDataSetter
-    {
-        public void OnEnable()
-        {
-            if (enabled)
-            {
-                return;
-            }
-            UseName = EventData.DataName.DataNameInstance.AddName(() => currentName, (name) => currentName = name, dataType, null, this);
-            enabled = true;
-        }
-        public void OnDisable()
-        {
-            if (!enabled)
-            {
-                return;
-            }
-            UseName = null;
-            EventData.DataName.DataNameInstance.RemoveData(this);
-            enabled = false;
-        }
 
-
-        public string DataName { get => currentName; set => currentName = value; }
-
-
-
-
-
-
-
-        public Action<T> CreateDataSetter<T>(GameObject gameObject)
-        {
-            //~名字为空时, 返回空方法
-            if (currentName == null)
-            {
-                return (data) => { };
-            }
-            return (data) => EventData.EventDataF.GetData<T>(currentName, gameObject).Data = data;
-        }
-
-
-
-
-
-        private bool enabled = false;
-        private EventData.DataName.IDataNameInstance UseName;
-
-    }
 
 
 
@@ -175,16 +250,16 @@ namespace Configure.Inspector
     public partial class OutDataInspector
     {
 
-        public OutDataInspector(Type dataType, string dataName = null)
+        public OutDataInspector(Type dataType = null, string dataName = null)
         {
             this.currentName = dataName;
-            this.dataType = dataType;
-            OnEnable();
+            this.dataTypeName = dataType?.Name ?? "";
+            Enable();
         }
 
-
-
-        private Type dataType;
+        [SerializeField]
+        [HideInInspector]
+        private string dataTypeName;
     }
 
 

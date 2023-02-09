@@ -9,7 +9,11 @@ public static partial class ExtensionMethods
 {
 
 
-    
+    ///<summary>反转布伦</summary>
+    public static bool Not(this bool source)
+    {
+        return !source;
+    }
 
 
 

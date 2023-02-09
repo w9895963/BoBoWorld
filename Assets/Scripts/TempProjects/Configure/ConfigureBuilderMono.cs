@@ -12,7 +12,6 @@ namespace Configure
 {
     //属性:组件名,配置安装器
     [AddComponentMenu("配置/配置安装器")]
-    [ExecuteInEditMode]
     public partial class ConfigureBuilderMono : MonoBehaviour
     {
         //*按钮:检查缺失组件
@@ -50,11 +49,15 @@ namespace Configure
         [Space]
         public List<ConfigureItemManager> 配置列表 = new List<ConfigureItemManager>();
 
+       
+
 
 
         //列表:配置启用器列表
         private List<(Action Enable, Action Disable)> enablerList = new List<(Action Enable, Action Disable)>();
         private Dictionary<ConfigureItem, ConfigureRunner> runnerList = new();
+
+
 
 
 
@@ -124,30 +127,82 @@ namespace Configure
     }
 
 
-    //*新写法
+
+
+
+
+   
+
+
+
+
+
+
+
+    ///*初始化
     public partial class ConfigureBuilderMono
     {
-        List<(IConfigureRunnerBuilder, IConfigureRunner)> oldKeep = new();
-
-        ///<summary> 根据变动更新实际运行的配置, 并执行对应启用等操作 </summary>
-        public void UpdateRunnersAddRemove()
+        public ConfigureBuilderMono()
         {
-            IEnumerable<IConfigureRunnerBuilder> current = 配置列表.SelectManyNotNull(x => (x as IConfigureRunnerBuilders)?.RunnerBuilders);
-            IEnumerable<IConfigureRunnerBuilder> newsToAddBuilder = current.Except(oldKeep.Select(x => x.Item1));
-            IEnumerable<(IConfigureRunnerBuilder, IConfigureRunner)> oldsToRemove = oldKeep.Where(x => !current.Contains(x.Item1));
-            IEnumerable<(IConfigureRunnerBuilder, IConfigureRunner)> newsToAdd = newsToAddBuilder.Select(x => (x, x.CreateRunnerOver(gameObject)));
 
 
-            oldsToRemove.ForEach(x => manager.RemoveRunner(x.Item2));
-            newsToAdd.ForEach(x => manager.AddRunner(x.Item2));
 
-            oldKeep.AddRange(newsToAdd);
-            oldKeep.RemoveAll(x => oldsToRemove.Select(y => y.Item1).Contains(x.Item1));
+            RunnerListMonitor = new(cf =>
+            {
+               return cf;
+            });
+           
+
+
+            
+
+
+
+
+            ConfigListMonitor = new(配置列表);
+            ConfigListMonitor.SelectManyToList(x => (x as IConfigureRunnerBuilders)?.RunnerBuilders, (x, y) => (y, y.CreateRunner(this)), RunnerListMonitor);
+
+            ConfigListMonitor.Update();
+
+
+            SelfEnabler = new((cf) =>
+            {
+                cf.initialize = Init;
+                cf.unInitialize = UnInit;
+                cf.enable = Enable;
+                cf.disable = Disable;
+
+                void Init()
+                {
+                    RunnerListMonitor.ForEach(x => x.Item2.Init());
+                }
+                void UnInit()
+                {
+                    RunnerListMonitor.ForEach(x => x.Item2.UnInit());
+                }
+                void Enable()
+                {
+                    RunnerListMonitor.ForEach(x => x.Item2.Enable());
+                }
+                void Disable()
+                {
+                    RunnerListMonitor.ForEach(x => x.Item2.Disable());
+                }
+
+
+                return cf;
+            });
 
         }
+        ClassCore.Enabler SelfEnabler;
+        ClassCore.ListMonitor<ConfigureItemManager> ConfigListMonitor;
+        ClassCore.ListMonitor<(IConfigureRunnerBuilder, IConfigureRunner)> RunnerListMonitor;
+
+
+
+
+
     }
-
-
 
 
     //*Unity事件
@@ -156,40 +211,28 @@ namespace Configure
         //*苏醒
         void Awake()
         {
-            manager.Initialize();
+            SelfEnabler.Init();
         }
         void OnEnable()
         {
-            manager.Enable();
-
+            SelfEnabler.Enable();
         }
 
         void OnDisable()
         {
-            manager.Disable();
+            SelfEnabler.Disable();
         }
 
         void OnDestroy()
         {
-            manager.Destroy();
+            SelfEnabler.UnInit();
         }
 
 
         //*编辑器变动
         void OnValidate()
         {
-            UpdateRunners();
-            UpdateRunnersAddRemove();
+            ConfigListMonitor.Update();
         }
-    }
-
-
-
-    public partial class ConfigureBuilderMono
-    {
-        private ConfigureManager manager = new();
-       
-
-
     }
 }

@@ -21,7 +21,7 @@ namespace EventData
             {
                 IEnumerable<IDataNameInfo> re = AllNameInfo_Preset;
                 IEnumerable<IDataNameInfo> add;
-                add = DataNameInstance.AllNameInstance.Cast<IDataNameInstance>().Select((name) => name.ToDataNameInfo());
+                add = DataNameInstance.AllNameInstance.SelectNotNull((name) => (name as IDataNameInstance)?.ToDataNameInfo());
                 re = re.Concat(add);
 
                 return re;

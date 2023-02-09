@@ -56,7 +56,7 @@ namespace Configure.ConfigureItems
 
         public override string MenuName => "物理/重力施力";
 
-        public override Type[] RequireComponents => null;
+        public override Type[] RequireComponentsOnGameObject => null;
         public override ItemRunnerBase CreateRunnerOver(GameObject gameObject)
         {
             return new Runner() { gameObject = gameObject, config = this };

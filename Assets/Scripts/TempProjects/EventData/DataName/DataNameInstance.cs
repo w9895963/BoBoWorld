@@ -19,7 +19,7 @@ namespace EventData.DataName
 
 
         public static DataNameInstance AddName(Func<string> nameGetter, Action<string> nameSetter, Type type,
-            Func<bool> isAliveChecker = null,Object identifier = null)
+            Func<bool> isAliveChecker = null, Object identifier = null)
         {
             DataNameInstance name = new()
             {
@@ -31,6 +31,28 @@ namespace EventData.DataName
             };
             allNameInstance.AddNotNull(name);
             return name;
+        }
+        public static DataNameInstance AddName(DataNameInstanceConfig config)
+        {
+            DataNameInstance name = new()
+            {
+                nameGetter = config.nameGetter,
+                nameSetter = config.nameSetter,
+                typeGetter = config.typeGetter,
+                aliveChecker = config.aliveChecker,
+                identifier = config.identifier,
+            };
+            allNameInstance.AddNotNull(name);
+            return name;
+        }
+        public class DataNameInstanceConfig
+        {
+            public Func<string> nameGetter;
+            public Action<string> nameSetter;
+            public Func<Type> typeGetter;
+
+            public Func<bool> aliveChecker;
+            public Object identifier;
         }
 
         /// <summary>移除不活动数据</summary>
@@ -44,7 +66,7 @@ namespace EventData.DataName
         {
             allNameInstance.RemoveAll((data) => data.identifier == identifier);
         }
-       
+
 
     }
 
@@ -53,7 +75,17 @@ namespace EventData.DataName
     {
         public string DataName { get => nameGetter?.Invoke(); set => nameSetter?.Invoke(value); }
 
-        public Type DataType => typeGetter?.Invoke();
+        public Type DataType
+        {
+            get
+            {
+                return typeGetter?.Invoke();
+            }
+            set
+            {
+                typeGetter = () => value;
+            }
+        }
     }
 
     //*构建参数

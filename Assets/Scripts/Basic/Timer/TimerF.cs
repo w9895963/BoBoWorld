@@ -48,9 +48,12 @@ public static class TimerF
         return re;
     }
 
+
+
     ///<summary>延迟运行, 等待下一帧执行操作, !!编辑器使用!!</summary>
     public static void WaitUpdate_InEditor(Action action, int updateCount = 1)
     {
+#if UNITY_EDITOR
         int count = 0;
         UnityEditor.EditorApplication.update += MyEditorUpdateFunction;
 
@@ -65,6 +68,7 @@ public static class TimerF
                 UnityEditor.EditorApplication.update -= MyEditorUpdateFunction;
             }
         }
+#endif
 
 
     }

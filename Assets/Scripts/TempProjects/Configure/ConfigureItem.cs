@@ -156,7 +156,7 @@ namespace Configure
                 {
 
                     //添加必要组件
-                    requiredTypes.AddRangeNotNull(addition.RequireComponents);
+                    requiredTypes.AddRangeNotNull(addition.RequireComponentsOnGameObject);
                     //除重
                     requiredTypes = requiredTypes.Distinct().ToList();
                 }

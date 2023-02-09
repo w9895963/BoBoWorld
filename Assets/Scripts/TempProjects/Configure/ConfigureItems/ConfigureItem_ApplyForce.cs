@@ -61,12 +61,12 @@ namespace Configure.ConfigureItems
         private ConfigureRunner GetCreateRunner(GameObject gameObject)
         {
             Runner r = new Runner(gameObject, this);
-            return new ConfigureRunner(r.Initialize, r.Enable, r.Disable, r.Destroy);
+            return new ConfigureRunner(r.Init, r.Enable, r.Disable, r.UnInit);
         }
 
-        IConfigureRunner IConfigureRunnerBuilder.CreateRunnerOver(GameObject gameObject)
+        IConfigureRunner IConfigureRunnerBuilder.CreateRunner(MonoBehaviour mono)
         {
-            return new Runner(gameObject, this);
+            return new Runner(mono.gameObject, this);
         }
 
         private class Runner :IConfigureRunner
@@ -87,7 +87,7 @@ namespace Configure.ConfigureItems
 
             public bool AllowEnable => true;
 
-            public void Initialize()
+            public void Init()
             {
 
                 //获取施力数据列表
@@ -117,7 +117,7 @@ namespace Configure.ConfigureItems
 
             }
 
-            public void Destroy()
+            public void UnInit()
             {
                 enablerList.ForEach(x => x.Disable());
             }

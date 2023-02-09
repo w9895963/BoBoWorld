@@ -15,7 +15,8 @@ namespace Configure.Inspector
 
         [InfoBox("$" + nameof(脚本说明))]
         [HideLabel]
-        public PlaceHolder placeHolder;
+        [SerializeField]
+        private PlaceHolder placeHolder;
         [HideInInspector]
         public string 脚本说明;
 
@@ -25,7 +26,7 @@ namespace Configure.Inspector
             this.脚本说明 = string.Join("\n", texts);
         }
         [Serializable]
-        public class PlaceHolder
+        private class PlaceHolder
         {
 
         }

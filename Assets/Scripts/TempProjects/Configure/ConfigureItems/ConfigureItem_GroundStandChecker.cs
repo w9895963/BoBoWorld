@@ -18,7 +18,7 @@ namespace Configure.ConfigureItems
 
         public override string MenuName => "角色/站立判断";
 
-        public override Type[] RequireComponents => null;
+        public override Type[] RequireComponentsOnGameObject => null;
 
 
 

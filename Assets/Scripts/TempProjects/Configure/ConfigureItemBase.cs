@@ -13,9 +13,10 @@ namespace Configure
     public abstract class ConfigureItemBase : ConfigureItem
     {
         public abstract string MenuName { get; }
-        public abstract Type[] RequireComponents { get; }
+        public abstract Type[] RequireComponentsOnGameObject { get; }
+        // public abstract Type[] RequireComponents (GameObject gameObject);
         public abstract ItemRunnerBase CreateRunnerOver(GameObject gameObject);
-       
+
 
 
 
@@ -36,6 +37,12 @@ namespace Configure
         }
 
 
+    }
+
+    public interface IConfigureData
+    {
+        string MenuName { get; }
+        Type[] RequireComponents (GameObject gameObject);
     }
 
 

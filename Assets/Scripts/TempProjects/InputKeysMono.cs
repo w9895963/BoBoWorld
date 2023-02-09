@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 
 public class InputKeysMono : MonoBehaviour
 {
-    private void Awake()
+    private void OnEnable()
     {
         InputActionAsset asset = GameObject.FindObjectOfType<PlayerInput>().actions;
 
@@ -46,4 +46,7 @@ public class InputKeysMono : MonoBehaviour
 
 
     }
+
+
+    
 }

@@ -145,9 +145,17 @@ public static partial class ExtensionMethods
 
 
     ///<summary>移除所有相同单位</summary>
-    public static void RemoveAll<T>(this List<T> source, T items)
+    public static int RemoveAll<T>(this List<T> source, T items)
     {
-        source.RemoveAll((x) => x.Equals(items));
+        return source.RemoveAll((x) => x.Equals(items));
+    }
+    ///<summary>移除所有</summary>
+    public static void RemoveRange<T>(this List<T> source, IEnumerable<T> items)
+    {
+        foreach (var item in items)
+        {
+            source.Remove(item);
+        }
     }
 
     ///<summary>移除末尾</summary>

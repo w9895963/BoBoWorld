@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 
 namespace Configure.Inspector
 {
+   
     [System.Serializable]
     [InlineProperty]
     public class DataNameDropDown<T>

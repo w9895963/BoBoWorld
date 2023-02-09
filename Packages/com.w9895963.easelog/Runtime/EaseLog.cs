@@ -16,8 +16,15 @@ namespace EaseTool
         public class LogParam
         {
             /// <summary>深度</summary>
-            public int depth = 3;
+            public int depth = 2;
 
+            /// <summary>一次最大显示数量</summary>
+            public int maxShowLine = 50;
+
+
+            #region //&何如显示
+            /// <summary>显示行号</summary>
+            public bool showLineIndex = true;
 
             /// <summary>显示标题</summary>
             public bool showLabel = true;
@@ -76,33 +83,54 @@ namespace EaseTool
 
 
 
+            #endregion
+            //&Region  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
 
             /// <summary>是否显示共有字段</summary>
             public bool showContentFieldPublic = true;
             /// <summary>是否显示实例字段</summary>
             public bool showContentFieldInstance = true;
             /// <summary>是否显示私有字段</summary>
-            public bool showContentFieldPrivate = true;
+            public bool showContentFieldPrivate = false;
 
             public bool showContentPropertyPublic = true;
             /// <summary>是否显示实例字段和属性</summary>
             public bool showContentPropertyInstance = true;
             /// <summary>是否显示私有字段和属性</summary>
             public bool showContentPropertyPrivate = false;
+
             /// <summary>显示父对象的模板</summary>
             public string contentHolderValueTemplate = "({0} members)⇣";
             /// <summary>显示父对象的模板, 类专用</summary>
             public string contentHolderValueTemplateClass = "({0} fields, {1} properties)⇣";
 
-            public BindingFlags PropertyFlags => (showContentPropertyPublic ? BindingFlags.Public : 0) |
-            (showContentPropertyInstance ? BindingFlags.Instance : 0) |
-            (showContentPropertyPrivate ? BindingFlags.NonPublic : 0);
 
-            public BindingFlags FieldFlags => (showContentFieldPublic ? BindingFlags.Public : 0) |
-            (showContentFieldInstance ? BindingFlags.Instance : 0) |
-            (showContentFieldPrivate ? BindingFlags.NonPublic : 0);
+
+
+
         }
+        ///<summary>输入日志参数</summary>
+        private class LogParam_Flag
+        {
 
+
+            public BindingFlags PropertyFlags => (parm.showContentPropertyPublic ? BindingFlags.Public : 0) |
+            (parm.showContentPropertyInstance ? BindingFlags.Instance : 0) |
+            (parm.showContentPropertyPrivate ? BindingFlags.NonPublic : 0);
+
+            public BindingFlags FieldFlags => (parm.showContentFieldPublic ? BindingFlags.Public : 0) |
+            (parm.showContentFieldInstance ? BindingFlags.Instance : 0) |
+            (parm.showContentFieldPrivate ? BindingFlags.NonPublic : 0);
+
+
+
+            public LogParam_Flag(LogParam parm)
+            {
+                this.parm = parm;
+            }
+            private readonly LogParam parm;
+        }
 
 
 
@@ -192,6 +220,10 @@ namespace EaseTool
             (x => x is string,
             (x, param, logInfos) => logInfos.Last().value = $"\"{x}\""),
 
+            //如果是:Delegate
+            (x => x is Delegate,
+            (x, param, logInfos) => logInfos.Last().value = x.ToString()),
+
             //如果是:可枚举的
             (x => x is System.Collections.IEnumerable,
             ContentAnalyzer_IEnumerable),
@@ -204,16 +236,14 @@ namespace EaseTool
             (x => x.GetType().IsValueType,
             (x, param, logInfos) => logInfos.Last().value = x.ToString()),
 
+            
+
             //如果是:自身有自定义的ToString方法
             (x => x.GetType().GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance).DeclaringType != typeof(object),
             (x, param, logInfos) => logInfos.Last().value = x.ToString()),
 
-            //如果是:Delegate
-            (x => x is Delegate,
-            (x, param, logInfos) => logInfos.Last().value = x.ToString()),
-
             //如果是:其他类,则打印出所有字段和属性
-            (x => x.GetType().IsClass,
+            (x => x.GetType().GetFields().Length+ x.GetType().GetProperties().Length > 0,
             ContentAnalyzer_Class),
             
             //如果是:其他
@@ -247,7 +277,8 @@ namespace EaseTool
         private static void ContentAnalyzer_ValueTuple(Object content, LogParam param, List<LogInfo> logInfos)
         {
             var type = content.GetType();
-            var fields = type.GetFields(param.PropertyFlags);
+            LogParam_Flag flag = new(param);
+            var fields = type.GetFields(flag.PropertyFlags);
             int curIndex = logInfos.Count - 1;
             int currDepth = param.depth;
             param.depth = param.depth - 1;
@@ -270,9 +301,10 @@ namespace EaseTool
         {
             var type = content.GetType();
 
-            var fields = type.GetFields(param.FieldFlags);
+            LogParam_Flag flag = new(param);
+            var fields = type.GetFields(flag.FieldFlags);
             int fieldLength = fields.Length;
-            var properties = type.GetProperties(param.PropertyFlags);
+            var properties = type.GetProperties(flag.PropertyFlags);
             int curIndex = logInfos.Count - 1;
             int currDepth = param.depth;
 

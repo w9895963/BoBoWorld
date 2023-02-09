@@ -121,7 +121,7 @@ namespace Configure
 
 
 
-    interface IConfigureRunnerManager
+    public interface IConfigureRunnerManager
     {
         void AddRunner(IConfigureRunner runner);
         void RemoveRunner(IConfigureRunner runner);
@@ -134,31 +134,41 @@ namespace Configure
 
 
 
-    interface IConfigureRunnerBuilders
+    public interface IConfigureRunnerBuilders
     {
         IConfigureRunnerBuilder[] RunnerBuilders { get; }
-        void OnValidate();
     }
 
 
-    interface IConfigureRunnerBuilder
+    public interface IConfigureRunnerBuilder
     {
-        IConfigureRunner CreateRunnerOver(GameObject gameObject);
+        IConfigureRunner CreateRunner(MonoBehaviour mono);
     }
 
 
     public interface IConfigureRunner
     {
-        bool AllowEnable { get; }
-        void Initialize();
-        void Destroy();
-        void Enable();
-        void Disable();
+        public void Init();
+        public void UnInit();
+        public void Enable();
+        public void Disable();
 
     }
 
 
+    public interface IConfigItemInfo
+    {
 
+        public string MenuName { get; }
+
+        public ConfigItemInfo OptionalInfo { get; }
+
+
+        public class ConfigItemInfo
+        {
+            
+        }
+    }
 
 
 

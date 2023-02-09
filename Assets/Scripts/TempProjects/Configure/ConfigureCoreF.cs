@@ -44,6 +44,27 @@ namespace Configure
                     }
                 });
 
+
+                //获得接口为 IConfigItemInfo 的所有类
+                typeof(ConfigureItem).GetSubTypes().ForEach(t =>
+                {
+                    //如果继承了接口 IConfigItemInfo
+                    if (t.GetInterfaces().Contains(typeof(IConfigItemInfo)))
+                    {
+                        IConfigItemInfo ins = Activator.CreateInstance(t) as IConfigItemInfo;
+                        //如果没有菜单名，就不添加
+                        if (ins.MenuName.IsNotEmpty())
+                        {
+                            list.Add(new KeyValuePair<string, Type>(ins.MenuName, t));
+                        }
+
+                    }
+                });
+
+
+
+
+
                 //排序
                 list.Sort((a, b) => a.Key.CompareTo(b.Key));
 

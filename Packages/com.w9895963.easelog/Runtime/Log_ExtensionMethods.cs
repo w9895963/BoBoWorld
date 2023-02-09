@@ -34,6 +34,7 @@ public static partial class ExtensionMethods
 
 
         //获取所有要打印的行
+        int index = 0;
         IEnumerable<string> texts = infos.Select(x =>
         {
             string re = "";
@@ -47,9 +48,9 @@ public static partial class ExtensionMethods
             string typeString = EaseLog.GetLogString(typeStr, logParam.showType, logParam.typeColor, logParam.showColor, logParam.typeTemplate);
             string indexString = EaseLog.GetLogString(indexStr, logParam.showIndex, logParam.indexColor, logParam.showColor, logParam.indexTemplate);
 
-            re = indent + string.Format(logParam.lineTemplate, indexString, nameString, typeString, valueString);
+            re = indent + string.Format(logParam.lineTemplate, indexString, nameString, typeString, valueString)+$"- ({index})";
 
-
+            index++;
             return re;
         });
 
