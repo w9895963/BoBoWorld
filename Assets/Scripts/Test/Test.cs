@@ -12,7 +12,10 @@ public partial class Test : MonoBehaviour
 {
 
 
-
+    //start
+    private void Start()
+    {
+    }
 
 
     private void Reset()

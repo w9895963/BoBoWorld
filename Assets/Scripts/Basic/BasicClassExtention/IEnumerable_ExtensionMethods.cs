@@ -73,14 +73,14 @@ public static partial class ExtensionMethods
     ///<summary>选择但是不包含Null</summary>
     public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
     {
-      return  source.Select(selector).Where((x) => x != null);
+      return  source.Where((x) => x != null).Select(selector).Where((x) => x != null);
     }
 
 
-    ///<summary>SelectMany方法拓展:排除Null</summary>
+    ///<summary>SelectMany方法拓展:自动排除Null</summary>
     public static IEnumerable<TResult> SelectManyNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
     {
-        return source.SelectMany(selector).Where((x) => x != null);
+        return source.Where((x) => x != null).SelectMany(selector).Where((x) => x != null);
     }
 
 
