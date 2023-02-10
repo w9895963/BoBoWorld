@@ -66,7 +66,7 @@ namespace Configure.ConfigureItems
 
         
 
-        private class Runner :ClassCore.IRunnerConfig
+        private class Runner :CoreClass.IRunnerConfig
         {
             private GameObject gameObject;
             private Rigidbody2D rigidbody2D;

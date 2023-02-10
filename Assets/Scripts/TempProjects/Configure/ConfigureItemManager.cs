@@ -124,8 +124,8 @@ namespace Configure
 
     public interface IConfigureRunnerManager
     {
-        void AddRunner(ClassCore.IRunner runner);
-        void RemoveRunner(ClassCore.IRunner runner);
+        void AddRunner(CoreClass.IRunner runner);
+        void RemoveRunner(CoreClass.IRunner runner);
         void Initialize();
         void Destroy();
         void Enable();
@@ -143,7 +143,7 @@ namespace Configure
 
     public interface IConfigureRunnerBuilder
     {
-        ClassCore.IRunnerConfig CreateRunnerConfig(MonoBehaviour mono);
+        CoreClass.IRunnerConfig CreateRunnerConfig(MonoBehaviour mono);
     }
 
 

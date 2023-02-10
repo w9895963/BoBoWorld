@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace ClassCore
+namespace CoreClass
 {
     /// <summary> 用于控制初始化和启用 </summary>
     public class Runner : IRunner
@@ -15,9 +15,12 @@ namespace ClassCore
         ///<summary> 更新状态至约束 </summary>
         public void Update()
         {
+          /*   Debug.Log("Runner: " + " 更新状态至约束");
             //~如果冲突则警告
             var enable = _autoEnabled?.Invoke();
             var init = _autoInitialized?.Invoke();
+            enable.Log("enable");
+            init.Log("init");
             if (enable != null && init != null)
             {
                 if (enable == true && init == false)
@@ -29,7 +32,7 @@ namespace ClassCore
             {
                 Enable();
             }
-            else
+            else if (enable == false)
             {
                 Disable();
             }
@@ -37,10 +40,10 @@ namespace ClassCore
             {
                 Init();
             }
-            else
+            else if (init == false)
             {
                 UnInit();
-            }
+            } */
         }
 
         ///<summary> 初始化 </summary>
@@ -76,11 +79,14 @@ namespace ClassCore
         ///<summary> 停止 </summary>
         public void Disable()
         {
+            Debug.Log("Runner: " + " Disable");
+            _enabled.Log();
             if (_enabled == true)
             {
                 _onDisable?.Invoke();
                 _enabled = false;
             }
+            _enabled.Log();
         }
 
         private bool _enabled = false;

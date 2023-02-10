@@ -17,7 +17,7 @@ namespace Configure.ConfigureItems
 
 
     [System.Serializable]
-    public class ConfigureItem_SetInput : ConfigureItem, IConfigureRunnerBuilder, IConfigItemInfo
+    public class ConfigureItem_SetInput : ConfigureItem,  IConfigItemInfo, IGetter<MonoBehaviour, CoreClass.InitedEnabler>
     {
         [Sirenix.OdinInspector.LabelText("输入映射")]
         public List<InputSetting> InputSettings = new List<InputSetting>();
@@ -122,16 +122,31 @@ namespace Configure.ConfigureItems
 
         string IConfigItemInfo.MenuName => "玩家输入/引入输入数据";
         IConfigItemInfo.ConfigItemInfo IConfigItemInfo.OptionalInfo => null;
+
+
         
 
-        ClassCore.IRunnerConfig IConfigureRunnerBuilder.CreateRunnerConfig(MonoBehaviour mono) => new Runner()
+        CoreClass.InitedEnabler IGetter<MonoBehaviour, CoreClass.InitedEnabler>.Get(MonoBehaviour parm)
         {
-            gameObject = mono.gameObject,
-            config = this
-        };
-        
+            if (_runner != null)
+                return _runner;
 
-        private class Runner : ClassCore.IRunnerConfig
+            Runner runner = new Runner()
+            {
+                gameObject = parm.gameObject,
+                config = this
+            };
+
+            _runner = new CoreClass.InitedEnabler(runner);
+            return _runner;
+        }
+
+
+
+        private CoreClass.InitedEnabler _runner;
+
+
+        private class Runner : CoreClass.IRunnerConfig
         {
             public GameObject gameObject;
             public ConfigureItem_SetInput config;

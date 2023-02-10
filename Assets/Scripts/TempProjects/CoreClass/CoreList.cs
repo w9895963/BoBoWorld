@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ClassCore
+namespace CoreClass
 {
     ///<summary> 这个类用来添加和删除成员 </summary>
     public class CoreList<T>

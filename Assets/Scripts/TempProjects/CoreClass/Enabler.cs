@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace ClassCore
+namespace CoreClass
 {
     public abstract partial class Enabler
     {
@@ -51,7 +51,7 @@ namespace ClassCore
     {
         public class AutoEnabler : Enabler
         {
-           
+
             public override Action<bool> OnEnabled { get => OnEnabledAction; set => OnEnabledAction = value; }
             public Func<bool> EnabledAccessor;
             public override bool Enabled
@@ -85,7 +85,7 @@ namespace ClassCore
             }
 
 
-             private Action<bool> OnEnabledAction;
+            private Action<bool> OnEnabledAction;
         }
     }
 
@@ -94,4 +94,8 @@ namespace ClassCore
     {
         Enabler Enabler { get; }
     }
+
 }
+
+
+ 

@@ -144,24 +144,44 @@ namespace Configure
     {
         public ConfigureBuilderMono()
         {
+            InitedEnabler = new();
+
+
+
 
             RunnerListMonitor = new(cf =>
             {
-                cf.OnAdd = (k, v) =>
+                CoreClass.InitedEnablerActive monoRunner = InitedEnabler;
+                cf.OnAdd = (configItem, runner) =>
                 {
-                    ClassCore.Enabler enabler = (k as ClassCore.IEnabled).Enabler;
-                    enabler.OnEnabled = (b) =>
-                    {
-                        b.Log("OnEnabled");
-                        v.Update();
-                    };
-                    (v as ClassCore.Runner).AutoEnabled = () => this.enabled & enabler.Enabled;
-                    v.Init();
-                    v.Update();
+                    CoreClass.AutoEnabler itemEnabler = (configItem as IGetter<CoreClass.AutoEnabler>).Get();
+
+                    itemEnabler.OnEnable += runner.Update;
+                    itemEnabler.OnDisable += runner.Update;
+
+
+                    monoRunner.OnEnable += runner.Update;
+                    monoRunner.OnDisable += runner.Update;
+                    monoRunner.OnUnInit += runner.Update;
+                    monoRunner.OnInit += runner.Update;
+
+
+                    runner.AccessEnabled = () => itemEnabler.Enabled && monoRunner.Enabled;
+                    runner.AccessInited = () =>  monoRunner.Initialized;
+
                 };
-                cf.OnRemove = (k, v) =>
+                cf.OnRemove = (configItem, runner) =>
                 {
-                    v.UnInit();
+                    CoreClass.AutoEnabler itemEnabler = (configItem as IGetter<CoreClass.AutoEnabler>).Get();
+
+                    itemEnabler.OnEnable -= runner.Update;
+                    itemEnabler.OnDisable -= runner.Update;
+
+                    monoRunner.OnEnable -= runner.Update;
+                    monoRunner.OnDisable -= runner.Update;
+                    monoRunner.OnUnInit -= runner.Update;
+                    monoRunner.OnInit -= runner.Update;
+
                 };
                 return cf;
             });
@@ -169,7 +189,7 @@ namespace Configure
 
 
             BuilderListMonitor = new();
-            BuilderListMonitor.SelectToDict(b => b, (b, k) => new ClassCore.Runner(k.CreateRunnerConfig(this)), RunnerListMonitor);
+            BuilderListMonitor.SelectToDict(b => b, (b, k) => (k as IGetter<MonoBehaviour, CoreClass.InitedEnabler>).Get(this), RunnerListMonitor);
 
 
 
@@ -184,40 +204,15 @@ namespace Configure
             ConfigListMonitor.Update();
 
 
-            SelfEnabler = new((cf) =>
-            {
-                cf.initialize = Init;
-                cf.unInitialize = UnInit;
-                cf.enable = Enable;
-                cf.disable = Disable;
-
-                void Init()
-                {
-                    RunnerListMonitor.Values.ForEach(x => x.Init());
-                }
-                void UnInit()
-                {
-                    RunnerListMonitor.Values.ForEach(x => x.UnInit());
-                }
-                void Enable()
-                {
-                   RunnerListMonitor.Values.ForEach(x => x.Enable());
-                }
-                void Disable()
-                {
-                    RunnerListMonitor.Values.ForEach(x => x.Disable());
-                }
 
 
-                return cf;
-            });
-            SelfEnabler.AutoEnabled = () => this.enabled;
+
 
         }
-        ClassCore.Runner SelfEnabler;
-        ClassCore.ListMonitor<ConfigureItemManager> ConfigListMonitor;
-        ClassCore.ListMonitor<IConfigureRunnerBuilder> BuilderListMonitor;
-        ClassCore.CoreDict<IConfigureRunnerBuilder, ClassCore.IRunner> RunnerListMonitor;
+        CoreClass.InitedEnablerActive InitedEnabler;
+        CoreClass.ListMonitor<ConfigureItemManager> ConfigListMonitor;
+        CoreClass.ListMonitor<IConfigureRunnerBuilder> BuilderListMonitor;
+        CoreClass.CoreDict<IConfigureRunnerBuilder, CoreClass.InitedEnabler> RunnerListMonitor;
 
 
 
@@ -233,21 +228,21 @@ namespace Configure
         //*苏醒
         void Awake()
         {
-            SelfEnabler.Init();
+            InitedEnabler.Init();
         }
         void OnEnable()
         {
-            SelfEnabler.Enable();
+            InitedEnabler.Enable();
         }
 
         void OnDisable()
         {
-            SelfEnabler.Disable();
+            InitedEnabler.Disable();
         }
 
         void OnDestroy()
         {
-            SelfEnabler.UnInit();
+            InitedEnabler.UnInit();
         }
 
 
@@ -255,7 +250,7 @@ namespace Configure
         void OnValidate()
         {
             ConfigListMonitor.Update();
-            SelfEnabler.Update();
+            // SelfEnabler.Update();
             Debug.Log("OnValidate");
         }
     }

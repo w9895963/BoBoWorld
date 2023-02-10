@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ClassCore;
+using CoreClass;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -149,7 +149,6 @@ namespace Configure
 
 
             autoEnabler?.Update();
-            Enabled.Log("Enabled");
 
         }
 
@@ -207,22 +206,12 @@ namespace Configure
 
 
     //*接口:配置项目启动接口
-    public abstract partial class ConfigureItem : ClassCore.IEnabled
+    public abstract partial class ConfigureItem :  IGetter<CoreClass.AutoEnabler>
     {
 
-        Enabler ClassCore.IEnabled.Enabler
-        {
-            get
-            {
-                if (autoEnabler == null)
-                {
-                    autoEnabler = new ClassCore.Enabler.AutoEnabler();
-                    autoEnabler.EnabledAccessor = () => Enabled;
-                }
-                return autoEnabler;
-            }
-        }
-        private ClassCore.Enabler.AutoEnabler autoEnabler;
+        private CoreClass.AutoEnabler _autoEnabler;
+        private CoreClass.AutoEnabler autoEnabler => _autoEnabler ?? (_autoEnabler = new());
+        AutoEnabler IGetter<AutoEnabler>.Get() => autoEnabler;
     }
 
 

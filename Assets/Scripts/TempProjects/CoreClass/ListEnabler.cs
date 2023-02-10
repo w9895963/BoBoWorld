@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ClassCore
+namespace CoreClass
 {
     /// <summary> 统一启动器 </summary>
     public class ListEnabler<T>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ClassCore
+namespace CoreClass
 {
     public class CoreDict<K, V>
     {  /// <summary> 所有值</summary>
