@@ -6,29 +6,7 @@ using System.Threading.Tasks;
 namespace ClassCore
 {
     public class CoreDict<K, V>
-    {
-        public CoreDict(Action<K, V> add = null, Action<K, V> remove = null)
-        {
-            _add = add;
-            _remove = remove;
-        }
-        public CoreDict(Func<Config, Config> configGetter)
-        {
-            var value = configGetter(new());
-            _add = value.add;
-            _remove = value.remove;
-        }
-        public class Config
-        {
-            public Action<K, V> add;
-            public Action<K, V> remove;
-        }
-        private Dictionary<K, V> _dict = new();
-        private Action<K, V> _add;
-        private Action<K, V> _remove;
-
-
-        /// <summary> 所有值</summary>
+    {  /// <summary> 所有值</summary>
         public IEnumerable<V> Values => _dict.Values;
         /// <summary> 所有键</summary>
         public IEnumerable<K> Keys => _dict.Keys;
@@ -49,5 +27,32 @@ namespace ClassCore
             if (!v) return;
             _remove?.Invoke(key, v1);
         }
+
+
+
+
+
+        public CoreDict(Action<K, V> add = null, Action<K, V> remove = null)
+        {
+            _add = add;
+            _remove = remove;
+        }
+        public CoreDict(Func<Config, Config> configGetter)
+        {
+            var value = configGetter(new());
+            _add = value.OnAdd;
+            _remove = value.OnRemove;
+        }
+        public class Config
+        {
+            public Action<K, V> OnAdd;
+            public Action<K, V> OnRemove;
+        }
+        private Dictionary<K, V> _dict = new();
+        private Action<K, V> _add;
+        private Action<K, V> _remove;
+
+
+
     }
 }

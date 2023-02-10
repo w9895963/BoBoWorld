@@ -86,6 +86,7 @@ namespace Configure
         public void OnValidate()
         {
             HotUpdate();
+            Debug.Log("配置管理器改动");
 
 
 
@@ -123,8 +124,8 @@ namespace Configure
 
     public interface IConfigureRunnerManager
     {
-        void AddRunner(IConfigureRunner runner);
-        void RemoveRunner(IConfigureRunner runner);
+        void AddRunner(ClassCore.IRunner runner);
+        void RemoveRunner(ClassCore.IRunner runner);
         void Initialize();
         void Destroy();
         void Enable();
@@ -142,18 +143,11 @@ namespace Configure
 
     public interface IConfigureRunnerBuilder
     {
-        IConfigureRunner CreateRunner(MonoBehaviour mono);
+        ClassCore.IRunnerConfig CreateRunnerConfig(MonoBehaviour mono);
     }
 
 
-    public interface IConfigureRunner
-    {
-        public void Init();
-        public void UnInit();
-        public void Enable();
-        public void Disable();
 
-    }
 
 
     public interface IConfigItemInfo
@@ -166,11 +160,10 @@ namespace Configure
 
         public class ConfigItemInfo
         {
-            
+
         }
     }
 
 
 
 }
-

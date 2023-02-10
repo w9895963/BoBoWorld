@@ -122,15 +122,16 @@ namespace Configure.ConfigureItems
 
         string IConfigItemInfo.MenuName => "玩家输入/引入输入数据";
         IConfigItemInfo.ConfigItemInfo IConfigItemInfo.OptionalInfo => null;
-        IConfigureRunner IConfigureRunnerBuilder.CreateRunner(MonoBehaviour mono) => new Runner()
+        
+
+        ClassCore.IRunnerConfig IConfigureRunnerBuilder.CreateRunnerConfig(MonoBehaviour mono) => new Runner()
         {
             gameObject = mono.gameObject,
-            config = this,
+            config = this
         };
+        
 
-
-
-        private class Runner : IConfigureRunner
+        private class Runner : ClassCore.IRunnerConfig
         {
             public GameObject gameObject;
             public ConfigureItem_SetInput config;
@@ -143,20 +144,18 @@ namespace Configure.ConfigureItems
 
 
 
-            public bool AllowEnable => true;
 
-            public void Init()
+            public void OnInit()
             {
                 UnityEngine.InputSystem.InputActionAsset actions = GameObject.FindObjectOfType<UnityEngine.InputSystem.PlayerInput>().actions;
-                Debug.Log("Init");
 
                 config.InputSettings.ForEach(x =>
                 {
-                    string actionName = x.InputAction_Name.Log("actionName");
+                    string actionName = x.InputAction_Name;
+                    string mapName = x.InputAction_MapName;
 
-                    string mapName = x.InputAction_MapName.Log("mapName");
-                    string dataName = x.DataName.Log("dataName");
-                    Type type = x.DataType.Log("type");
+                    string dataName = x.DataName;
+                    Type type = x.DataType;
 
                     Action<UnityEngine.InputSystem.InputAction.CallbackContext> dataSetter = null;
 
@@ -192,7 +191,6 @@ namespace Configure.ConfigureItems
                     Action<UnityEngine.InputSystem.InputAction.CallbackContext> performedAct = ctx =>
                     {
                         dataSetter?.Invoke(ctx);
-                        Debug.Log("Performed");
                     };
 
                     onEnableAction += () =>
@@ -225,18 +223,17 @@ namespace Configure.ConfigureItems
 
             }
 
-            public void UnInit()
+            public void OnUnInit()
             {
 
             }
 
-            public void Enable()
+            public void OnEnable()
             {
                 onEnableAction?.Invoke();
-                Debug.Log("Enable");
             }
 
-            public void Disable()
+            public void OnDisable()
             {
                 onDisableAction?.Invoke();
             }

@@ -13,17 +13,7 @@ namespace ClassCore
             _add += x => list.AddRange(selector(x));
             _remove += x => list.RemoveRange(selector(x));
         }
-        public void SelectManyToList<TValue, TResult>(Func<T, IEnumerable<TValue>> selector, Func<T, TValue, TResult> resultSelector, ListMonitor<TResult> list)
-        {
-            _add += x =>
-            {
-                list.AddRange(selector(x).Select(y => resultSelector(x, y)));
-            };
-            _remove += x =>
-            {
-                list.RemoveRange(selector(x).Select(y => resultSelector(x, y)));
-            };
-        }
+      
         public void SelectToDict<TKey, TValue>(Func<T, TKey> keySelector, Func<T, TKey, TValue> valueSelector, CoreDict<TKey, TValue> dict)
         {
             _add += x =>

@@ -49,7 +49,7 @@ namespace Configure
         [Space]
         public List<ConfigureItemManager> 配置列表 = new List<ConfigureItemManager>();
 
-       
+
 
 
 
@@ -131,7 +131,7 @@ namespace Configure
 
 
 
-   
+
 
 
 
@@ -145,22 +145,41 @@ namespace Configure
         public ConfigureBuilderMono()
         {
 
-
-
             RunnerListMonitor = new(cf =>
             {
-               return cf;
+                cf.OnAdd = (k, v) =>
+                {
+                    ClassCore.Enabler enabler = (k as ClassCore.IEnabled).Enabler;
+                    enabler.OnEnabled = (b) =>
+                    {
+                        b.Log("OnEnabled");
+                        v.Update();
+                    };
+                    (v as ClassCore.Runner).AutoEnabled = () => this.enabled & enabler.Enabled;
+                    v.Init();
+                    v.Update();
+                };
+                cf.OnRemove = (k, v) =>
+                {
+                    v.UnInit();
+                };
+                return cf;
             });
-           
 
 
-            
+
+            BuilderListMonitor = new();
+            BuilderListMonitor.SelectToDict(b => b, (b, k) => new ClassCore.Runner(k.CreateRunnerConfig(this)), RunnerListMonitor);
+
+
+
+
 
 
 
 
             ConfigListMonitor = new(配置列表);
-            ConfigListMonitor.SelectManyToList(x => (x as IConfigureRunnerBuilders)?.RunnerBuilders, (x, y) => (y, y.CreateRunner(this)), RunnerListMonitor);
+            ConfigListMonitor.SelectManyToList(x => ((x as IConfigureRunnerBuilders)?.RunnerBuilders), BuilderListMonitor);
 
             ConfigListMonitor.Update();
 
@@ -174,29 +193,32 @@ namespace Configure
 
                 void Init()
                 {
-                    RunnerListMonitor.ForEach(x => x.Item2.Init());
+                    RunnerListMonitor.Values.ForEach(x => x.Init());
                 }
                 void UnInit()
                 {
-                    RunnerListMonitor.ForEach(x => x.Item2.UnInit());
+                    RunnerListMonitor.Values.ForEach(x => x.UnInit());
                 }
                 void Enable()
                 {
-                    RunnerListMonitor.ForEach(x => x.Item2.Enable());
+                   RunnerListMonitor.Values.ForEach(x => x.Enable());
                 }
                 void Disable()
                 {
-                    RunnerListMonitor.ForEach(x => x.Item2.Disable());
+                    RunnerListMonitor.Values.ForEach(x => x.Disable());
                 }
 
 
                 return cf;
             });
+            SelfEnabler.AutoEnabled = () => this.enabled;
 
         }
-        ClassCore.Enabler SelfEnabler;
+        ClassCore.Runner SelfEnabler;
         ClassCore.ListMonitor<ConfigureItemManager> ConfigListMonitor;
-        ClassCore.ListMonitor<(IConfigureRunnerBuilder, IConfigureRunner)> RunnerListMonitor;
+        ClassCore.ListMonitor<IConfigureRunnerBuilder> BuilderListMonitor;
+        ClassCore.CoreDict<IConfigureRunnerBuilder, ClassCore.IRunner> RunnerListMonitor;
+
 
 
 
@@ -233,6 +255,8 @@ namespace Configure
         void OnValidate()
         {
             ConfigListMonitor.Update();
+            SelfEnabler.Update();
+            Debug.Log("OnValidate");
         }
     }
 }

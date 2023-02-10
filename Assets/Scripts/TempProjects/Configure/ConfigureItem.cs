@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ClassCore;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ using UnityEngine;
 namespace Configure
 {
     [System.Serializable]
-    public abstract class ConfigureItem
+    public abstract partial class ConfigureItem
     {
         #region //&界面部分
 
@@ -27,7 +28,11 @@ namespace Configure
         [ButtonGroup("配置属性/h/1")]
         [PropertyOrder(-1)]
         // [GUIColor(nameof(buttonColor))]
-        private void EnableButton() { 启用配置 = !启用配置; }
+        private void EnableButton()
+        {
+            启用配置 = !启用配置;
+            OnValidate();
+        }
         private string buttonName => 启用配置 ? "配置启用" : "配置停用";
         private Color buttonColor => 启用配置 ? Color.green : Color.yellow;
 
@@ -106,7 +111,7 @@ namespace Configure
             }
 
 
-            
+
 
 
 
@@ -141,6 +146,11 @@ namespace Configure
         public void OnValidate()
         {
             SetScriptRefer();
+
+
+            autoEnabler?.Update();
+            Enabled.Log("Enabled");
+
         }
 
 
@@ -165,6 +175,10 @@ namespace Configure
             }
         }
 
+
+
+
+
         //创建运行器
 
 
@@ -188,6 +202,32 @@ namespace Configure
 
 
     }
+
+
+
+
+    //*接口:配置项目启动接口
+    public abstract partial class ConfigureItem : ClassCore.IEnabled
+    {
+
+        Enabler ClassCore.IEnabled.Enabler
+        {
+            get
+            {
+                if (autoEnabler == null)
+                {
+                    autoEnabler = new ClassCore.Enabler.AutoEnabler();
+                    autoEnabler.EnabledAccessor = () => Enabled;
+                }
+                return autoEnabler;
+            }
+        }
+        private ClassCore.Enabler.AutoEnabler autoEnabler;
+    }
+
+
+
+
 
 
 

@@ -9,9 +9,9 @@ namespace ClassCore
     public class ListEnabler<T>
     {
        
-        private List<Enabler> _enablers = new();
+        private List<Runner> _enablers = new();
 
-        private Enabler selfEnabler = new();
+        private Runner selfEnabler = new();
 
 
         public bool Enabled => selfEnabler.Enabled;
