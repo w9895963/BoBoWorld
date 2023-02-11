@@ -114,9 +114,9 @@ namespace Configure
 
 
 
-    public partial class ConfigureItemManager : IConfigureRunnerBuilders
+    public partial class ConfigureItemManager : IConfigureItemManager
     {
-        IConfigureRunnerBuilder[] IConfigureRunnerBuilders.RunnerBuilders => 配置文件列表.SelectNotNull(x => x as IConfigureRunnerBuilder).ToArray();
+        IConfigureItem[] IConfigureItemManager.RunnerBuilders => 配置文件列表.SelectNotNull(x => x as IConfigureItem).ToArray();
     }
 
 
@@ -135,15 +135,15 @@ namespace Configure
 
 
 
-    public interface IConfigureRunnerBuilders
+    public interface IConfigureItemManager
     {
-        IConfigureRunnerBuilder[] RunnerBuilders { get; }
+        IConfigureItem[] RunnerBuilders { get; }
     }
 
 
-    public interface IConfigureRunnerBuilder
+    public interface IConfigureItem : ICreate<MonoBehaviour, CoreClass.InitedEnabler>
     {
-        CoreClass.IRunnerConfig CreateRunnerConfig(MonoBehaviour mono);
+        public CoreClass.InitedEnabler CreateRunnerConfig(MonoBehaviour mono) => Create(mono);
     }
 
 

@@ -17,7 +17,7 @@
 # 不忽略Assets文件夹下的Scripts文件夹
 /Assets/*/
 !/Assets/Scripts/
-
+!/Assets/Scripts*/
 
 # 忽略各种文件类型
 *.meta

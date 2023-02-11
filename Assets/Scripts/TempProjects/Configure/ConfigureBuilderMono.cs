@@ -144,14 +144,16 @@ namespace Configure
     {
         public ConfigureBuilderMono()
         {
-            InitedEnabler = new();
+            MonoRunner = new();
+            MonoRunner.OnEnable += () => Debug.Log("InitedEnabler.OnEnable");
 
 
 
 
-            RunnerListMonitor = new(cf =>
+
+            RunnerList = new(cf =>
             {
-                CoreClass.InitedEnablerActive monoRunner = InitedEnabler;
+                CoreClass.InitedEnablerActive monoRunner = MonoRunner;
                 cf.OnAdd = (configItem, runner) =>
                 {
                     CoreClass.AutoEnabler itemEnabler = (configItem as IGetter<CoreClass.AutoEnabler>).Get();
@@ -160,14 +162,16 @@ namespace Configure
                     itemEnabler.OnDisable += runner.Update;
 
 
+
                     monoRunner.OnEnable += runner.Update;
                     monoRunner.OnDisable += runner.Update;
                     monoRunner.OnUnInit += runner.Update;
                     monoRunner.OnInit += runner.Update;
 
 
-                    runner.AccessEnabled = () => itemEnabler.Enabled && monoRunner.Enabled;
-                    runner.AccessInited = () =>  monoRunner.Initialized;
+                    runner.AccessEnabled = () => monoRunner.Enabled && itemEnabler.Enabled && RunnerList.ContainsKey(configItem);
+                    runner.AccessInited = () => monoRunner.Initialized;
+                    runner.Update();
 
                 };
                 cf.OnRemove = (configItem, runner) =>
@@ -181,15 +185,16 @@ namespace Configure
                     monoRunner.OnDisable -= runner.Update;
                     monoRunner.OnUnInit -= runner.Update;
                     monoRunner.OnInit -= runner.Update;
+                    runner.Update();
 
                 };
                 return cf;
             });
-
+           
 
 
             BuilderListMonitor = new();
-            BuilderListMonitor.SelectToDict(b => b, (b, k) => (k as IGetter<MonoBehaviour, CoreClass.InitedEnabler>).Get(this), RunnerListMonitor);
+            BuilderListMonitor.SelectToDict((k) => k.CreateRunnerConfig(this), RunnerList);
 
 
 
@@ -199,7 +204,7 @@ namespace Configure
 
 
             ConfigListMonitor = new(配置列表);
-            ConfigListMonitor.SelectManyToList(x => ((x as IConfigureRunnerBuilders)?.RunnerBuilders), BuilderListMonitor);
+            ConfigListMonitor.SelectManyToList(x => ((x as IConfigureItemManager)?.RunnerBuilders), BuilderListMonitor);
 
             ConfigListMonitor.Update();
 
@@ -209,10 +214,10 @@ namespace Configure
 
 
         }
-        CoreClass.InitedEnablerActive InitedEnabler;
+        CoreClass.InitedEnablerActive MonoRunner;
         CoreClass.ListMonitor<ConfigureItemManager> ConfigListMonitor;
-        CoreClass.ListMonitor<IConfigureRunnerBuilder> BuilderListMonitor;
-        CoreClass.CoreDict<IConfigureRunnerBuilder, CoreClass.InitedEnabler> RunnerListMonitor;
+        CoreClass.ListMonitor<IConfigureItem> BuilderListMonitor;
+        CoreClass.CoreDict<IConfigureItem, CoreClass.InitedEnabler> RunnerList;
 
 
 
@@ -228,21 +233,21 @@ namespace Configure
         //*苏醒
         void Awake()
         {
-            InitedEnabler.Init();
+            MonoRunner.Init();
         }
         void OnEnable()
         {
-            InitedEnabler.Enable();
+            MonoRunner.Enable();
         }
 
         void OnDisable()
         {
-            InitedEnabler.Disable();
+            MonoRunner.Disable();
         }
 
         void OnDestroy()
         {
-            InitedEnabler.UnInit();
+            MonoRunner.UnInit();
         }
 
 
@@ -250,8 +255,6 @@ namespace Configure
         void OnValidate()
         {
             ConfigListMonitor.Update();
-            // SelfEnabler.Update();
-            Debug.Log("OnValidate");
         }
     }
 }

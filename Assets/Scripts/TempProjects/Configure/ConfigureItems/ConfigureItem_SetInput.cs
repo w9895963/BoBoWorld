@@ -17,7 +17,7 @@ namespace Configure.ConfigureItems
 
 
     [System.Serializable]
-    public class ConfigureItem_SetInput : ConfigureItem,  IConfigItemInfo, IGetter<MonoBehaviour, CoreClass.InitedEnabler>
+    public class ConfigureItem_SetInput : ConfigureItem, IConfigItemInfo, IConfigureItem
     {
         [Sirenix.OdinInspector.LabelText("输入映射")]
         public List<InputSetting> InputSettings = new List<InputSetting>();
@@ -124,27 +124,22 @@ namespace Configure.ConfigureItems
         IConfigItemInfo.ConfigItemInfo IConfigItemInfo.OptionalInfo => null;
 
 
+
+
+
+
         
 
-        CoreClass.InitedEnabler IGetter<MonoBehaviour, CoreClass.InitedEnabler>.Get(MonoBehaviour parm)
+        CoreClass.InitedEnabler ICreate<MonoBehaviour, CoreClass.InitedEnabler>.Create(MonoBehaviour mono)
         {
-            if (_runner != null)
-                return _runner;
-
             Runner runner = new Runner()
             {
-                gameObject = parm.gameObject,
+                gameObject = mono.gameObject,
                 config = this
             };
 
-            _runner = new CoreClass.InitedEnabler(runner);
-            return _runner;
+            return new CoreClass.InitedEnabler(runner);
         }
-
-
-
-        private CoreClass.InitedEnabler _runner;
-
 
         private class Runner : CoreClass.IRunnerConfig
         {

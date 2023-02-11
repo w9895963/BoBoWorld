@@ -22,11 +22,12 @@ namespace CoreClass
         /// <summary> 删除</summary>
         public void Remove(K key)
         {
-            V v1 = _dict[key];
+            V value = _dict[key];
             bool v = _dict.Remove(key);
             if (!v) return;
-            _remove?.Invoke(key, v1);
+            _remove?.Invoke(key, value);
         }
+        public bool ContainsKey(K key) => _dict.ContainsKey(key);
 
 
 

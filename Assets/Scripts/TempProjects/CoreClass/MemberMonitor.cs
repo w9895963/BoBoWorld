@@ -13,7 +13,7 @@ namespace CoreClass
             _add += x => list.AddRange(selector(x));
             _remove += x => list.RemoveRange(selector(x));
         }
-      
+
         public void SelectToDict<TKey, TValue>(Func<T, TKey> keySelector, Func<T, TKey, TValue> valueSelector, CoreDict<TKey, TValue> dict)
         {
             _add += x =>
@@ -23,6 +23,15 @@ namespace CoreClass
             };
             _remove += x => dict.Remove(keySelector(x));
         }
+        public void SelectToDict<V>(Func<T, V> VSelector, CoreDict<T, V> dict)
+        {
+            _add += x =>
+            {
+                dict.Add(x, VSelector(x));
+            };
+            _remove += x => dict.Remove(x);
+        }
+
 
 
         public void Update()

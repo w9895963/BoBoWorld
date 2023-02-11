@@ -1,0 +1,19 @@
+{
+    "name": "Babel.Dev",
+    "rootNamespace": "",
+    "references": [
+        "GUID:237cbb5df8d2d4f479a9e1f12e52df95",
+        "GUID:54426b5a1022b134296090bd75c76849",
+        "GUID:7569fa27c1c7c064aa8db706e7a7995c",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

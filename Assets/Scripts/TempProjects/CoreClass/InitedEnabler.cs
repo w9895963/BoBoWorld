@@ -1,12 +1,12 @@
 using System;
-
+using UnityEngine;
 
 namespace CoreClass
 {
-    public partial class InitedEnabler
+    public class InitedEnabler
     {
-        public Func<bool> AccessEnabled;
         public Func<bool> AccessInited;
+        public Func<bool> AccessEnabled;
         public Action OnInit;
         public Action OnUnInit;
         public Action OnDisable;
@@ -15,44 +15,101 @@ namespace CoreClass
         public bool Initialized => initialized;
         public void Update()
         {
-            bool targetEnabled = AccessEnabled?.Invoke() ?? false;
             bool targetInitialized = AccessInited?.Invoke() ?? false;
+            bool targetEnabled = AccessEnabled?.Invoke() ?? false;
+            bool? doEnable = null;
+            bool? doInit = null;
 
-            if (targetInitialized != initialized)
+
+            if (targetInitialized == true && targetEnabled == true)
             {
-                //如果需要初始化, 则初始化
-                if (targetInitialized)
+                if (initialized == false)
                 {
-                    initialized = true;
-                    OnInit?.Invoke();
+                    doInit = true;
                 }
-                //如果需要取消初始化, 则取消初始化, 取消前先停用
-                else
+                if (enabled == false)
                 {
-                    if (enabled == true)
-                    {
-                        enabled = false;
-                        OnDisable?.Invoke();
-                    }
-                    initialized = false;
-                    OnUnInit?.Invoke();
+                    doEnable = true;
                 }
             }
-            //如果已经初始化, 且启用状态需要改变, 则改变启用状态
-            else
-            if (initialized == true || targetInitialized != initialized)
+            else if (targetInitialized == true && targetEnabled == false)
             {
-                if (targetEnabled)
+                if (initialized == false && enabled == false)
                 {
-                    enabled = true;
-                    OnEnable?.Invoke();
+                   doInit = true;
+                }
+                else if (initialized == true && enabled == true)
+                {
+                   doEnable = false;
+                }
+                else if (initialized == true && enabled == false)
+                {
+                    //啥都不做
                 }
                 else
                 {
-                    enabled = false;
-                    OnDisable?.Invoke();
+                    Debug.LogError($"不可能的情况:{initialized},{enabled}");
+                }
+
+            }
+            else if (targetInitialized == false && targetEnabled == true)
+            {
+                if (enabled == true)
+                {
+                    doEnable = false;
+                }
+                if (initialized == true)
+                {
+                    doInit = false;
                 }
             }
+            else if (targetInitialized == false && targetEnabled == false)
+            {
+                if (initialized == true && enabled == true)
+                {
+                    doEnable = false;
+                    doInit = false;
+                }
+                else if (initialized == true && enabled == false)
+                {
+                    doInit = false;
+                }
+                else if (initialized == false && enabled == false)
+                {
+                    //啥都不做
+                }
+                else
+                {
+                    Debug.LogError($"不可能的情况:{initialized},{enabled}");
+                }
+            }
+
+
+            initialized = doInit ?? initialized;
+            enabled = doEnable ?? enabled;
+            if (doInit == true)
+            {
+                OnInit?.Invoke();
+            }
+            else if (doInit == false)
+            {
+                OnUnInit?.Invoke();
+            }
+
+            if (doEnable == true)
+            {
+                OnEnable?.Invoke();
+            }
+            else if (doEnable == false)
+            {
+                OnDisable?.Invoke();
+            }
+
+
+            //测试用
+            // Debug.Log($"targetInitialized:{AccessInited?.Invoke()},targetEnabled:{AccessEnabled?.Invoke()}");
+            // Debug.Log($"targetInitialized:{targetInitialized},targetEnabled:{targetEnabled}");
+            // Debug.Log($"OnInit: {OnInit != null},OnUnInit: {OnUnInit != null},OnDisable: {OnDisable != null},OnEnable: {OnEnable != null}");
         }
 
 
@@ -78,41 +135,55 @@ namespace CoreClass
     }
 
     //*额外方法
-    public partial class InitedEnablerActive : InitedEnabler
+    public class InitedEnablerActive
     {
+        public event Action OnInit { add => enabler.OnInit += value; remove => enabler.OnInit -= value; }
+        public event Action OnUnInit { add => enabler.OnUnInit += value; remove => enabler.OnUnInit -= value; }
+        public event Action OnDisable { add => enabler.OnDisable += value; remove => enabler.OnDisable -= value; }
+        public event Action OnEnable { add => enabler.OnEnable += value; remove => enabler.OnEnable -= value; }
+        public bool Enabled => enabler.Enabled;
+        public bool Initialized => enabler.Initialized;
+
         public void Init()
         {
-            base.AccessInited = () => true;
-            base.Update();
+            enabler.AccessInited = () => true;
+            enabler.Update();
         }
         public void UnInit()
         {
-            base.AccessEnabled = () => false;
-            base.AccessInited = () => false;
-            base.Update();
+            enabler.AccessEnabled = () => false;
+            enabler.AccessInited = () => false;
+            enabler.Update();
         }
         public void Enable()
         {
-            base.AccessInited = () => true;
-            base.AccessEnabled = () => true;
-            base.Update();
+            enabler.AccessInited = () => true;
+            enabler.AccessEnabled = () => true;
+            enabler.Update();
+
         }
         public void Disable()
         {
-            base.AccessEnabled = () => false;
-            base.Update();
+            enabler.AccessEnabled = () => false;
+            enabler.Update();
         }
 
 
-        //隐藏:Update
-        private new void Update()
-        {
-            throw new NotImplementedException();
-        }
-        //隐藏:AccessorEnabled
-        private new Func<bool> AccessEnabled;
-        //隐藏:AccessorInitialized
-        private new Func<bool> AccessInited;
+
+
+
+
+
+
+
+
+
+        private InitedEnabler enabler = new();
     }
+
+
+
+
+
 
 }

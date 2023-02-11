@@ -206,11 +206,24 @@ namespace Configure
 
 
     //*接口:配置项目启动接口
-    public abstract partial class ConfigureItem :  IGetter<CoreClass.AutoEnabler>
+    public abstract partial class ConfigureItem : IGetter<CoreClass.AutoEnabler>
     {
 
         private CoreClass.AutoEnabler _autoEnabler;
-        private CoreClass.AutoEnabler autoEnabler => _autoEnabler ?? (_autoEnabler = new());
+        private CoreClass.AutoEnabler autoEnabler
+        {
+            get
+            {
+                if (_autoEnabler == null)
+                {
+                    _autoEnabler = new();
+                    _autoEnabler.AccessorEnabled = () => 启用配置;
+
+                }
+                return _autoEnabler;
+            }
+        }
+
         AutoEnabler IGetter<AutoEnabler>.Get() => autoEnabler;
     }
 
