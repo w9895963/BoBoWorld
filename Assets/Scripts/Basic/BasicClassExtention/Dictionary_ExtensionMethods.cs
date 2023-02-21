@@ -26,7 +26,11 @@ public static partial class ExtensionMethods
     {
 
 
-        if (!dict.TryGetValue(key, out V re))
+        if (dict.TryGetValue(key, out V re))
+        {
+
+        }
+        else
         {
             if (defaultValue != null)
             {
@@ -38,11 +42,9 @@ public static partial class ExtensionMethods
 
 
         return re;
+
     }
-    public static V GetOrCreate<K, V>(this Dictionary<K, V> dict, K key) where V : new()
-    {
-        return GetOrCreate<K, V>(dict, key, () => new V());
-    }
+
 
 
 

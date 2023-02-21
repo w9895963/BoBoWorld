@@ -70,6 +70,24 @@ public static partial class ExtensionMethods
        return string.Join(separator, source);
     }
 
+    ///<summary>移除所有</summary>
+    public static void RemoveAll<T>(this ICollection<T> source, IEnumerable<T> removeItem)
+    {
+        //唯一
+        removeItem = removeItem.Distinct();
+        //交集
+        removeItem = removeItem.Intersect(source);
+
+        do
+        {
+            foreach (var item in removeItem)
+            {
+                source.Remove(item);
+            }
+            removeItem = removeItem.Intersect(source);
+        } while (removeItem.Count() > 0);
+    }
+
     ///<summary>选择但是不包含Null</summary>
     public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
     {
