@@ -56,7 +56,7 @@ namespace EventData
 
 
                 //~排序
-                var list = DataNameF.GetDataNamesList().ToList();
+                var list = PresetNameF.GetDataNamesList().ToList();
                 本地数据.SortBy((a) => list.IndexOf(a.eventData.Key));
                 全局数据.SortBy((a) => list.IndexOf(a.eventData.Key));
 

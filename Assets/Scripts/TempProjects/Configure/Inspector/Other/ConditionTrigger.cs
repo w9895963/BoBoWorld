@@ -60,7 +60,7 @@ namespace Configure.Inspector
             Type type = typeof(ConditionTrigger).GetNestedTypes()
             .Where(t => t.BaseType == typeof(ConditionCore))
             // .Log()//Test
-            .FirstOrDefault(t => t.GetProperty(nameof(ConditionCore.dataType)).GetValue(Activator.CreateInstance(t)) as Type == EventData.DataNameF.GetDataType(dataName));
+            .FirstOrDefault(t => t.GetProperty(nameof(ConditionCore.dataType)).GetValue(Activator.CreateInstance(t)) as Type == EventData.PresetNameF.GetDataType(dataName));
 
             if (type == null)
                 conditionBase = new ConditionOnUpdate();
@@ -70,7 +70,7 @@ namespace Configure.Inspector
 
         private string[] GetDataList()
         {
-            return EventData.DataNameF.GetDataNamesListWithGroup();
+            return EventData.PresetNameF.GetDataNamesListWithGroup();
         }
 
 

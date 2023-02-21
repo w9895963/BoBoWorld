@@ -18,7 +18,7 @@ namespace Configure.Inspector
 
         public string[] UpdateDropdownNames()
         {
-            return EventData.DataNameF.GetAllNamesOnType(typeof(T)).ToArray();
+            return EventData.PresetNameF.GetAllNamesOnType(typeof(T)).ToArray();
         }
 
 

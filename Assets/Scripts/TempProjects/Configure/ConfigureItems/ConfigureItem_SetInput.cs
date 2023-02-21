@@ -19,8 +19,7 @@ namespace Configure.ConfigureItems
     [System.Serializable]
     public class ConfigureItem_SetInput : ConfigureItem, IConfigItemInfo, IConfigureItem
     {
-        [Sirenix.OdinInspector.LabelText("输入映射")]
-        public List<InputSetting> InputSettings = new List<InputSetting>();
+        public List<InputSetting> 按键映射 = new List<InputSetting>();
 
 
         [Serializable]
@@ -101,7 +100,7 @@ namespace Configure.ConfigureItems
             private Type dataType;
             [Sirenix.OdinInspector.LabelText("输出数据")]
             [SerializeField]
-            private Configure.Inspector.OutDataInspector outData = new Inspector.OutDataInspector();
+            private Configure.Inspector.DataInstance outData = new Inspector.DataInstance();
 
             #endregion
             //&Region  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
@@ -141,6 +140,10 @@ namespace Configure.ConfigureItems
             return new CoreClass.InitedEnabler(runner);
         }
 
+
+
+        
+
         private class Runner : CoreClass.IRunnerConfig
         {
             public GameObject gameObject;
@@ -159,7 +162,7 @@ namespace Configure.ConfigureItems
             {
                 UnityEngine.InputSystem.InputActionAsset actions = GameObject.FindObjectOfType<UnityEngine.InputSystem.PlayerInput>().actions;
 
-                config.InputSettings.ForEach(x =>
+                config.按键映射.ForEach(x =>
                 {
                     string actionName = x.InputAction_Name;
                     string mapName = x.InputAction_MapName;

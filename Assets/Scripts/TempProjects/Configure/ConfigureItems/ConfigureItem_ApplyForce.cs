@@ -47,7 +47,7 @@ namespace Configure.ConfigureItems
 
         public void PresetDataContentOnCreate()
         {
-            forceNameList = DataNameF.GetAllNamesOnType(typeof(Vector2)).Where(x => x.Contains("施力")).ToList();
+            forceNameList = PresetNameF.GetAllNamesOnType(typeof(Vector2)).Where(x => x.Contains("施力")).ToList();
         }
 
 

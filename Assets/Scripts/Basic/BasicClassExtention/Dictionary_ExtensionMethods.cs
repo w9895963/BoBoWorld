@@ -40,7 +40,6 @@ public static partial class ExtensionMethods
         }
 
 
-
         return re;
 
     }

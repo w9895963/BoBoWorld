@@ -314,7 +314,7 @@ namespace Configure.Inspector
         public DataImport(System.Type type)
         {
             this.type = type;
-            updateDropdownNames = DataNameF.GetAllNamesOnType(type).ToList();
+            updateDropdownNames = PresetNameF.GetAllNamesOnType(type).ToList();
         }
 
 

@@ -145,7 +145,6 @@ namespace Configure
         public ConfigureBuilderMono()
         {
             MonoRunner = new();
-            MonoRunner.OnEnable += () => Debug.Log("InitedEnabler.OnEnable");
 
 
 

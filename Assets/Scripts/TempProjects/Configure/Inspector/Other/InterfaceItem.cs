@@ -128,7 +128,7 @@ namespace Configure.Inspector.InterfaceItems
 
         private string[] DataNameDropList()
         {
-            return EventData.DataNameF.GetAllNamesOnType(type);
+            return EventData.PresetNameF.GetAllNamesOnType(type);
         }
     }
 }

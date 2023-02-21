@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Configure
 {
-    public static partial class ConfigureCoreF
+    public static partial class CoreF
     {
         ///<summary> 获得所有配置组件的(名字,类型)字典, 结果已排序 </summary>
         public static Dictionary<string, Type> NameTypeDict
@@ -22,7 +22,7 @@ namespace Configure
 
                 //否则，先把预设的字典复制过来, 用列表
                 List<KeyValuePair<string, Type>> list = new List<KeyValuePair<string, Type>>();
-                foreach (var item in Data.NameTypeDict_preset)
+                foreach (var item in Preset.NameTypeDict_preset)
                 {
                     list.Add(item);
                 }

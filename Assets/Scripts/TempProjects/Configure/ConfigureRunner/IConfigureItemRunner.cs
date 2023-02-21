@@ -2,13 +2,10 @@
 namespace Configure
 {
     //接口:配置运行器接口
-    public interface IConfigureItemRunner
+    public interface IConfigureItemRunner:CoreClass.IRunnerConfig
     {
 
-        void Destroy();
-        void Disable();
-        void Enable();
-        void Init();
+        
     }
 
 

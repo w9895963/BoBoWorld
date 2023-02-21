@@ -52,10 +52,10 @@ namespace Configure
             //如果自身有 IConfigureRunnerBuilder 接口 则添加接口里对应的启动方法
             if (this is IConfigureItemRunner configureRunner)
             {
-                this.init += configureRunner.Init;
-                this.enable += configureRunner.Enable;
-                this.disable += configureRunner.Disable;
-                this.destroy += configureRunner.Destroy;
+                this.init += configureRunner.OnInit;
+                this.enable += configureRunner.OnEnable;
+                this.disable += configureRunner.OnDisable;
+                this.destroy += configureRunner.OnUnInit;
             }
         }
 

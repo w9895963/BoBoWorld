@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using EventData;
 using UnityEditor;
 using UnityEngine;
+using Configure.Inspector;
+using static EventData.DataName.Preset;
 
 
 
@@ -13,7 +15,7 @@ namespace Configure.ConfigureItems
 
 
     [System.Serializable]
-    public class ConfigureItem_GravityFore : ConfigureItemBase
+    public class ConfigureItem_GravityFore : ConfigureItem, IConfigItemInfo, IConfigureItem
     {
 
 
@@ -27,11 +29,19 @@ namespace Configure.ConfigureItems
 
         [Tooltip("默认重力:当没有其他任何影响, 物体的重力为此值, 若不成功则为零")]
         public Inspector.InputDataOrValue 默认重力 = new(typeof(Vector2), EventData.DataName.Preset.PresetName.重力向量.ToString(), new Vector2(0, -9.8f));
+        public DataReferOrValue<Vector2> 默认重力_ = new(cfg =>
+        {
+            cfg.defaultDataName =  PresetName.重力向量.ToString();
+            cfg.defaultValue = new Vector2(0, -9.8f);
+            cfg.dataType = typeof(Vector2);
+            
+            return cfg;
+        });
 
 
 
 
-        public Inspector.ConditionTriggerList 触发条件 = new Inspector.ConditionTriggerList(){labelName = "触发条件"};
+        public Inspector.ConditionTriggerList 触发条件 = new Inspector.ConditionTriggerList() { labelName = "触发条件" };
 
 
 
@@ -54,46 +64,47 @@ namespace Configure.ConfigureItems
         //&Region  ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 
-        public override string MenuName => "物理/重力施力";
 
-        public override Type[] RequireComponentsOnGameObject => null;
-        public override ItemRunnerBase CreateRunnerOver(GameObject gameObject)
+
+        string IConfigItemInfo.MenuName => "物理/重力施力";
+
+        IConfigItemInfo.ConfigItemInfo IConfigItemInfo.OptionalInfo => null;
+
+        CoreClass.InitedEnabler ICreate<MonoBehaviour, CoreClass.InitedEnabler>.Create(MonoBehaviour parm)
         {
-            return new Runner() { gameObject = gameObject, config = this };
+            Runner runner = new Runner()
+            {
+                gameObject = parm.gameObject,
+                config = this
+            };
+
+            return new CoreClass.InitedEnabler(runner);
         }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public class Runner : ItemRunnerBase<ConfigureItem_GravityFore>
+        public class Runner : IConfigureItemRunner
         {
+            public GameObject gameObject;
+            public ConfigureItem_GravityFore config;
 
             // 预设重力
-            private Func<Vector2> getPresetGravity;
-            private Vector2 presetGravity => getPresetGravity();
+            private IDataGetter<Vector2> presetGravityInspData=> config.默认重力_;
+            private Func<Vector2> presetGravityGetter;
+            private Vector2 presetGravity => (presetGravityGetter ??= presetGravityInspData.CreateGetter(gameObject))();
 
             // 重力设置
             private Action<Vector2> setPresetGravity;
             private Vector2 gravityForce { set => setPresetGravity(value); }
+
+
+
+            // 启动器
             private (Action Enable, Action Disable) enabler = (null, null);
 
-            public override void Init()
+            public void OnInit()
             {
                 var outDataHolder = config.默认重力.CreateDataHandlerInstance<Vector2>(gameObject);
-                getPresetGravity = () => outDataHolder.data;
                 EventDataF.CreateConditionEnabler(CalcGravity, GravityDisable, ref enabler);
             }
 
@@ -117,16 +128,16 @@ namespace Configure.ConfigureItems
 
 
 
-            public override void Destroy()
+            public void OnUnInit()
             {
             }
 
-            public override void Disable()
+            public void OnDisable()
             {
                 enabler.Disable();
             }
 
-            public override void Enable()
+            public void OnEnable()
             {
                 enabler.Enable();
             }

@@ -96,7 +96,7 @@ namespace Configure
 
 
 
-                void IConfigureItemRunner.Init()
+                public void OnInit()
                 {
                     dataList.ForEach(x =>
                     {
@@ -109,18 +109,18 @@ namespace Configure
 
                     });
                 }
-                void IConfigureItemRunner.Enable()
+                public void OnEnable()
                 {
                     enabler.enable?.Invoke();
                 }
 
-                void IConfigureItemRunner.Disable()
+                public void OnDisable()
                 {
                     enabler.disable?.Invoke();
                 }
 
 
-                void IConfigureItemRunner.Destroy()
+                public void OnUnInit()
                 {
 
                 }

@@ -120,7 +120,7 @@ namespace Configure
 
 
 
-                void IConfigureItemRunner.Init()
+               public void OnInit()
                 {
                     groundCollider.Clear();
                     enabler = default;
@@ -148,7 +148,7 @@ namespace Configure
                     //地面物体
                     groundObjectD = config.地面物体.GetEventDataHandler(gameObject);
                 }
-                void IConfigureItemRunner.Enable()
+               public void OnEnable()
                 {
                     enabler.enable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Add(gameObject, OnCollisionEnter2D);
@@ -156,7 +156,7 @@ namespace Configure
                     BasicEvent.OnCollision2D_Exit.Add(gameObject, OnCollisionExit2D);
                 }
 
-                void IConfigureItemRunner.Disable()
+               public void OnDisable()
                 {
                     enabler.disable?.Invoke();
                     BasicEvent.OnCollision2D_Enter.Remove(gameObject, OnCollisionEnter2D);
@@ -165,7 +165,7 @@ namespace Configure
                 }
 
 
-                void IConfigureItemRunner.Destroy()
+               public void OnUnInit()
                 {
 
                 }

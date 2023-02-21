@@ -114,7 +114,7 @@ namespace Configure
 
 
 
-                void IConfigureItemRunner.Init()
+               public void OnInit()
                 {
                     contactGround = EventDataF.GetData<bool>(config.p是否与地面物体物理接触.dataName, gameObject);
                     time = config.p延迟判断时间;
@@ -122,19 +122,19 @@ namespace Configure
                     contactGround.OnUpdateDo_AddEnabler(OnContactGroundUpdate, ref enabler);
 
                 }
-                void IConfigureItemRunner.Enable()
+               public void OnEnable()
                 {
                     enabler.Enable?.Invoke();
                 }
 
-                void IConfigureItemRunner.Disable()
+               public void OnDisable()
                 {
                     enabler.Disable?.Invoke();
                     timer.Cancel();
                 }
 
 
-                void IConfigureItemRunner.Destroy()
+               public void OnUnInit()
                 {
 
                 }

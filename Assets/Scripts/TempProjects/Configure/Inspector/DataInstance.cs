@@ -3,17 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Configure.DataInstance;
 using EventData.DataName;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using static Configure.DataInstance.CoreF;
 using Object = System.Object;
 
 namespace Configure.Inspector
 {
 
 
+
     //*公用方法
-    public partial class OutDataInspector : IDataSetter
+    public partial class DataInstance : IDataSetter
     {
         public void Enable()
         {
@@ -21,7 +24,7 @@ namespace Configure.Inspector
             {
                 return;
             }
-            UseName = EventData.DataName.DataNameInstance.AddName(new()
+            UseName = DataNameInstance.AddName(new()
             {
                 nameGetter = () => currentName,
                 nameSetter = (name) => currentName = name,
@@ -38,7 +41,7 @@ namespace Configure.Inspector
                 return;
             }
             UseName = null;
-            EventData.DataName.DataNameInstance.RemoveData(this);
+            DataNameInstance.RemoveData(this);
             enabled = false;
         }
 
@@ -73,13 +76,23 @@ namespace Configure.Inspector
             EventData.EventDataHandler<T> eventDataHandler = EventData.EventDataF.GetData<T>(currentName, gameObject);
             return (data) => eventDataHandler.Data = data;
         }
+        public Func<T> CreateDataGetter<T>(GameObject gameObject)
+        {
+            //~名字为空时, 返回空方法
+            if (currentName == null)
+            {
+                return () => default;
+            }
+            EventData.EventDataHandler<T> eventDataHandler = EventData.EventDataF.GetData<T>(currentName, gameObject);
+            return () => eventDataHandler.Data;
+        }
 
 
 
 
 
         private bool enabled = false;
-        private EventData.DataName.IDataNameInstance UseName;
+        private IDataNameInstance UseName;
         //字典:名字-类型
         private static Dictionary<string, Type> nameTypeDic = new Dictionary<string, Type>(){
             {"Int32",typeof(int)},
@@ -136,7 +149,7 @@ namespace Configure.Inspector
     //*界面组成
     [Serializable]
     [InlineProperty]
-    public partial class OutDataInspector
+    public partial class DataInstance
     {
         [ValueDropdown(nameof(currentName_NamesDropDownList))]
         [SuffixLabel("$" + nameof(currentName_typeName), true)]
@@ -185,7 +198,7 @@ namespace Configure.Inspector
             }
             else
             {
-                EventData.DataNameD.AllNameInstance.Where((data) => data.DataName == currentName).ForEach((data) => data.DataName = newName);
+                AllNameInstance.Where((data) => data.DataName == currentName).ForEach((data) => data.DataName = newName);
             }
 
         }
@@ -193,6 +206,7 @@ namespace Configure.Inspector
 
 
         [Button("?")]
+        [PropertyOrder(10)]
         [PropertyTooltip("$" + nameof(helpInfo))]
         [HorizontalGroup("A", MaxWidth = 20)]
         private void helpIcon() { }
@@ -201,7 +215,7 @@ namespace Configure.Inspector
             get
             {
                 //~获得帮助信息
-                var count = EventData.DataNameD.AllNameInstance.Where((data) => data.DataName == currentName).Count();
+                var count = AllNameInstance.Where((data) => data.DataName == currentName).Count();
                 var refCount = $"引用次数:{count}";
                 var help = "如果不设置名字将不会被输出";
 
@@ -218,7 +232,7 @@ namespace Configure.Inspector
         {
             ValueDropdownList<string> valueDropdownList = new ValueDropdownList<string>();
 
-            EventData.DataNameD.AllDataNameInfo
+            AllDataNameInfo
             .Where((data) => data.DataType == DataType)
             .Where((data) => data.DataName.IsNotEmpty())
             .ForEach((data) =>
@@ -227,7 +241,7 @@ namespace Configure.Inspector
                 valueDropdownList.Add($"{data.DataGroup}/{countStr}{data.DataName}", data.DataName);
             });
 
-            valueDropdownList.Insert(0, new ValueDropdownItem<string>("未命名", ""));
+            valueDropdownList.Insert(0, new ValueDropdownItem<string>("未选择", ""));
 
             return valueDropdownList;
         }
@@ -247,10 +261,10 @@ namespace Configure.Inspector
 
 
     //*构造
-    public partial class OutDataInspector
+    public partial class DataInstance
     {
 
-        public OutDataInspector(Type dataType = null, string dataName = null)
+        public DataInstance(Type dataType = null, string dataName = null)
         {
             this.currentName = dataName;
             this.dataTypeName = dataType?.Name ?? "";

@@ -22,7 +22,7 @@ namespace Configure
         public string 添加配置 = addTypeDefault;
         private const string addTypeDefault = "选择配置类型";
         private string[] configureTypes => configureTypeDict.Keys.ToArray();
-        private static Dictionary<string, Type> configureTypeDict => ConfigureCoreF.NameTypeDict;
+        private static Dictionary<string, Type> configureTypeDict => CoreF.NameTypeDict;
         private void OnValueChanged_addType()
         {
 
@@ -117,51 +117,6 @@ namespace Configure
     public partial class ConfigureItemManager : IConfigureItemManager
     {
         IConfigureItem[] IConfigureItemManager.RunnerBuilders => 配置文件列表.SelectNotNull(x => x as IConfigureItem).ToArray();
-    }
-
-
-
-
-    public interface IConfigureRunnerManager
-    {
-        void AddRunner(CoreClass.IRunner runner);
-        void RemoveRunner(CoreClass.IRunner runner);
-        void Initialize();
-        void Destroy();
-        void Enable();
-        void Disable();
-    }
-
-
-
-
-    public interface IConfigureItemManager
-    {
-        IConfigureItem[] RunnerBuilders { get; }
-    }
-
-
-    public interface IConfigureItem : ICreate<MonoBehaviour, CoreClass.InitedEnabler>
-    {
-        public CoreClass.InitedEnabler CreateRunnerConfig(MonoBehaviour mono) => Create(mono);
-    }
-
-
-
-
-
-    public interface IConfigItemInfo
-    {
-
-        public string MenuName { get; }
-
-        public ConfigItemInfo OptionalInfo { get; }
-
-
-        public class ConfigItemInfo
-        {
-
-        }
     }
 
 

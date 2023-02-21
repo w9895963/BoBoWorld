@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using UnityEngine;
-using Object = System.Object;
+using static EventData.PresetNameF;
 
-namespace EventData.DataName
+namespace Configure.DataInstance
 {
+
 
 
 
@@ -71,7 +70,7 @@ namespace EventData.DataName
     }
 
     //*接口定义
-    public partial class DataNameInstance : EventData.DataName.IDataNameInstance
+    public partial class DataNameInstance : IDataNameInstance
     {
         public string DataName { get => nameGetter?.Invoke(); set => nameSetter?.Invoke(value); }
 
@@ -98,15 +97,6 @@ namespace EventData.DataName
         private Func<bool> aliveChecker;
         private Object identifier;
     }
-
-
-
-
-
-
-
-
-
 
 
 

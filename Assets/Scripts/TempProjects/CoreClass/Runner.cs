@@ -167,15 +167,4 @@ namespace CoreClass
     {
         IRunner GetRunner();
     }
-
-
-
-    public interface IRunnerConfig
-    {
-        void OnInit();
-        void OnUnInit();
-        void OnEnable();
-        void OnDisable();
-
-    }
 }

@@ -72,7 +72,7 @@ namespace Configure
             //如果空了
             if (string.IsNullOrEmpty(显示标题))
             {
-                ConfigureCoreF.NameTypeDict.TryGetKey(this.GetType(), out 显示标题);
+                CoreF.NameTypeDict.TryGetKey(this.GetType(), out 显示标题);
             }
         }
 
@@ -107,7 +107,7 @@ namespace Configure
             if (this is ConfigureItemBase itemBase)
             {
                 ConfigureItemBase.ItemRunnerBase itemRunnerBase = itemBase.CreateRunnerOver(monoBehaviour.gameObject);
-                return new ConfigureRunner(itemRunnerBase.Init, itemRunnerBase.Enable, itemRunnerBase.Disable, itemRunnerBase.Destroy);
+                return new ConfigureRunner(itemRunnerBase.OnInit, itemRunnerBase.OnEnable, itemRunnerBase.OnDisable, itemRunnerBase.OnUnInit);
             }
 
 

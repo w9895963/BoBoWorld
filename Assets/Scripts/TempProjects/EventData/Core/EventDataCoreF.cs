@@ -24,7 +24,7 @@ namespace EventData
                 //判断key是否存在DataName中
                 if (Enum.IsDefined(typeof(DataName.Preset.PresetName), key))
                 {
-                    System.Type type = DataNameF.GetDataType(key);
+                    System.Type type = PresetNameF.GetDataType(key);
                     if (type != typeof(T))
                     {
                         Debug.LogError($"数据名[{key}]对应的类型为[{type}], 但是你使用的类型为[{typeof(T)}]");
@@ -40,7 +40,7 @@ namespace EventData
 
                 //~获取数据
                 EventData eventData;
-                bool IsGlobal = DataNameF.IsGlobal(key);
+                bool IsGlobal = PresetNameF.IsGlobal(key);
                 //如果是本地数据
                 if (!IsGlobal)
                 {
@@ -104,7 +104,7 @@ namespace EventData
             {
                 //~获取数据
                 EventData eventData = null;
-                bool IsGlobal = DataNameF.IsGlobal(key);
+                bool IsGlobal = PresetNameF.IsGlobal(key);
                 //如果是本地数据
                 if (!IsGlobal)
                 {
@@ -123,7 +123,7 @@ namespace EventData
                 if (eventData == null)
                 {
                     //获得类型,没有则报错
-                    System.Type type = DataNameF.GetDataType(key);
+                    System.Type type = PresetNameF.GetDataType(key);
                     if (type != null)
                     {
                         //新建

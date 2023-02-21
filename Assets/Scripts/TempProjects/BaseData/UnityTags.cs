@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 public static partial class BaseData
 {
+    /// <summary> 所有Unity内置Tag </summary>
+    public static string[] UnityTags => unityTags ?? unityTags_Init();
     //Unity Tag
     private static string[] unityTags;
     private static string[] unityTags_Init()
@@ -16,5 +18,5 @@ public static partial class BaseData
 #endif
         return unityTags;
     }
-    public static string[] UnityTags => unityTags ?? unityTags_Init();
+
 }

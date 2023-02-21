@@ -261,7 +261,7 @@ namespace Configure.Inspector
 
 
             private Color SwitcGenerateCondition_ButtonColor => isUseDataForCondition ? Color.green : Color.grey;
-            private string[] dataNameList => EventData.DataNameF.GetAllNamesOnTypeWithGroup(dataType).ToArray();
+            private string[] dataNameList => EventData.PresetNameF.GetAllNamesOnTypeWithGroup(dataType).ToArray();
 
         }
 

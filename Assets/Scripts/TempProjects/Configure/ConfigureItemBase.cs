@@ -25,10 +25,10 @@ namespace Configure
         {
             public GameObject gameObject;
 
-            public abstract void Destroy();
-            public abstract void Disable();
-            public abstract void Enable();
-            public abstract void Init();
+            public abstract void OnUnInit();
+            public abstract void OnDisable();
+            public abstract void OnEnable();
+            public abstract void OnInit();
         }
 
         public abstract class ItemRunnerBase<T> : ItemRunnerBase
@@ -39,11 +39,7 @@ namespace Configure
 
     }
 
-    public interface IConfigureData
-    {
-        string MenuName { get; }
-        Type[] RequireComponents (GameObject gameObject);
-    }
+   
 
 
 

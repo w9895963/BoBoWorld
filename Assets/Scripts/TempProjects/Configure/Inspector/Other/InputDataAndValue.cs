@@ -19,7 +19,7 @@ namespace Configure.Inspector
         {
             // 赋默认值
             //当前期望数据类型
-            var type = DataNameF.GetDataType(dataName);
+            var type = PresetNameF.GetDataType(dataName);
             //当前数据类型
             Type valueType = value?.GetType();
             //如果不一致则新建对应类型的数据
@@ -42,7 +42,7 @@ namespace Configure.Inspector
 
 
         }
-        private string[] dataNames => DataNameF.GetDataNamesList();
+        private string[] dataNames => PresetNameF.GetDataNamesList();
 
 
 

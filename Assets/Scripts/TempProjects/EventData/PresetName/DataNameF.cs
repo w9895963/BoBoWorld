@@ -6,10 +6,12 @@ using Configure;
 using EventData;
 using EventData.DataName;
 using UnityEngine;
+using Configure.DataInstance;
+using static Configure.DataInstance.CoreF;
 
 namespace EventData
 {
-    public static partial class DataNameF
+    public static partial class PresetNameF
     {
         ///<summary>从完整数据名中获得单纯数据名</summary>
 
@@ -76,7 +78,7 @@ namespace EventData
 
 
             //~创建一个正则表达式⁡,并匹配内置数据名
-            if (DataName.Preset.TypeDict.TryGetValue(type, out string pattern))
+            if (DataName.Preset.TypeMatchDict.TryGetValue(type, out string pattern))
             {
                 //创建一个正则表达式
                 Regex regex = new Regex(pattern);
@@ -125,7 +127,7 @@ namespace EventData
             System.Type type = null;
 
             //历遍正则字典TypeRegexDic
-            DataName.Preset.TypeDict.ForEach((keyValue) =>
+            DataName.Preset.TypeMatchDict.ForEach((keyValue) =>
              {
                  //创建一个正则表达式
                  Regex r = new Regex(keyValue.Value);
@@ -149,7 +151,7 @@ namespace EventData
         ///<summary>获取现有数据类型表</summary>
         public static System.Type[] GetAllTypes()
         {
-            return DataName.Preset.TypeDict.Keys.Distinct().ToArray();
+            return DataName.Preset.TypeMatchDict.Keys.Distinct().ToArray();
         }
 
 
@@ -175,87 +177,7 @@ namespace EventData
 
 
 
-    ///<summary>类定义</summary>
-    public static partial class DataNameF
-    {
-
-
-
-
-        public struct NameInfoPreSet : IDataNameInfo
-        {
-            public string dataName;
-            public string DataName => dataName;
-
-            public Type DataType => GetDataType(dataName);
-            public string DataGroup => GetGroup(dataName);
-            public string DataNameWithGroup => String.Join('/', DataGroup, dataName);
-            public IEnumerable<DataName.IDataNameInstance> DataNameInstances => GetDataNameInstances();
-            public int InstanceCount => DataNameInstances.Count();
-
-            public NameInfoPreSet(string dataName)
-            {
-                this.dataName = dataName;
-            }
-
-            private IEnumerable<DataName.IDataNameInstance> GetDataNameInstances()
-            {
-                foreach (var item in DataNameD.AllNameInstance)
-                {
-                    if (item.DataName == dataName)
-                    {
-                        yield return item;
-                    }
-                }
-            }
-
-
-        }
-
-
-        public struct NameInfoInstance : IDataNameInfo
-        {
-            private IDataNameInstance instance;
-            public string DataName => instance.DataName;
-
-            public Type DataType => instance.DataType;
-            public string DataGroup => GetGroup(instance.DataName);
-            public string DataNameWithGroup => String.Join('/', DataGroup, DataName);
-            public IEnumerable<DataName.IDataNameInstance> DataNameInstances => GetDataNameInstances();
-            public int InstanceCount => DataNameInstances.Count();
-
-            public NameInfoInstance(DataName.DataNameInstance nameInstance)
-            {
-                instance = nameInstance;
-            }
-            public NameInfoInstance(IDataNameInstance nameInstance)
-            {
-                instance = nameInstance;
-            }
-
-
-            private IEnumerable<DataName.IDataNameInstance> GetDataNameInstances()
-            {
-                foreach (var item in EventData.DataName.DataNameInstance.AllNameInstance)
-                {
-                    if (item.DataName == instance.DataName)
-                    {
-                        yield return item;
-                    }
-                }
-            }
-
-
-
-
-
-
-        }
-
-
-
-
-    }
+  
 
 
 
@@ -265,8 +187,9 @@ namespace EventData
 
 
     ///<summary>内部方法</summary>
-    public static partial class DataNameF
+    public static partial class PresetNameF
     {
+
         ///<summary>将数据名列表加上分组</summary>
         private static string[] DataName_AddGroup(string[] arr)
         {

@@ -19,7 +19,7 @@ public static partial class ExtensionMethods
 
         return defaultOut;
     }
-  
+
 
     public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
     {
@@ -67,7 +67,7 @@ public static partial class ExtensionMethods
     ///<summary>合并所有</summary>
     public static string Join(this IEnumerable<string> source, string separator = "")
     {
-       return string.Join(separator, source);
+        return string.Join(separator, source);
     }
 
     ///<summary>移除所有</summary>
@@ -91,7 +91,7 @@ public static partial class ExtensionMethods
     ///<summary>选择但是不包含Null</summary>
     public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
     {
-      return  source.Where((x) => x != null).Select(selector).Where((x) => x != null);
+        return source.Where((x) => x != null).Select(selector).Where((x) => x != null);
     }
 
 

@@ -7,7 +7,7 @@ using Configure.ConfigureItems;
 namespace Configure
 {
     //预设数据
-    public static partial class Data
+    public static partial class Preset 
     {
         ///<summary> 配置组件的预设(名字,类型)字典 </summary>
         public static Dictionary<string, Type> NameTypeDict_preset = new Dictionary<string, Type>() {

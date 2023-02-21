@@ -39,21 +39,21 @@ namespace Configure.ConfigureItems
 
 
 
-            public override void Init()
+            public override void OnInit()
             {
                 throw new NotImplementedException();
             }
-            public override void Destroy()
-            {
-                throw new NotImplementedException();
-            }
-
-            public override void Disable()
+            public override void OnUnInit()
             {
                 throw new NotImplementedException();
             }
 
-            public override void Enable()
+            public override void OnDisable()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void OnEnable()
             {
                 throw new NotImplementedException();
             }
